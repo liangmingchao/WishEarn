@@ -27,6 +27,9 @@ struct RootTabView: View {
                     viewModel: container.makeTodayViewModel(),
                     makeRecordEditorViewModel: { condition in
                         container.makeRecordEditorViewModel(condition: condition, record: nil)
+                    },
+                    makeWishEditorViewModel: {
+                        container.makeWishEditorViewModel()
                     }
                 )
             }

@@ -168,8 +168,8 @@ final class AppContainer {
     func makeTodayViewModel() -> TodayViewModel {
         TodayViewModel(
             wishRepository: wishRepository,
-            conditionRepository: conditionRepository,
             progressRepository: progressRepository,
+            wishProgressService: wishProgressService,
             clock: dependencies.clock
         )
     }
