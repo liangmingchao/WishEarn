@@ -91,7 +91,7 @@ Avoid:
 - Cartoon mascots, XP, coins, rankings, or punishment language.
 - Making a missing wish image look like a broken image placeholder.
 
-Use a restrained cool-mist palette with a single lagoon-teal accent. The editorial composition stays; the palette should feel fresh and optimistic rather than warm/terracotta. Color must communicate role, not decorate every element.
+Use a soft ivory canvas with a single deep petrol-teal accent and eucalyptus-mint containers. The editorial composition stays; the palette should feel fresh and optimistic rather than warm/terracotta. Color must communicate role, not decorate every element.
 
 ## 6. Content and microcopy
 

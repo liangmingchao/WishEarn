@@ -88,13 +88,13 @@
 - 发布材料：`docs/APP_STORE.md`、`docs/RELEASE_CHECKLIST.md`。
 - Release Archive 与 Development IPA 构建成功。
 - Phase 2 设计系统、心愿首页、心愿详情、Today 行动页、Editors、Unlock / Achievements / Settings 改版。
-- 配色刷新：lagoon teal 冷色体系与同色系 App Icon。
+- 配色刷新：petrol teal + eucalyptus 冷色体系与同色系 App Icon。
 - 测试体系：272 项，业务层主要文件覆盖率 88%–100%。
 
 ## Last Verification
 
 - Build: PASS — Debug / Release
-- Unit Tests: PASS — 272 项，iPhone 18 Pro / iOS 27.2，2026-11-09 23:58
+- Unit Tests: PASS — 272 项，iPhone 18 Pro / iOS 27.2，2026-11-10 00:13
 - Palette refresh: PASS — Light / Dark / Detail / Today / Achievements / Settings / Unlock / Editor 截图
 - Integration Tests: PASS
 - Archive: PASS — `build/WishEarn.xcarchive`（0.15.0 / 1）

@@ -1,11 +1,11 @@
-# Palette Refresh — Lagoon Teal
+# Palette Refresh — Petrol & Eucalyptus
 
-Replaces the previous terracotta/warm-paper palette with a cool-mist canvas and lagoon-teal accent. The editorial serif composition is unchanged.
+Replaces the previous terracotta/warm-paper palette with a soft ivory canvas, deep petrol-teal accent, and eucalyptus-mint containers. The editorial serif composition is unchanged.
 
-- Light: cool mist canvas `#F3F8F8`, near-white surface `#FCFEFE`, deep lagoon accent `#0C6F7A`, soft aqua container `#D7EEF2`.
-- Dark: deep green-black canvas `#0C1517`, dark surface `#152225`, bright aqua accent `#6FD3D8`.
+- Light: soft ivory canvas `#F6F4F0`, warm-white surface `#FCFBF8`, deep petrol accent `#194E57`, eucalyptus container `#DDEAE6`.
+- Dark: deep blue-green canvas `#0D1516`, dark surface `#172021`, eucalyptus-mint accent `#7ECFC3`.
 - Semantic success, warning, and danger remain distinct from the accent and retain 4.5:1 contrast targets.
-- App icon updated to the same teal gradient with the existing white heart + sparkles mark.
+- App icon updated to the same petrol → eucalyptus gradient with the existing white heart + sparkles mark.
 
 Captured on iPhone 18 Pro Simulator (iOS 27.2) with in-memory Debug-only data:
 

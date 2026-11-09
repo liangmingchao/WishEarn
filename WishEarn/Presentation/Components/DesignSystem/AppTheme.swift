@@ -4,33 +4,33 @@ import UIKit
 enum AppColors {
     // MARK: Canvas and surfaces
 
-    static let canvas = Color.dynamic(light: 0xF3F8F8, dark: 0x0C1517)
-    static let surface = Color.dynamic(light: 0xFCFEFE, dark: 0x152225)
-    static let surfaceSecondary = Color.dynamic(light: 0xE3EFF1, dark: 0x1F3237)
+    static let canvas = Color.dynamic(light: 0xF6F4F0, dark: 0x0D1516)
+    static let surface = Color.dynamic(light: 0xFCFBF8, dark: 0x172021)
+    static let surfaceSecondary = Color.dynamic(light: 0xE4ECE7, dark: 0x223031)
 
     // MARK: Text
 
-    static let textPrimary = Color.dynamic(light: 0x142628, dark: 0xEDF6F8)
+    static let textPrimary = Color.dynamic(light: 0x161B1C, dark: 0xF1F5F3)
     // Light values are tuned so normal-size supporting text still meets
     // 4.5:1 contrast on canvas and surface.
-    static let textSecondary = Color.dynamic(light: 0x50686C, dark: 0xB4C8CD)
-    static let textTertiary = Color.dynamic(light: 0x5D7478, dark: 0x8BA2A8)
+    static let textSecondary = Color.dynamic(light: 0x5A6868, dark: 0xB7C5C3)
+    static let textTertiary = Color.dynamic(light: 0x637271, dark: 0x8FA19F)
 
     // MARK: Action and state
 
-    // Deep lagoon teal in light mode, bright aqua in dark mode. The light
+    // Deep petrol teal in light mode, eucalyptus mint in dark mode. The light
     // accent is dark enough for text; the dark accent takes dark labels.
-    static let accent = Color.dynamic(light: 0x0C6F7A, dark: 0x6FD3D8)
-    static let accentSoft = Color.dynamic(light: 0xD7EEF2, dark: 0x13383F)
-    static let onAccent = Color.dynamic(light: 0xFFFFFF, dark: 0x0C1517)
-    static let success = Color.dynamic(light: 0x2E7D4F, dark: 0x72C995)
-    static let warning = Color.dynamic(light: 0x94601E, dark: 0xDDB26B)
-    static let danger = Color.dynamic(light: 0xB94A45, dark: 0xED8C86)
+    static let accent = Color.dynamic(light: 0x194E57, dark: 0x7ECFC3)
+    static let accentSoft = Color.dynamic(light: 0xDDEAE6, dark: 0x1A3737)
+    static let onAccent = Color.dynamic(light: 0xFFFFFF, dark: 0x0D1516)
+    static let success = Color.dynamic(light: 0x2E7A55, dark: 0x78C69A)
+    static let warning = Color.dynamic(light: 0x8E641F, dark: 0xD8B36B)
+    static let danger = Color.dynamic(light: 0xB14B46, dark: 0xE88B85)
 
     // MARK: Structure
 
-    static let separator = Color.dynamic(light: 0xD8E6E9, dark: 0x293C41)
-    static let progressTrack = Color.dynamic(light: 0xE1EEF1, dark: 0x293C41)
+    static let separator = Color.dynamic(light: 0xE3E5E0, dark: 0x2A3838)
+    static let progressTrack = Color.dynamic(light: 0xE5ECE8, dark: 0x2A3838)
 
     // MARK: Compatibility aliases
     //
