@@ -13,26 +13,54 @@ struct StatusBadge: View {
     var tone: Tone = .neutral
 
     var body: some View {
-        Text(title)
-            .font(AppTypography.caption)
-            .foregroundStyle(foregroundColor)
-            .padding(.horizontal, AppSpacing.sm)
-            .padding(.vertical, AppSpacing.xs)
-            .background(backgroundColor)
-            .clipShape(Capsule())
+        HStack(spacing: AppSpacing.xs) {
+            Circle()
+                .fill(foregroundColor)
+                .frame(width: 6, height: 6)
+                .accessibilityHidden(true)
+
+            Text(title)
+                .font(AppTypography.caption)
+                .foregroundStyle(foregroundColor)
+                .lineLimit(1)
+                .fixedSize(horizontal: true, vertical: false)
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(Text(title))
     }
 
     private var foregroundColor: Color {
         switch tone {
-        case .neutral: AppColors.textSecondary
-        case .primary: AppColors.primary
-        case .success: AppColors.success
-        case .warning: AppColors.warning
-        case .danger: AppColors.danger
+        case .neutral: return AppColors.textSecondary
+        case .primary: return AppColors.accent
+        case .success: return AppColors.success
+        case .warning: return AppColors.warning
+        case .danger: return AppColors.danger
         }
     }
+}
 
-    private var backgroundColor: Color {
-        foregroundColor.opacity(0.14)
+#Preview("Status — Light") {
+    StatusBadgePreview()
+        .preferredColorScheme(.light)
+}
+
+#Preview("Status — Dark") {
+    StatusBadgePreview()
+        .preferredColorScheme(.dark)
+}
+
+private struct StatusBadgePreview: View {
+    var body: some View {
+        VStack(alignment: .leading, spacing: AppSpacing.md) {
+            StatusBadge(title: "进行中", tone: .primary)
+            StatusBadge(title: "已解锁", tone: .success)
+            StatusBadge(title: "已暂停", tone: .warning)
+            StatusBadge(title: "需要处理", tone: .danger)
+            StatusBadge(title: "已兑现", tone: .neutral)
+        }
+        .padding(AppSpacing.screenInset)
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+        .appScreenBackground()
     }
 }

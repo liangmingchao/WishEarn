@@ -27,7 +27,7 @@ struct UnlockCelebrationView: View {
                     .opacity(appeared ? 1 : 0)
 
                 Text("你做到了")
-                    .font(.system(.largeTitle, design: .rounded).weight(.bold))
+                    .font(AppTypography.display)
                     .foregroundStyle(AppColors.textPrimary)
 
                 Text(wish.title)
