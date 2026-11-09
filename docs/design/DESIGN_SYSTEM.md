@@ -12,19 +12,19 @@ Use semantic names. Values below are initial targets; verify contrast in impleme
 
 | Token | Light | Dark | Use |
 |---|---|---|---|
-| canvas | #F7F4EF | #151412 | App background |
-| surface | #FFFEFC | #211F1C | Main cards and sheets |
-| surfaceSecondary | #EEEAE3 | #2B2824 | Quiet grouped surfaces |
-| textPrimary | #282521 | #F4F0E9 | Primary text |
-| textSecondary | #746F66 | #B9B2A8 | Supporting text |
-| textTertiary | #989187 | #8E877E | Metadata only |
-| accent | #B85F3D | #E08A65 | Primary action / active progress |
-| accentSoft | #F1DED4 | #422B22 | Accent container |
-| success | #397B5B | #76B994 | Completed state |
-| warning | #A96E24 | #D9A65C | Caution only |
-| danger | #B94A45 | #E47C75 | Destructive / error |
-| separator | #E4DED5 | #39352F | Hairlines |
-| progressTrack | #EAE4DC | #39352F | Progress background |
+| canvas | #F3F8F8 | #0C1517 | App background |
+| surface | #FCFEFE | #152225 | Main cards and sheets |
+| surfaceSecondary | #E3EFF1 | #1F3237 | Quiet grouped surfaces |
+| textPrimary | #142628 | #EDF6F8 | Primary text |
+| textSecondary | #50686C | #B4C8CD | Supporting text |
+| textTertiary | #5D7478 | #8BA2A8 | Metadata only |
+| accent | #0C6F7A | #6FD3D8 | Primary action / active progress |
+| accentSoft | #D7EEF2 | #13383F | Accent container |
+| success | #2E7D4F | #72C995 | Completed state |
+| warning | #94601E | #DDB26B | Caution only |
+| danger | #B94A45 | #ED8C86 | Destructive / error |
+| separator | #D8E6E9 | #293C41 | Hairlines |
+| progressTrack | #E1EEF1 | #293C41 | Progress background |
 
 Rules:
 - Accent is used for one primary action and active progress, not every icon.
@@ -88,7 +88,7 @@ Prefer subtle border separation over drop shadows. If shadow is needed: low opac
 Wish imagery is the strongest visual differentiator.
 - Detail hero: wide crop, 16:10 target, rounded 26 pt corners; preserve subject via center crop and allow user-selected image focal behavior if available.
 - Home card: 104 × 116 pt editorial thumbnail on standard width; do not force 64 pt generic icon tiles.
-- No-image state: warm neutral surface with a restrained line illustration / symbol and a subtle “Add a photo” affordance only in edit context.
+- No-image state: cool neutral surface with a restrained line illustration / symbol and a subtle “Add a photo” affordance only in edit context.
 - Do not show broken-image glyphs.
 - Respect stored image data and existing image-loading path; do not add remote image dependencies.
 

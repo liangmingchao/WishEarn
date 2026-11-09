@@ -21,6 +21,7 @@
 - Settings 补充 JSON 导出格式与图片限制说明，并补齐 52 pt 行高与披露指示。
 - 解锁幂等与领取失败测试补充；测试扩展至 272 项。
 - 首页 Featured WishCard 主图从 16:10 调整为 2:1，并修复竖图按源图比例撑高卡片的问题；心愿详情 Hero 保持 16:10。
+- 全量配色从暖陶土改为 lagoon teal 冷色体系，同步 Light / Dark tokens、对比度测试、设计文档与 App Icon。
 
 ### Planned
 

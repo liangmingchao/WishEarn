@@ -7,7 +7,7 @@
 ## 1. Design composition rules
 
 ### Visual rhythm
-- Page canvas: warm neutral background.
+- Page canvas: cool mist neutral background.
 - Main content horizontal inset: 20 pt.
 - Section spacing: 28–32 pt.
 - Card internal inset: 16–20 pt.
