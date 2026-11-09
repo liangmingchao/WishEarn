@@ -1,6 +1,28 @@
 import Foundation
 import Observation
 
+struct WishProgressSummary: Equatable {
+    let completedConditionCount: Int
+    let totalConditionCount: Int
+
+    var ratio: Double {
+        guard totalConditionCount > 0 else { return 0 }
+        return Double(completedConditionCount) / Double(totalConditionCount)
+    }
+
+    var isComplete: Bool {
+        totalConditionCount > 0 && completedConditionCount == totalConditionCount
+    }
+
+    var text: String {
+        "已完成 \(completedConditionCount) / \(totalConditionCount) 项条件"
+    }
+
+    var accessibilityValue: String {
+        "已完成 \(completedConditionCount) 项，共 \(totalConditionCount) 项"
+    }
+}
+
 @MainActor
 @Observable
 final class WishListViewModel {
@@ -40,6 +62,21 @@ final class WishListViewModel {
         wishes.filter { filter.matches($0) }
     }
 
+    /// The first active wish in the existing repository/ViewModel order.
+    ///
+    /// A featured wish is only meaningful when the selected filter can contain
+    /// active wishes. No price/progress/date ranking happens here.
+    var featuredWish: Wish? {
+        guard filter == .all || filter == .active else { return nil }
+        return filteredWishes.first { $0.status == .active }
+    }
+
+    /// The filtered list without the featured wish, preserving source order.
+    var secondaryWishes: [Wish] {
+        guard let featuredWish else { return filteredWishes }
+        return filteredWishes.filter { $0.id != featuredWish.id }
+    }
+
     func conditionCount(for wish: Wish) -> Int {
         conditionCounts[wish.id] ?? 0
     }
@@ -50,6 +87,17 @@ final class WishListViewModel {
 
     func overallProgress(for wish: Wish) -> Double? {
         progressByWish[wish.id]?.overallRatio
+    }
+
+    /// Presentation-ready required-condition progress from the existing service.
+    func progressSummary(for wish: Wish) -> WishProgressSummary? {
+        guard let progress = progressByWish[wish.id], progress.requiredTotal > 0 else {
+            return nil
+        }
+        return WishProgressSummary(
+            completedConditionCount: progress.requiredCompleted,
+            totalConditionCount: progress.requiredTotal
+        )
     }
 
     func delete(_ wish: Wish) {
@@ -103,6 +151,10 @@ final class WishListViewModel {
         do {
             let fetched = try wishRepository.fetchAll()
             wishes = fetched
+
+            if fetched.isEmpty {
+                filter = .all
+            }
 
             var counts: [UUID: Int] = [:]
             var loadedProgress: [UUID: WishProgress] = [:]
