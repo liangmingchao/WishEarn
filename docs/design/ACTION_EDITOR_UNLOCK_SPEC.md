@@ -105,6 +105,21 @@ Completed today:
 - [ ] Empty state does not shame or pressure the user.
 - [ ] Long titles, large text, and dark mode remain usable.
 
+
+## 2.6 Current implementation contract and known gaps (reviewed against main)
+
+The current main-branch implementation was inspected before planning UI work. The following are explicit integration facts; they do not change the intended product direction:
+
+- `TodayViewModel.items` currently contains every condition for ACTIVE wishes, in repository-provided order. It does not expose separate actionable/completed-today collections or a cumulative progress snapshot for each condition. UI work must not claim those richer semantics already exist.
+- `TodayConditionItem.isDone` currently treats STREAK as done when a record exists today, CHECKPOINT as done when any historical record exists, and COUNT/DURATION/AMOUNT/CUSTOM as never done for the day. This means CHECKPOINT's current “done” meaning is lifetime completion, not “recorded today”; do not relabel it as a completed-today fact. This should be reviewed as a ViewModel/product-semantics gap before redesigning Today grouping.
+- COUNT/DURATION/AMOUNT/CUSTOM Today rows currently show today's recorded amount when present, not the condition's cumulative progress. A cumulative snapshot requires a presentation-ready value from the existing progress service/ViewModel; it must not be aggregated in the View.
+- `ConditionEditorView` currently makes condition type read-only while editing. Preserve this behavior. Type-specific controls apply to creation and to the existing type when editing; do not expose type switching during edit without an explicit Domain migration/update decision.
+- `RecordEditorViewModel` currently receives a Condition, not a Wish, and the editor has no wish-title context. Adding that context requires a small presentation-factory/ViewModel contract change. Keep the condition context as the current baseline until that change is explicitly included in the implementation issue.
+- The current Record Editor has no delete-record action. Do not add record deletion as part of visual redesign. If product wants it later, create a separate business/UX task with recalculation and unlock-regression rules.
+- `UnlockCoordinator` currently presents a Wish and the count of all conditions, claims via the existing lifecycle `complete` use case, and dismisses the presentation for “later”. It does not expose a persisted unlock snapshot in the presentation model. Do not describe the count as an immutable unlock-time snapshot unless the implementation is changed and approved.
+
+These gaps must be listed in the implementation plan with an owner and disposition (preserve current behavior, make a scoped ViewModel enhancement, or defer). They must not be hidden by view-side calculations.
+
 ## 3. Wish Editor — create and edit
 
 ### 3.1 User job
@@ -199,10 +214,10 @@ The form must adapt to the selected type. Never show a generic numeric target fi
 
 ### 4.4 Type switching
 
-- When the user changes type, show only fields relevant to the selected type.
+- During creation, when the user changes type, show only fields relevant to the selected type. During edit, preserve the current implementation's read-only type display.
 - Preserve compatible values only when the existing ViewModel explicitly supports that mapping.
 - Do not silently reinterpret a COUNT value as a DURATION or AMOUNT value.
-- If switching type invalidates prior values, clear only the affected type-specific fields and explain the reset before saving when necessary.
+- Do not implement type switching during edit; any future support requires a separately reviewed Domain update contract.
 - When editing an existing condition, initialize all controls from persisted values.
 - Do not change a condition's type as a side effect of opening the editor.
 
