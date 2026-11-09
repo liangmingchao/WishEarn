@@ -4,7 +4,8 @@ import Observation
 struct UnlockPresentation: Identifiable {
     let id = UUID()
     let wish: Wish
-    let conditionCount: Int
+    /// Count at presentation time, not a persisted unlock-time snapshot.
+    let requiredConditionCount: Int
     let imageData: Data?
 }
 
@@ -32,11 +33,14 @@ final class UnlockCoordinator: UnlockEventPublishing, UnlockFailureReporting {
     }
 
     func publishUnlock(wishID: UUID) {
+        guard presentation == nil else { return }
+
         do {
             guard let wish = try wishRepository.fetch(id: wishID) else {
                 return
             }
             let conditions = try conditionRepository.fetchConditions(wishID: wishID)
+            let requiredConditionCount = conditions.filter(\.isRequired).count
 
             var imageData: Data?
             if let imagePath = wish.imagePath {
@@ -50,7 +54,7 @@ final class UnlockCoordinator: UnlockEventPublishing, UnlockFailureReporting {
 
             presentation = UnlockPresentation(
                 wish: wish,
-                conditionCount: conditions.count,
+                requiredConditionCount: requiredConditionCount,
                 imageData: imageData
             )
         } catch {
