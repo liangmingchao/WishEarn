@@ -26,6 +26,7 @@ struct EditorField<Content: View>: View {
 
             content
                 .font(AppTypography.body)
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(AppSpacing.md)
                 .background(AppColors.surfaceSecondary)
                 .clipShape(

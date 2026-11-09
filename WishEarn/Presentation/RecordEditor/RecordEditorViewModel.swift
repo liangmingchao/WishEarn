@@ -30,13 +30,85 @@ final class RecordEditorViewModel {
         case .count:
             return "本次次数"
         case .duration:
-            return "本次时长（\(condition.unit ?? "分钟")）"
+            return "本次时长"
         case .amount:
-            return "本次金额（\(condition.unit ?? "元")）"
+            return "本次金额"
         case .custom:
-            let unit = condition.unit.map { "（\($0)）" } ?? ""
-            return "本次数值\(unit)"
+            return "本次数值"
         case .streak, .checkpoint:
+            return ""
+        }
+    }
+
+    /// The unit is displayed next to the input, not buried in the field label.
+    var valueUnit: String? {
+        switch condition.type {
+        case .count:
+            return condition.unit ?? "次"
+        case .duration:
+            return condition.unit ?? "分钟"
+        case .amount:
+            return condition.unit ?? "元"
+        case .custom:
+            return condition.unit
+        case .streak, .checkpoint:
+            return nil
+        }
+    }
+
+    var valueValidationMessage: String? {
+        guard showsValueField else { return nil }
+
+        let trimmed = normalizedValueText
+        guard !trimmed.isEmpty else { return nil }
+
+        guard let parsed = Decimal(
+            string: trimmed,
+            locale: Locale(identifier: "en_US_POSIX")
+        ) else {
+            return "请输入有效的记录值。"
+        }
+
+        if condition.type == .amount {
+            return parsed >= 0 ? nil : "金额不能为负数。"
+        }
+
+        return parsed > 0 ? nil : "记录值必须大于 0。"
+    }
+
+    var canSave: Bool {
+        guard !isSaving else { return false }
+        guard showsValueField else { return true }
+        guard !normalizedValueText.isEmpty else { return false }
+        return valueValidationMessage == nil
+    }
+
+    var completionTitle: String {
+        if isEditing {
+            return "修改完成记录"
+        }
+
+        switch condition.type {
+        case .streak:
+            return "记录一次完成"
+        case .checkpoint:
+            return "标记为已完成"
+        default:
+            return ""
+        }
+    }
+
+    var completionMessage: String {
+        if isEditing {
+            return "保存后更新这条记录，并重新计算进度。"
+        }
+
+        switch condition.type {
+        case .streak:
+            return "保存后按记录日期计入连续天数。"
+        case .checkpoint:
+            return "完成一次即可达成，保存后不可重复记录。"
+        default:
             return ""
         }
     }
@@ -50,7 +122,10 @@ final class RecordEditorViewModel {
     }
 
     var conditionSummary: String {
-        "\(condition.type.displayName) · \(condition.targetDescription)"
+        if condition.type == .checkpoint {
+            return condition.type.displayName
+        }
+        return "\(condition.type.displayName) · \(condition.targetDescription)"
     }
 
     init(
@@ -80,11 +155,10 @@ final class RecordEditorViewModel {
 
         let value: Decimal
         if showsValueField {
-            let trimmedValue = valueText
-                .replacingOccurrences(of: ",", with: "")
-                .trimmingCharacters(in: .whitespacesAndNewlines)
-
-            guard let parsed = Decimal(string: trimmedValue, locale: Locale(identifier: "en_US_POSIX")) else {
+            guard let parsed = Decimal(
+                string: normalizedValueText,
+                locale: Locale(identifier: "en_US_POSIX")
+            ) else {
                 error = .domain(.invalidInput("请输入有效的记录值。"))
                 return
             }
@@ -134,5 +208,11 @@ final class RecordEditorViewModel {
         } catch {
             self.error = AppError.wrap(error)
         }
+    }
+
+    private var normalizedValueText: String {
+        valueText
+            .replacingOccurrences(of: ",", with: "")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 }

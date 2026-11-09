@@ -33,6 +33,58 @@ final class WishEditorViewModel {
         editingWish != nil
     }
 
+    var titleHelperText: String? {
+        trimmedTitle.isEmpty ? "必填" : nil
+    }
+
+    /// Preserve the persisted currency code while keeping the existing
+    /// no-currency-picker behavior. The editor only formats it.
+    var currencyCode: String {
+        editingWish?.currencyCode ?? "CNY"
+    }
+
+    var currencySymbol: String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.locale = Locale(identifier: "zh_CN")
+        formatter.currencyCode = currencyCode
+        return formatter.currencySymbol ?? currencyCode
+    }
+
+    var currencySummary: String {
+        let name = Locale(identifier: "zh_CN")
+            .localizedString(forCurrencyCode: currencyCode) ?? currencyCode
+        return "币种：\(name)（\(currencyCode)）"
+    }
+
+    var priceValidationMessage: String? {
+        let trimmed = normalizedPriceText
+        guard !trimmed.isEmpty else { return nil }
+
+        guard let parsed = Decimal(
+            string: trimmed,
+            locale: Locale(identifier: "en_US_POSIX")
+        ), parsed >= 0 else {
+            return "参考价格格式不正确。"
+        }
+
+        return nil
+    }
+
+    var targetDateValidationMessage: String? {
+        guard hasTargetDate else { return nil }
+
+        let today = clock.calendar.startOfDay(for: clock.now)
+        return targetDate >= today ? nil : "目标日期不能早于今天。"
+    }
+
+    var canSave: Bool {
+        !isSaving
+            && !trimmedTitle.isEmpty
+            && priceValidationMessage == nil
+            && targetDateValidationMessage == nil
+    }
+
     init(
         lifecycleService: WishLifecycleServicing,
         imageStorage: ImageStorageService,
@@ -74,10 +126,9 @@ final class WishEditorViewModel {
     }
 
     func loadSelectedImage(from item: PhotosPickerItem?) async {
-        guard let item else {
-            selectedImageData = nil
-            return
-        }
+        // Opening and cancelling PhotosPicker must not clear an existing image;
+        // removal is an explicit user action through removeSelectedImage().
+        guard let item else { return }
 
         do {
             guard let data = try await item.loadTransferable(type: Data.self) else {
@@ -104,16 +155,13 @@ final class WishEditorViewModel {
 
         error = nil
 
-        let trimmedTitle = title.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmedTitle.isEmpty else {
             error = .domain(.invalidInput("请输入心愿名称。"))
             return
         }
 
         let targetPrice: Decimal?
-        let trimmedPrice = priceText
-            .replacingOccurrences(of: ",", with: "")
-            .trimmingCharacters(in: .whitespacesAndNewlines)
+        let trimmedPrice = normalizedPriceText
 
         if trimmedPrice.isEmpty {
             targetPrice = nil
@@ -129,12 +177,9 @@ final class WishEditorViewModel {
         let finalDescription = descriptionText.trimmingCharacters(in: .whitespacesAndNewlines)
         let finalTargetDate = hasTargetDate ? targetDate : nil
 
-        if hasTargetDate {
-            let today = clock.calendar.startOfDay(for: clock.now)
-            guard targetDate >= today else {
-                error = .domain(.invalidInput("目标日期不能早于今天。"))
-                return
-            }
+        if let validationMessage = targetDateValidationMessage {
+            error = .domain(.invalidInput(validationMessage))
+            return
         }
 
         isSaving = true
@@ -181,7 +226,7 @@ final class WishEditorViewModel {
                 description: description,
                 imagePath: savedImagePath,
                 targetPrice: targetPrice,
-                currencyCode: "CNY",
+                currencyCode: currencyCode,
                 targetDate: targetDate,
                 createdAt: now,
                 updatedAt: now
@@ -198,6 +243,16 @@ final class WishEditorViewModel {
             }
             self.error = AppError.wrap(error)
         }
+    }
+
+    private var trimmedTitle: String {
+        title.trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+
+    private var normalizedPriceText: String {
+        priceText
+            .replacingOccurrences(of: ",", with: "")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     private func saveEdit(

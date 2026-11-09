@@ -185,6 +185,63 @@ final class ConditionEditorViewModelTests: XCTestCase {
         sut.viewModel.type = .checkpoint
         sut.viewModel.onTypeChanged()
         XCTAssertEqual(sut.viewModel.targetText, "1")
+
+        sut.viewModel.type = .count
+        sut.viewModel.onTypeChanged()
+        XCTAssertEqual(sut.viewModel.targetText, "")
+    }
+
+    func testCanSaveRequiresTitleAndValidTarget() throws {
+        let sut = try makeSUT()
+
+        XCTAssertFalse(sut.viewModel.canSave)
+        XCTAssertEqual(sut.viewModel.titleHelperText, "必填")
+
+        sut.viewModel.title = "健身"
+        sut.viewModel.targetText = "20"
+        XCTAssertTrue(sut.viewModel.canSave)
+        XCTAssertNil(sut.viewModel.targetValidationMessage)
+
+        sut.viewModel.targetText = "abc"
+        XCTAssertFalse(sut.viewModel.canSave)
+        XCTAssertEqual(sut.viewModel.targetValidationMessage, "目标值必须大于 0。")
+
+        sut.viewModel.targetText = "0"
+        XCTAssertFalse(sut.viewModel.canSave)
+        XCTAssertEqual(sut.viewModel.targetValidationMessage, "目标值必须大于 0。")
+    }
+
+    func testStreakPresentationUsesIntegerKeyboardAndGuidance() throws {
+        let sut = try makeSUT()
+        sut.viewModel.type = .streak
+        sut.viewModel.onTypeChanged()
+
+        XCTAssertEqual(sut.viewModel.targetFieldTitle, "连续天数")
+        XCTAssertTrue(sut.viewModel.usesIntegerKeyboard)
+        XCTAssertTrue(sut.viewModel.targetHelperText.contains("正整数"))
+        XCTAssertNil(sut.viewModel.targetValidationMessage)
+
+        sut.viewModel.targetText = "1.5"
+        XCTAssertEqual(
+            sut.viewModel.targetValidationMessage,
+            "连续坚持的目标值必须为正整数。"
+        )
+    }
+
+    func testCheckpointCanSaveWithoutNumericTarget() throws {
+        let sut = try makeSUT()
+        sut.viewModel.type = .checkpoint
+        sut.viewModel.onTypeChanged()
+        sut.viewModel.title = "完成开源项目"
+
+        XCTAssertFalse(sut.viewModel.showsTargetField)
+        XCTAssertTrue(sut.viewModel.canSave)
+        XCTAssertNil(sut.viewModel.targetValidationMessage)
+        XCTAssertEqual(sut.viewModel.targetFieldTitle, "")
+        XCTAssertEqual(
+            sut.viewModel.checkpointMessage,
+            "完成一次即可达成，无需填写目标值。"
+        )
     }
 
     func testStreakTargetRejectsNonIntegerValues() throws {

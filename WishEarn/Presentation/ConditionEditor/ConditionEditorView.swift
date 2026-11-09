@@ -12,64 +12,85 @@ struct ConditionEditorView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: AppSpacing.lg) {
-                    EditorField(title: "条件类型") {
-                        if viewModel.isEditing {
-                            Text(viewModel.type.displayName)
-                                .foregroundStyle(AppColors.textSecondary)
-                        } else {
-                            Picker("条件类型", selection: $viewModel.type) {
-                                ForEach(ConditionType.allCases, id: \.self) { type in
-                                    Text(type.displayName).tag(type)
-                                }
-                            }
-                            .pickerStyle(.menu)
-                            .tint(AppColors.primary)
-                        }
-                    }
-
-                    EditorField(title: "条件名称") {
+                    EditorField(
+                        title: "条件名称",
+                        helperText: viewModel.titleHelperText
+                    ) {
                         TextField("例如：健身", text: $viewModel.title)
                     }
 
-                    EditorField(title: "描述（可选）") {
-                        TextField("补充说明", text: $viewModel.descriptionText, axis: .vertical)
-                            .lineLimit(2...4)
-                    }
+                    typeField
 
                     if viewModel.showsTargetField {
-                        EditorField(title: "目标值") {
-                            TextField("0", text: $viewModel.targetText)
-                                .keyboardType(.decimalPad)
+                        EditorField(
+                            title: viewModel.targetFieldTitle,
+                            helperText: viewModel.targetHelperText,
+                            errorText: viewModel.targetValidationMessage
+                        ) {
+                            HStack(
+                                alignment: .firstTextBaseline,
+                                spacing: AppSpacing.sm
+                            ) {
+                                TextField("0", text: $viewModel.targetText)
+                                    .keyboardType(
+                                        viewModel.usesIntegerKeyboard
+                                            ? .numberPad
+                                            : .decimalPad
+                                    )
+
+                                if let unit = viewModel.fixedUnitText {
+                                    Text(unit)
+                                        .font(AppTypography.callout)
+                                        .foregroundStyle(AppColors.textSecondary)
+                                }
+                            }
                         }
 
                         unitField
+                    } else {
+                        checkpointCard
                     }
 
                     if viewModel.type == .amount {
                         EditorField(title: "金额方向") {
-                            Picker("金额方向", selection: $viewModel.amountDirection) {
-                                ForEach(AmountDirection.allCases, id: \.self) { direction in
-                                    Text(direction.displayName).tag(direction)
+                            Menu {
+                                ForEach(
+                                    AmountDirection.allCases,
+                                    id: \.self
+                                ) { direction in
+                                    Button(direction.displayName) {
+                                        viewModel.amountDirection = direction
+                                    }
                                 }
+                            } label: {
+                                EditorMenuLabel(
+                                    title: viewModel.amountDirection.displayName
+                                )
                             }
-                            .pickerStyle(.menu)
-                            .tint(AppColors.primary)
+                            .buttonStyle(.plain)
+                            .accessibilityLabel("金额方向")
+                            .accessibilityValue(
+                                viewModel.amountDirection.displayName
+                            )
                         }
                     }
 
-                    VStack(alignment: .leading, spacing: AppSpacing.sm) {
-                        Toggle("必需条件", isOn: $viewModel.isRequired)
-                            .tint(AppColors.primary)
-                        Text("MVP 阶段所有条件默认参与解锁判断。")
-                            .font(AppTypography.caption)
-                            .foregroundStyle(AppColors.textSecondary)
+                    EditorField(title: "说明（选填）") {
+                        TextField(
+                            "补充说明",
+                            text: $viewModel.descriptionText,
+                            axis: .vertical
+                        )
+                        .lineLimit(2...4)
                     }
-                    .appCard()
+
+                    requiredSection
                 }
                 .padding(AppSpacing.lg)
             }
             .appScreenBackground()
-            .navigationTitle(viewModel.isEditing ? "编辑条件" : "添加条件")
+            .scrollDismissesKeyboard(.interactively)
+            .navigationTitle(viewModel.isEditing ? "编辑条件" : "添加解锁条件")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -82,11 +103,12 @@ struct ConditionEditorView: View {
                     Button("保存") {
                         viewModel.save()
                     }
-                    .disabled(viewModel.isSaving)
+                    .disabled(!viewModel.canSave)
                 }
             }
             .tint(AppColors.primary)
             .appErrorAlert(error: $viewModel.error)
+            .environment(\.locale, Locale(identifier: "zh_CN"))
             .interactiveDismissDisabled(viewModel.isSaving)
             .onChange(of: viewModel.type) { _, _ in
                 viewModel.onTypeChanged()
@@ -95,6 +117,28 @@ struct ConditionEditorView: View {
                 if isSaved {
                     dismiss()
                 }
+            }
+        }
+    }
+
+    private var typeField: some View {
+        EditorField(title: "条件类型") {
+            if viewModel.isEditing {
+                Text(viewModel.type.displayName)
+                    .foregroundStyle(AppColors.textSecondary)
+            } else {
+                Menu {
+                    ForEach(ConditionType.allCases, id: \.self) { type in
+                        Button(type.displayName) {
+                            viewModel.type = type
+                        }
+                    }
+                } label: {
+                    EditorMenuLabel(title: viewModel.type.displayName)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("条件类型")
+                .accessibilityValue(viewModel.type.displayName)
             }
         }
     }
@@ -116,21 +160,103 @@ struct ConditionEditorView: View {
                 TextField("例如：页", text: $viewModel.unit)
             }
         default:
-            EditorField(title: "单位") {
-                Text(viewModel.unit)
+            EmptyView()
+        }
+    }
+
+    private var checkpointCard: some View {
+        HStack(alignment: .top, spacing: AppSpacing.md) {
+            Image(systemName: "checkmark.seal.fill")
+                .font(.system(size: 22, weight: .regular))
+                .foregroundStyle(AppColors.success)
+                .accessibilityHidden(true)
+
+            VStack(alignment: .leading, spacing: AppSpacing.xs) {
+                Text("完成型条件")
+                    .font(AppTypography.headline)
+                    .foregroundStyle(AppColors.textPrimary)
+
+                Text(viewModel.checkpointMessage)
+                    .font(AppTypography.callout)
                     .foregroundStyle(AppColors.textSecondary)
+                    .fixedSize(horizontal: false, vertical: true)
             }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .appCard()
+    }
+
+    private var requiredSection: some View {
+        VStack(alignment: .leading, spacing: AppSpacing.sm) {
+            Toggle("必需条件", isOn: $viewModel.isRequired)
+                .tint(AppColors.primary)
+            Text("必需条件参与心愿解锁判断；关闭后仅作为可选努力方向。")
+                .font(AppTypography.caption)
+                .foregroundStyle(AppColors.textSecondary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .appCard()
     }
 }
 
-#Preview {
+private struct EditorMenuLabel: View {
+    let title: String
+
+    var body: some View {
+        HStack(spacing: AppSpacing.sm) {
+            Text(title)
+                .foregroundStyle(AppColors.textPrimary)
+            Spacer(minLength: AppSpacing.sm)
+            Image(systemName: "chevron.up.chevron.down")
+                .font(AppTypography.caption)
+                .foregroundStyle(AppColors.textSecondary)
+                .accessibilityHidden(true)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .contentShape(Rectangle())
+    }
+}
+
+#Preview("STREAK") {
+    ConditionEditorView(viewModel: makePreviewViewModel(type: .streak))
+}
+
+#Preview("COUNT") {
+    ConditionEditorView(viewModel: makePreviewViewModel(type: .count))
+}
+
+#Preview("DURATION") {
+    ConditionEditorView(viewModel: makePreviewViewModel(type: .duration))
+}
+
+#Preview("AMOUNT") {
+    ConditionEditorView(viewModel: makePreviewViewModel(type: .amount))
+}
+
+#Preview("CHECKPOINT") {
+    ConditionEditorView(viewModel: makePreviewViewModel(type: .checkpoint))
+}
+
+#Preview("CUSTOM") {
+    ConditionEditorView(viewModel: makePreviewViewModel(type: .custom))
+}
+
+#Preview("AMOUNT — 深色") {
+    ConditionEditorView(viewModel: makePreviewViewModel(type: .amount))
+        .preferredColorScheme(.dark)
+}
+
+@MainActor
+private func makePreviewViewModel(
+    type: ConditionType
+) -> ConditionEditorViewModel {
     let container = AppContainer.preview()
-    ConditionEditorView(
-        viewModel: container.makeConditionEditorViewModel(
-            wishID: UUID(),
-            condition: nil,
-            sortOrder: 0
-        )
+    let viewModel = container.makeConditionEditorViewModel(
+        wishID: UUID(),
+        condition: nil,
+        sortOrder: 0
     )
+    viewModel.type = type
+    viewModel.onTypeChanged()
+    return viewModel
 }

@@ -140,6 +140,67 @@ final class RecordEditorViewModelTests: XCTestCase {
 
         XCTAssertEqual(sut.viewModel.error, .domain(.invalidInput("请输入有效的记录值。")))
         XCTAssertFalse(sut.viewModel.isSaved)
+        XCTAssertEqual(sut.viewModel.valueText, "abc")
+    }
+
+    func testCanSaveRequiresValidValue() throws {
+        let condition = try makeCondition()
+        let sut = try makeSUT(condition: condition)
+
+        XCTAssertFalse(sut.viewModel.canSave)
+        XCTAssertNil(sut.viewModel.valueValidationMessage)
+
+        sut.viewModel.valueText = "5"
+        XCTAssertTrue(sut.viewModel.canSave)
+        XCTAssertNil(sut.viewModel.valueValidationMessage)
+
+        sut.viewModel.valueText = "abc"
+        XCTAssertFalse(sut.viewModel.canSave)
+        XCTAssertEqual(sut.viewModel.valueValidationMessage, "请输入有效的记录值。")
+
+        sut.viewModel.valueText = "0"
+        XCTAssertFalse(sut.viewModel.canSave)
+        XCTAssertEqual(sut.viewModel.valueValidationMessage, "记录值必须大于 0。")
+    }
+
+    func testAmountZeroIsValidButNegativeIsNot() throws {
+        let condition = try makeCondition(
+            type: .amount,
+            targetValue: 5000,
+            unit: "元",
+            amountDirection: .income
+        )
+        let sut = try makeSUT(condition: condition)
+
+        sut.viewModel.valueText = "0"
+        XCTAssertTrue(sut.viewModel.canSave)
+        XCTAssertNil(sut.viewModel.valueValidationMessage)
+
+        sut.viewModel.valueText = "-1"
+        XCTAssertFalse(sut.viewModel.canSave)
+        XCTAssertEqual(sut.viewModel.valueValidationMessage, "金额不能为负数。")
+    }
+
+    func testNoValueTypesCanSaveWithCompletionCopy() throws {
+        let streak = try makeSUT(
+            condition: try makeCondition(type: .streak, targetValue: 30, unit: "天")
+        )
+        XCTAssertTrue(streak.viewModel.canSave)
+        XCTAssertEqual(streak.viewModel.completionTitle, "记录一次完成")
+        XCTAssertEqual(
+            streak.viewModel.completionMessage,
+            "保存后按记录日期计入连续天数。"
+        )
+
+        let checkpoint = try makeSUT(
+            condition: try makeCondition(type: .checkpoint, targetValue: 1, unit: nil)
+        )
+        XCTAssertTrue(checkpoint.viewModel.canSave)
+        XCTAssertEqual(checkpoint.viewModel.completionTitle, "标记为已完成")
+        XCTAssertEqual(
+            checkpoint.viewModel.completionMessage,
+            "完成一次即可达成，保存后不可重复记录。"
+        )
     }
 
     func testDuplicateStreakErrorMapsToAppError() throws {
@@ -194,7 +255,17 @@ final class RecordEditorViewModelTests: XCTestCase {
                 unit: "小时"
             )
         )
-        XCTAssertEqual(duration.viewModel.valueLabel, "本次时长（小时）")
+        XCTAssertEqual(duration.viewModel.valueLabel, "本次时长")
+        XCTAssertEqual(duration.viewModel.valueUnit, "小时")
+
+        let durationWithoutUnit = try makeSUT(
+            condition: try makeCondition(
+                type: .duration,
+                targetValue: 100,
+                unit: nil
+            )
+        )
+        XCTAssertEqual(durationWithoutUnit.viewModel.valueUnit, "分钟")
 
         let amount = try makeSUT(
             condition: try makeCondition(
@@ -204,7 +275,8 @@ final class RecordEditorViewModelTests: XCTestCase {
                 amountDirection: .income
             )
         )
-        XCTAssertEqual(amount.viewModel.valueLabel, "本次金额（元）")
+        XCTAssertEqual(amount.viewModel.valueLabel, "本次金额")
+        XCTAssertEqual(amount.viewModel.valueUnit, "元")
         XCTAssertEqual(amount.viewModel.amountDirectionText, "收入")
 
         let custom = try makeSUT(
@@ -214,19 +286,23 @@ final class RecordEditorViewModelTests: XCTestCase {
                 unit: "页"
             )
         )
-        XCTAssertEqual(custom.viewModel.valueLabel, "本次数值（页）")
+        XCTAssertEqual(custom.viewModel.valueLabel, "本次数值")
+        XCTAssertEqual(custom.viewModel.valueUnit, "页")
 
         let streak = try makeSUT(
             condition: try makeCondition(type: .streak, targetValue: 30, unit: "天")
         )
         XCTAssertEqual(streak.viewModel.valueLabel, "")
+        XCTAssertNil(streak.viewModel.valueUnit)
         XCTAssertFalse(streak.viewModel.showsValueField)
 
         let checkpoint = try makeSUT(
             condition: try makeCondition(type: .checkpoint, targetValue: 1, unit: nil)
         )
         XCTAssertEqual(checkpoint.viewModel.valueLabel, "")
+        XCTAssertNil(checkpoint.viewModel.valueUnit)
         XCTAssertFalse(checkpoint.viewModel.showsValueField)
+        XCTAssertEqual(checkpoint.viewModel.conditionSummary, "目标完成")
     }
 
     func testNegativeAmountShowsError() throws {
