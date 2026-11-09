@@ -126,6 +126,60 @@ final class WishEditorViewModelTests: XCTestCase {
         XCTAssertTrue(repository.wishes.isEmpty)
     }
 
+    func testCanSaveRequiresValidFields() {
+        let (viewModel, _, _) = makeSUT()
+
+        XCTAssertFalse(viewModel.canSave)
+        XCTAssertEqual(viewModel.titleHelperText, "必填")
+
+        viewModel.title = "Kindle"
+        XCTAssertTrue(viewModel.canSave)
+        XCTAssertNil(viewModel.titleHelperText)
+
+        viewModel.priceText = "abc"
+        XCTAssertFalse(viewModel.canSave)
+        XCTAssertEqual(viewModel.priceValidationMessage, "参考价格格式不正确。")
+
+        viewModel.priceText = "1,099"
+        XCTAssertTrue(viewModel.canSave)
+        XCTAssertNil(viewModel.priceValidationMessage)
+
+        viewModel.hasTargetDate = true
+        viewModel.targetDate = now.addingTimeInterval(-86_400)
+        XCTAssertFalse(viewModel.canSave)
+        XCTAssertEqual(
+            viewModel.targetDateValidationMessage,
+            "目标日期不能早于今天。"
+        )
+
+        viewModel.targetDate = now
+        XCTAssertTrue(viewModel.canSave)
+    }
+
+    func testCancelledPhotoSelectionPreservesExistingImage() async {
+        let (viewModel, _, _) = makeSUT()
+        viewModel.selectedImageData = Data([1, 2])
+
+        await viewModel.loadSelectedImage(from: nil)
+
+        XCTAssertEqual(viewModel.selectedImageData, Data([1, 2]))
+    }
+
+    func testCurrencyPresentationUsesPersistedCode() throws {
+        let wish = try Wish(
+            title: "Kindle",
+            targetPrice: 10,
+            currencyCode: "USD",
+            createdAt: now,
+            updatedAt: now
+        )
+        let (viewModel, _, _) = makeEditingSUT(wish: wish)
+
+        XCTAssertEqual(viewModel.currencyCode, "USD")
+        XCTAssertTrue(viewModel.currencySummary.contains("USD"))
+        XCTAssertFalse(viewModel.currencySymbol.isEmpty)
+    }
+
     func testSaveRejectsInvalidPrice() {
         let (viewModel, repository, _) = makeSUT()
         viewModel.title = "Kindle"

@@ -12,6 +12,10 @@
 - TodayViewModel 输出 actionable / 今天已记录 / 已完成条件三组状态，并暴露累计进度快照；CHECKPOINT 历史完成不再显示为今日完成。
 - 保持 STREAK 每日唯一记录和 COUNT / DURATION / AMOUNT / CUSTOM 可多次记录的现有语义。
 - Today 空态、加载、错误态、深色模式与 Dynamic Type 调整；测试扩展至 261 项。
+- Wish Editor 改为图片邀请、必填名称、价格 / 原因 / 目标日期分组；取消图片选择不再清空已有图片；保存按钮按校验状态禁用。
+- Condition Editor 改为类型优先的字段布局：STREAK 整数输入与“天”单位、CHECKPOINT 完成型卡片、金额方向菜单；编辑时类型保持只读。
+- Record Editor 将单位贴近数值、完成型条件使用完成卡片、日期使用中文本地化，并增加字段内联校验。
+- 编辑器测试扩展至 270 项；六种条件类型均提供 Condition / Record Editor Preview。
 
 ### Planned
 
