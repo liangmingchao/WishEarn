@@ -116,7 +116,7 @@ struct WishListView: View {
                     } label: {
                         Text(filter.title)
                             .font(AppTypography.callout)
-                            .foregroundStyle(viewModel.filter == filter ? .white : AppColors.textSecondary)
+                            .foregroundStyle(viewModel.filter == filter ? AppColors.onAccent : AppColors.textSecondary)
                             .padding(.horizontal, AppSpacing.md)
                             .padding(.vertical, AppSpacing.sm)
                             .background(viewModel.filter == filter ? AppColors.primary : AppColors.surface)
