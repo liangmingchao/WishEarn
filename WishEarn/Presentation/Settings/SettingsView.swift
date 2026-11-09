@@ -34,21 +34,38 @@ struct SettingsView: View {
                 .listRowBackground(Color.clear)
             }
 
-            Section("数据") {
+            Section {
                 LabeledContent("数据存储", value: "仅保存在本机")
+                    .frame(minHeight: 52)
 
                 Button {
                     exportData()
                 } label: {
-                    HStack {
+                    HStack(spacing: AppSpacing.sm) {
                         Label("导出数据", systemImage: "square.and.arrow.up")
                             .foregroundStyle(AppColors.primary)
+
                         Spacer()
+
                         Text("JSON")
                             .font(AppTypography.caption)
                             .foregroundStyle(AppColors.textSecondary)
+
+                        Image(systemName: "chevron.right")
+                            .font(AppTypography.caption.weight(.semibold))
+                            .foregroundStyle(AppColors.textTertiary)
+                            .accessibilityHidden(true)
                     }
+                    .frame(minHeight: 52)
                 }
+                .accessibilityLabel("导出数据")
+                .accessibilityHint("导出为 JSON 文件")
+            } header: {
+                Text("数据")
+            } footer: {
+                Text("导出为 JSON 文件，包含心愿、条件、行动记录、解锁事件和暂停区间；不包含图片二进制，仅保留图片路径。")
+                    .font(AppTypography.footnote)
+                    .foregroundStyle(AppColors.textSecondary)
             }
 
             Section("隐私") {
@@ -60,6 +77,7 @@ struct SettingsView: View {
 
             Section("关于") {
                 LabeledContent("版本", value: appVersion)
+                    .frame(minHeight: 52)
                 Text("WishEarn · 让每一份想要，都有值得付出的努力。")
                     .font(AppTypography.caption)
                     .foregroundStyle(AppColors.textSecondary)
@@ -97,9 +115,17 @@ struct SettingsView: View {
     }
 }
 
-#Preview {
+#Preview("Light") {
     let container = AppContainer.preview()
     NavigationStack {
         SettingsView(dataExportService: container.dataExportService)
     }
+}
+
+#Preview("Dark") {
+    let container = AppContainer.preview()
+    NavigationStack {
+        SettingsView(dataExportService: container.dataExportService)
+    }
+    .preferredColorScheme(.dark)
 }

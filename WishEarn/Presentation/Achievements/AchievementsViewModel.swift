@@ -34,6 +34,18 @@ final class AchievementsViewModel {
         images[wish.id]
     }
 
+    func dateText(for wish: Wish) -> String? {
+        let date = wish.status == .completed
+            ? wish.completedAt
+            : wish.unlockedAt
+        guard let date else { return nil }
+
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "zh_CN")
+        formatter.dateFormat = "yyyy.MM.dd"
+        return formatter.string(from: date)
+    }
+
     func load() {
         isLoading = true
         error = nil
@@ -45,8 +57,18 @@ final class AchievementsViewModel {
 
         do {
             let wishes = try wishRepository.fetchAll()
-            let unlocked = wishes.filter { $0.status == .unlocked }
-            let completed = wishes.filter { $0.status == .completed }
+            let unlocked = wishes
+                .filter { $0.status == .unlocked }
+                .sorted {
+                    ($0.unlockedAt ?? $0.updatedAt)
+                        > ($1.unlockedAt ?? $1.updatedAt)
+                }
+            let completed = wishes
+                .filter { $0.status == .completed }
+                .sorted {
+                    ($0.completedAt ?? $0.updatedAt)
+                        > ($1.completedAt ?? $1.updatedAt)
+                }
 
             var completedConditions = 0
             var recordCount = 0

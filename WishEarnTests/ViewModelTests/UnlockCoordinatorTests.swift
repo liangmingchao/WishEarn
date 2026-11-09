@@ -38,12 +38,14 @@ final class UnlockCoordinatorTests: XCTestCase {
     }
 
     private func makeWish(
+        id: UUID? = nil,
+        title: String = "Kindle",
         status: WishStatus = .unlocked,
         imagePath: String? = nil
     ) throws -> Wish {
         try Wish(
-            id: wishID,
-            title: "Kindle",
+            id: id ?? wishID,
+            title: title,
             imagePath: imagePath,
             status: status,
             createdAt: now,
@@ -64,14 +66,41 @@ final class UnlockCoordinatorTests: XCTestCase {
                 createdAt: now
             )
         )
+        try sut.conditionRepository.save(
+            try Condition(
+                wishID: wishID,
+                title: "可选阅读",
+                type: .count,
+                targetValue: 10,
+                isRequired: false,
+                sortOrder: 1,
+                createdAt: now
+            )
+        )
         sut.imageStorage.storedImages["WishImages/a.jpg"] = Data([1, 2, 3])
 
         sut.coordinator.publishUnlock(wishID: wishID)
 
         let presentation = try XCTUnwrap(sut.coordinator.presentation)
         XCTAssertEqual(presentation.wish.id, wishID)
-        XCTAssertEqual(presentation.conditionCount, 1)
+        XCTAssertEqual(presentation.requiredConditionCount, 1)
         XCTAssertEqual(presentation.imageData, Data([1, 2, 3]))
+    }
+
+    func testRepeatedPublishKeepsFirstPresentation() throws {
+        let sut = makeSUT()
+        let first = try makeWish()
+        let second = try makeWish(
+            id: UUID(uuidString: "00000000-0000-0000-0000-000000000101")!,
+            title: "跑鞋"
+        )
+        try sut.wishRepository.save(first)
+        try sut.wishRepository.save(second)
+
+        sut.coordinator.publishUnlock(wishID: first.id)
+        sut.coordinator.publishUnlock(wishID: second.id)
+
+        XCTAssertEqual(sut.coordinator.presentation?.wish.id, first.id)
     }
 
     func testClaimCompletesWishAndDismisses() throws {
@@ -120,5 +149,6 @@ final class UnlockCoordinatorTests: XCTestCase {
 
         XCTAssertEqual(sut.coordinator.error, .persistence(.saveFailed("保存失败")))
         XCTAssertNotNil(sut.coordinator.presentation)
+        XCTAssertEqual(sut.wishRepository.wishes.first?.status, .unlocked)
     }
 }

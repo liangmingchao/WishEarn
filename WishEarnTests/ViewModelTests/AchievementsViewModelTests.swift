@@ -47,14 +47,18 @@ final class AchievementsViewModelTests: XCTestCase {
     private func makeWish(
         title: String,
         status: WishStatus,
-        imagePath: String? = nil
+        imagePath: String? = nil,
+        unlockedAt: Date? = nil,
+        completedAt: Date? = nil
     ) throws -> Wish {
         try Wish(
             title: title,
             imagePath: imagePath,
             status: status,
             createdAt: now,
-            updatedAt: now
+            updatedAt: now,
+            unlockedAt: unlockedAt,
+            completedAt: completedAt
         )
     }
 
@@ -130,6 +134,46 @@ final class AchievementsViewModelTests: XCTestCase {
             sut.viewModel.imageData(for: unlocked),
             Data([1, 2, 3])
         )
+    }
+
+    func testSectionsSortByAchievementDate() throws {
+        let sut = makeSUT()
+        let olderCompleted = try makeWish(
+            title: "较早兑现",
+            status: .completed,
+            completedAt: now.addingTimeInterval(-172_800)
+        )
+        let newerCompleted = try makeWish(
+            title: "最近兑现",
+            status: .completed,
+            completedAt: now
+        )
+        let olderUnlocked = try makeWish(
+            title: "较早解锁",
+            status: .unlocked,
+            unlockedAt: now.addingTimeInterval(-259_200)
+        )
+        let newerUnlocked = try makeWish(
+            title: "最近解锁",
+            status: .unlocked,
+            unlockedAt: now
+        )
+
+        for wish in [olderCompleted, newerCompleted, olderUnlocked, newerUnlocked] {
+            try sut.wishRepository.save(wish)
+        }
+
+        sut.viewModel.load()
+
+        XCTAssertEqual(
+            sut.viewModel.completedWishes.map(\.id),
+            [newerCompleted.id, olderCompleted.id]
+        )
+        XCTAssertEqual(
+            sut.viewModel.unlockedWishes.map(\.id),
+            [newerUnlocked.id, olderUnlocked.id]
+        )
+        XCTAssertNotNil(sut.viewModel.dateText(for: newerCompleted))
     }
 
     func testEmptyLoad() {

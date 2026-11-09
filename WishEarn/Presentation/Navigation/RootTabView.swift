@@ -68,7 +68,7 @@ struct RootTabView: View {
             UnlockCelebrationView(
                 wish: presentation.wish,
                 imageData: presentation.imageData,
-                conditionCount: presentation.conditionCount,
+                requiredConditionCount: presentation.requiredConditionCount,
                 onClaim: {
                     unlockCoordinator.claim()
                 },

@@ -30,7 +30,7 @@
 - TASK-901 应用信息（2026-11-08，图标 / 隐私清单 / App Store 文案）
 - TASK-902 数据导出（2026-11-08，JSON 导出 + 文件导出 UI）
 - TASK-903 发布构建（2026-11-08，Release Archive + Development IPA）
-- Phase 2 UI redesign：Issue #8 设计系统、#9 心愿首页、#10 心愿详情、#11 Today 行动页（2026-11-09 已合并）
+- Phase 2 UI redesign：Issue #8 设计系统、#9 心愿首页、#10 心愿详情、#11 Today 行动页、#12 Editors（2026-11-09 已合并）
 
 ## In Progress
 
@@ -40,7 +40,7 @@
 - Modified Files: 无
 - Remaining Work: TestFlight 上传、App Store 元数据与截图、最终真机检查
 
-- Issue #12 Editors：实现与测试完成，等待 PR Review；后续 #13 Unlock / Achievements / Settings
+- Issue #13 Unlock / Achievements / Settings：实现与测试完成，等待 PR Review
 
 ## Pending Tasks
 
@@ -87,20 +87,20 @@
 - 数据导出：JSON 文件导出，包含心愿、条件、记录、解锁事件、暂停区间。
 - 发布材料：`docs/APP_STORE.md`、`docs/RELEASE_CHECKLIST.md`。
 - Release Archive 与 Development IPA 构建成功。
-- Phase 2 设计系统、心愿首页、心愿详情、Today 行动页改版；Editors 待 PR Review。
-- 测试体系：270 项，业务层主要文件覆盖率 88%–100%。
+- Phase 2 设计系统、心愿首页、心愿详情、Today 行动页、Editors 改版；Unlock / Achievements / Settings 待 PR Review。
+- 测试体系：272 项，业务层主要文件覆盖率 88%–100%。
 
 ## Last Verification
 
 - Build: PASS — Debug / Release
-- Unit Tests: PASS — 270 项，iPhone 18 Pro / iOS 27.2，2026-11-09 22:57
-- Issue #12 Editors: PASS — 六种类型 Preview；Wish / Condition / Record Editor 截图
+- Unit Tests: PASS — 272 项，iPhone 18 Pro / iOS 27.2，2026-11-09 23:13
+- Issue #13 Unlock / Achievements / Settings: PASS — 解锁、成就、设置截图
 - Integration Tests: PASS
 - Archive: PASS — `build/WishEarn.xcarchive`（0.15.0 / 1）
 - IPA: PASS — `build/export/WishEarn.ipa`
 - Device: PASS — Release 0.15.0 安装并启动（iPhone 17）
 - Privacy Manifest: PASS — 已打包
-- Last Verified Commit: `92c210b`（main，PR #17）；Issue #12 Editors 在 `feat/issue-12-editors` 验证
+- Last Verified Commit: `4e4bb71`（main，PR #18）；Issue #13 在 `feat/issue-13-unlock-achievements-settings` 验证
 
 ## Current Risks
 

@@ -16,6 +16,10 @@
 - Condition Editor 改为类型优先的字段布局：STREAK 整数输入与“天”单位、CHECKPOINT 完成型卡片、金额方向菜单；编辑时类型保持只读。
 - Record Editor 将单位贴近数值、完成型条件使用完成卡片、日期使用中文本地化，并增加字段内联校验。
 - 编辑器测试扩展至 270 项；六种条件类型均提供 Condition / Record Editor Preview。
+- Unlock Celebration 改为图片、事实性必需条件数量、领取 / 稍后 / 关闭操作，并支持 Reduce Motion。
+- Achievements 改为紧凑汇总与已兑现 / 已解锁的日期行，空态不再展示零值仪表盘。
+- Settings 补充 JSON 导出格式与图片限制说明，并补齐 52 pt 行高与披露指示。
+- 解锁幂等与领取失败测试补充；测试扩展至 272 项。
 
 ### Planned
 
