@@ -10,4 +10,11 @@ struct ConditionDraft: Equatable {
     var amountDirection: AmountDirection?
     var isRequired: Bool
     var sortOrder: Int
+
+    func validate() throws {
+        try ConditionTargetValidator.validate(
+            type: type,
+            targetValue: targetValue
+        )
+    }
 }

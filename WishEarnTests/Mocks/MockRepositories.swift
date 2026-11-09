@@ -5,6 +5,7 @@ import Foundation
 final class MockWishRepository: WishRepository {
     var wishes: [Wish] = []
     var error: Error?
+    var saveErrorByWishID: [UUID: Error] = [:]
     private(set) var fetchAllCallCount = 0
 
     func fetch(id: UUID) throws -> Wish? {
@@ -27,6 +28,7 @@ final class MockWishRepository: WishRepository {
 
     func save(_ wish: Wish) throws {
         if let error { throw error }
+        if let saveError = saveErrorByWishID[wish.id] { throw saveError }
         if let index = wishes.firstIndex(where: { $0.id == wish.id }) {
             wishes[index] = wish
         } else {
@@ -71,20 +73,33 @@ final class MockWishPausePeriodRepository: WishPausePeriodRepository {
 final class MockUnlockEventRepository: UnlockEventRepository {
     var events: [UnlockEvent] = []
     var error: Error?
+    var fetchAllError: Error?
+    var fetchEventsError: Error?
+    var hasEventError: Error?
+    var saveError: Error?
 
     func fetchEvents(wishID: UUID) throws -> [UnlockEvent] {
+        if let fetchEventsError { throw fetchEventsError }
         if let error { throw error }
         return events
             .filter { $0.wishID == wishID }
             .sorted { $0.unlockedAt > $1.unlockedAt }
     }
 
+    func fetchAll() throws -> [UnlockEvent] {
+        if let fetchAllError { throw fetchAllError }
+        if let error { throw error }
+        return events.sorted { $0.unlockedAt < $1.unlockedAt }
+    }
+
     func hasEvent(wishID: UUID) throws -> Bool {
+        if let hasEventError { throw hasEventError }
         if let error { throw error }
         return events.contains { $0.wishID == wishID }
     }
 
     func save(_ event: UnlockEvent) throws {
+        if let saveError { throw saveError }
         if let error { throw error }
         if !events.contains(where: { $0.id == event.id }) {
             events.append(event)
@@ -106,11 +121,29 @@ final class MockWishUnlockService: WishUnlockServicing {
     var evaluatedWishIDs: [UUID] = []
     var result: UnlockResult = .notEligible
     var error: Error?
+    var recoveryReport = UnlockRecoveryReport()
+    var recoveryError: Error?
 
     func evaluateUnlock(wishID: UUID) throws -> UnlockResult {
         if let error { throw error }
         evaluatedWishIDs.append(wishID)
         return result
+    }
+
+    func recoverUnlockConsistency() throws -> UnlockRecoveryReport {
+        if let recoveryError { throw recoveryError }
+        return recoveryReport
+    }
+}
+
+@MainActor
+final class MockUnlockFailureReporter: UnlockFailureReporting {
+    private(set) var reportedWishIDs: [UUID] = []
+    private(set) var reportedMessages: [String] = []
+
+    func reportUnlockFailure(_ error: Error, wishID: UUID) {
+        reportedWishIDs.append(wishID)
+        reportedMessages.append(AppError.wrap(error).message)
     }
 }
 

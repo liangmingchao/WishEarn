@@ -74,6 +74,18 @@ struct Wish: Identifiable, Equatable, Sendable {
         }
     }
 
+    /// 使用已持久化的解锁事件恢复状态。
+    ///
+    /// 解锁事件是历史事实，恢复只补写状态，不覆盖事件本身，也不回退
+    /// `completed`。`unlockedAt` 仅在缺失时使用事件时间补齐。
+    mutating func restoreUnlockedState(unlockedAt eventDate: Date, now: Date) {
+        status = .unlocked
+        if unlockedAt == nil {
+            unlockedAt = eventDate
+        }
+        updatedAt = now
+    }
+
     mutating func updateDetails(
         title: String,
         description: String?,

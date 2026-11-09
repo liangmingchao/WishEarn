@@ -19,7 +19,6 @@ final class StreakCalculator {
         let recordDays = Set(records.map { calendar.startOfDay(for: $0.recordedAt) })
             .subtracting(pausedDays)
 
-        let target = NSDecimalNumber(decimal: condition.targetValue).intValue
         let longestStreak = longestStreak(
             recordDays: recordDays,
             pausedDays: pausedDays,
@@ -36,7 +35,7 @@ final class StreakCalculator {
             currentStreak: currentStreak,
             longestStreak: longestStreak,
             lastRecordedAt: records.map(\.recordedAt).max(),
-            isCompleted: currentStreak >= target
+            isCompleted: Decimal(currentStreak) >= condition.targetValue
         )
     }
 

@@ -83,11 +83,23 @@ final class ConditionEditorViewModel {
             let trimmedTarget = targetText
                 .replacingOccurrences(of: ",", with: "")
                 .trimmingCharacters(in: .whitespacesAndNewlines)
-            guard let parsed = Decimal(string: trimmedTarget, locale: Locale(identifier: "en_US_POSIX")),
-                  parsed > 0 else {
+            guard let parsed = Decimal(string: trimmedTarget, locale: Locale(identifier: "en_US_POSIX")) else {
                 error = .domain(.invalidInput("目标值必须大于 0。"))
                 return
             }
+
+            if type == .streak {
+                guard ConditionTargetValidator.isPositiveInteger(parsed) else {
+                    error = .domain(.invalidInput("连续坚持的目标值必须为正整数。"))
+                    return
+                }
+            } else {
+                guard parsed > 0 else {
+                    error = .domain(.invalidInput("目标值必须大于 0。"))
+                    return
+                }
+            }
+
             targetValue = parsed
         }
 

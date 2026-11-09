@@ -12,7 +12,8 @@ final class ConditionLifecycleServiceTests: XCTestCase {
     }
 
     private func makeSUT(
-        unlockService: WishUnlockServicing? = nil
+        unlockService: WishUnlockServicing? = nil,
+        unlockFailureReporter: UnlockFailureReporting? = nil
     ) -> SUT {
         let wishRepository = MockWishRepository()
         let conditionRepository = MockConditionRepository()
@@ -20,7 +21,8 @@ final class ConditionLifecycleServiceTests: XCTestCase {
             wishRepository: wishRepository,
             conditionRepository: conditionRepository,
             clock: FixedClock(now: now, calendar: TestDates.calendar),
-            unlockService: unlockService
+            unlockService: unlockService,
+            unlockFailureReporter: unlockFailureReporter
         )
         return SUT(
             service: service,
@@ -341,7 +343,11 @@ final class ConditionLifecycleServiceTests: XCTestCase {
     func testUnlockEvaluationFailureDoesNotBlockConditionCreation() throws {
         let unlockService = MockWishUnlockService()
         unlockService.error = PersistenceError.saveFailed("解锁失败")
-        let sut = makeSUT(unlockService: unlockService)
+        let reporter = MockUnlockFailureReporter()
+        let sut = makeSUT(
+            unlockService: unlockService,
+            unlockFailureReporter: reporter
+        )
         let wish = try makeWish()
         try sut.wishRepository.save(wish)
 
@@ -353,5 +359,83 @@ final class ConditionLifecycleServiceTests: XCTestCase {
             try sut.conditionRepository.fetchConditions(wishID: wish.id),
             [condition]
         )
+        XCTAssertEqual(reporter.reportedWishIDs, [wish.id])
+        XCTAssertEqual(
+            reporter.reportedMessages,
+            ["保存数据失败：解锁失败"]
+        )
+    }
+
+    func testCreateStreakConditionRejectsNonIntegerTargets() throws {
+        let targets = [
+            try XCTUnwrap(Decimal(string: "1.5")),
+            try XCTUnwrap(Decimal(string: "2.9")),
+            Decimal(0),
+            Decimal(-1)
+        ]
+
+        for target in targets {
+            let sut = makeSUT()
+            let wish = try makeWish()
+            try sut.wishRepository.save(wish)
+
+            XCTAssertThrowsError(
+                try sut.service.createCondition(
+                    makeDraft(
+                        wishID: wish.id,
+                        type: .streak,
+                        targetValue: target,
+                        unit: "天"
+                    )
+                )
+            ) { error in
+                XCTAssertEqual(
+                    error as? DomainError,
+                    .invalidInput("连续坚持的目标值必须为正整数。")
+                )
+            }
+
+            XCTAssertTrue(
+                try sut.conditionRepository.fetchConditions(wishID: wish.id).isEmpty
+            )
+        }
+    }
+
+    func testCreateStreakConditionAcceptsIntegerTarget() throws {
+        let sut = makeSUT()
+        let wish = try makeWish()
+        try sut.wishRepository.save(wish)
+
+        let condition = try sut.service.createCondition(
+            makeDraft(
+                wishID: wish.id,
+                type: .streak,
+                targetValue: 30,
+                unit: "天"
+            )
+        )
+
+        XCTAssertEqual(condition.type, .streak)
+        XCTAssertEqual(condition.targetValue, 30)
+        XCTAssertEqual(condition.unit, "天")
+    }
+
+    func testCreateCountConditionAllowsFractionalTarget() throws {
+        let sut = makeSUT()
+        let wish = try makeWish()
+        try sut.wishRepository.save(wish)
+        let target = try XCTUnwrap(Decimal(string: "1.5"))
+
+        let condition = try sut.service.createCondition(
+            makeDraft(
+                wishID: wish.id,
+                type: .count,
+                targetValue: target,
+                unit: "次"
+            )
+        )
+
+        XCTAssertEqual(condition.type, .count)
+        XCTAssertEqual(condition.targetValue, target)
     }
 }

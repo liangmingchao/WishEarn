@@ -181,6 +181,71 @@ final class WishUnlockServiceTests: XCTestCase {
         XCTAssertEqual(sut.eventRepository.events.count, 1)
     }
 
+    func testExistingEventRecoversActiveWishWithEventTimestamp() throws {
+        let sut = makeSUT()
+        let wish = try makeWish()
+        try sut.wishRepository.save(wish)
+        let eventTime = TestDates.make(year: 2026, month: 11, day: 7)
+        let event = try UnlockEvent(
+            wishID: wish.id,
+            unlockedAt: eventTime,
+            conditionSnapshot: "[]",
+            createdAt: eventTime
+        )
+        try sut.eventRepository.save(event)
+
+        XCTAssertEqual(try sut.service.evaluateUnlock(wishID: wish.id), .alreadyUnlocked)
+
+        let updated = try XCTUnwrap(sut.wishRepository.fetch(id: wish.id))
+        XCTAssertEqual(updated.status, .unlocked)
+        XCTAssertEqual(updated.unlockedAt, eventTime)
+        XCTAssertEqual(sut.eventRepository.events, [event])
+    }
+
+    func testExistingEventRecoversPausedWish() throws {
+        let sut = makeSUT()
+        let wish = try makeWish(status: .paused)
+        try sut.wishRepository.save(wish)
+        let eventTime = TestDates.make(year: 2026, month: 11, day: 7)
+        let event = try UnlockEvent(
+            wishID: wish.id,
+            unlockedAt: eventTime,
+            conditionSnapshot: "[]",
+            createdAt: eventTime
+        )
+        try sut.eventRepository.save(event)
+
+        let result = try sut.service.evaluateUnlock(wishID: wish.id)
+
+        XCTAssertEqual(result, .alreadyUnlocked)
+        let updated = try XCTUnwrap(sut.wishRepository.fetch(id: wish.id))
+        XCTAssertEqual(updated.status, .unlocked)
+        XCTAssertEqual(updated.unlockedAt, eventTime)
+        XCTAssertEqual(sut.eventRepository.events, [event])
+    }
+
+    func testExistingEventRecoversArchivedWish() throws {
+        let sut = makeSUT()
+        let wish = try makeWish(status: .archived)
+        try sut.wishRepository.save(wish)
+        let eventTime = TestDates.make(year: 2026, month: 11, day: 7)
+        let event = try UnlockEvent(
+            wishID: wish.id,
+            unlockedAt: eventTime,
+            conditionSnapshot: "[]",
+            createdAt: eventTime
+        )
+        try sut.eventRepository.save(event)
+
+        let result = try sut.service.evaluateUnlock(wishID: wish.id)
+
+        XCTAssertEqual(result, .alreadyUnlocked)
+        let updated = try XCTUnwrap(sut.wishRepository.fetch(id: wish.id))
+        XCTAssertEqual(updated.status, .unlocked)
+        XCTAssertEqual(updated.unlockedAt, eventTime)
+        XCTAssertEqual(sut.eventRepository.events, [event])
+    }
+
     func testRepeatedEvaluationCreatesSingleEvent() throws {
         let sut = makeSUT()
         let wish = try makeWish()

@@ -186,4 +186,59 @@ final class ConditionEditorViewModelTests: XCTestCase {
         sut.viewModel.onTypeChanged()
         XCTAssertEqual(sut.viewModel.targetText, "1")
     }
+
+    func testStreakTargetRejectsNonIntegerValues() throws {
+        let sut = try makeSUT()
+        sut.viewModel.type = .streak
+        sut.viewModel.onTypeChanged()
+        sut.viewModel.title = "连续坚持"
+
+        for targetText in ["1.5", "2.9", "0", "-1"] {
+            sut.viewModel.targetText = targetText
+            sut.viewModel.save()
+
+            XCTAssertEqual(
+                sut.viewModel.error,
+                .domain(.invalidInput("连续坚持的目标值必须为正整数。"))
+            )
+            XCTAssertFalse(sut.viewModel.isSaved)
+        }
+
+        XCTAssertTrue(
+            try sut.conditionRepository.fetchConditions(wishID: wishID).isEmpty
+        )
+    }
+
+    func testStreakTargetAllowsIntegerValue() throws {
+        let sut = try makeSUT()
+        sut.viewModel.type = .streak
+        sut.viewModel.onTypeChanged()
+        sut.viewModel.title = "连续坚持"
+        sut.viewModel.targetText = "30"
+
+        sut.viewModel.save()
+
+        XCTAssertTrue(sut.viewModel.isSaved)
+        let condition = try XCTUnwrap(
+            sut.conditionRepository.fetchConditions(wishID: wishID).first
+        )
+        XCTAssertEqual(condition.type, .streak)
+        XCTAssertEqual(condition.targetValue, 30)
+    }
+
+    func testCountTargetAllowsFractionalValue() throws {
+        let sut = try makeSUT()
+        sut.viewModel.title = "阅读"
+        sut.viewModel.targetText = "1.5"
+
+        sut.viewModel.save()
+
+        XCTAssertTrue(sut.viewModel.isSaved)
+        let condition = try XCTUnwrap(
+            sut.conditionRepository.fetchConditions(wishID: wishID).first
+        )
+        let expectedTarget = try XCTUnwrap(Decimal(string: "1.5"))
+        XCTAssertEqual(condition.type, .count)
+        XCTAssertEqual(condition.targetValue, expectedTarget)
+    }
 }

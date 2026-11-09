@@ -134,7 +134,7 @@ final class RepositoryTests: XCTestCase {
         XCTAssertTrue(try sut.progressRepository.fetchRecords(conditionID: condition.id).isEmpty)
     }
 
-    func testDeletingWishCascadesAllRelatedData() throws {
+    func testDeletingWishCascadesRelatedDataButKeepsUnlockEvents() throws {
         let sut = try makeSUT()
         let wish = try makeWish()
         try sut.wishRepository.save(wish)
@@ -173,7 +173,8 @@ final class RepositoryTests: XCTestCase {
         XCTAssertTrue(try sut.wishRepository.fetchAll().isEmpty)
         XCTAssertTrue(try sut.conditionRepository.fetchConditions(wishID: wish.id).isEmpty)
         XCTAssertTrue(try sut.progressRepository.fetchRecords(conditionID: condition.id).isEmpty)
-        XCTAssertTrue(try sut.unlockEventRepository.fetchEvents(wishID: wish.id).isEmpty)
+        XCTAssertEqual(try sut.unlockEventRepository.fetchEvents(wishID: wish.id), [event])
+        XCTAssertEqual(try sut.unlockEventRepository.fetchAll(), [event])
         XCTAssertTrue(try sut.pausePeriodRepository.fetchPeriods(wishID: wish.id).isEmpty)
     }
 
@@ -208,6 +209,47 @@ final class RepositoryTests: XCTestCase {
 
         XCTAssertTrue(try sut.unlockEventRepository.hasEvent(wishID: wish.id))
         XCTAssertEqual(try sut.unlockEventRepository.fetchEvents(wishID: wish.id), [event])
+        XCTAssertEqual(try sut.unlockEventRepository.fetchAll(), [event])
+    }
+
+    func testUnlockEventSaveNeverOverwritesExistingEvent() throws {
+        let sut = try makeSUT()
+        let wish = try makeWish()
+        let event = try UnlockEvent(
+            wishID: wish.id,
+            unlockedAt: now,
+            conditionSnapshot: #"{"count":1}"#,
+            createdAt: now
+        )
+        try sut.unlockEventRepository.save(event)
+
+        let conflicting = try UnlockEvent(
+            id: event.id,
+            wishID: wish.id,
+            unlockedAt: later,
+            conditionSnapshot: #"{"count":99}"#,
+            createdAt: later
+        )
+        try sut.unlockEventRepository.save(conflicting)
+
+        XCTAssertEqual(
+            try sut.unlockEventRepository.fetchEvents(wishID: wish.id),
+            [event]
+        )
+    }
+
+    func testUnlockEventFetchAllIncludesOrphanedEvents() throws {
+        let sut = try makeSUT()
+        let orphanWishID = UUID()
+        let event = try UnlockEvent(
+            wishID: orphanWishID,
+            unlockedAt: now,
+            conditionSnapshot: #"{"count":1}"#,
+            createdAt: now
+        )
+        try sut.unlockEventRepository.save(event)
+
+        XCTAssertEqual(try sut.unlockEventRepository.fetchAll(), [event])
     }
 
     func testPausePeriodCRUD() throws {

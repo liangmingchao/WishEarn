@@ -31,9 +31,10 @@ struct Condition: Identifiable, Equatable, Sendable {
             throw DomainError.invalidInput("条件名称不能为空。")
         }
 
-        guard targetValue > 0 else {
-            throw DomainError.invalidInput("条件目标值必须大于 0。")
-        }
+        try ConditionTargetValidator.validate(
+            type: type,
+            targetValue: targetValue
+        )
 
         if type.requiresAmountDirection {
             guard amountDirection != nil else {
