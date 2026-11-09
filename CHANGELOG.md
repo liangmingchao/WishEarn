@@ -6,6 +6,13 @@
 
 ## [Unreleased]
 
+### Changed
+
+- Today 行动页重构为低摩擦行动入口：Wish 作为次要上下文、条件标题主导、单一记录 CTA。
+- TodayViewModel 输出 actionable / 今天已记录 / 已完成条件三组状态，并暴露累计进度快照；CHECKPOINT 历史完成不再显示为今日完成。
+- 保持 STREAK 每日唯一记录和 COUNT / DURATION / AMOUNT / CUSTOM 可多次记录的现有语义。
+- Today 空态、加载、错误态、深色模式与 Dynamic Type 调整；测试扩展至 261 项。
+
 ### Planned
 
 - TestFlight 上传与 App Store 提交。
