@@ -50,8 +50,8 @@ jobs:
           curl -fsSL -o "$RUNNER_TEMP/xcodegen.zip" \
             "https://github.com/yonaskolb/XcodeGen/releases/download/${XCODEGEN_VERSION}/xcodegen.zip"
           unzip -q "$RUNNER_TEMP/xcodegen.zip" -d "$RUNNER_TEMP/xcodegen"
-          sudo cp -R "$RUNNER_TEMP/xcodegen/xcodegen/bin/" /usr/local/
-          sudo cp -R "$RUNNER_TEMP/xcodegen/xcodegen/share/" /usr/local/
+          sudo cp -R "$RUNNER_TEMP/xcodegen/xcodegen/bin" /usr/local/
+          sudo cp -R "$RUNNER_TEMP/xcodegen/xcodegen/share" /usr/local/
           sudo chmod +x /usr/local/bin/xcodegen
           xcodegen --version
 
