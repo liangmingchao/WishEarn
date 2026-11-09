@@ -11,6 +11,7 @@ final class WishDetailViewModelTests: XCTestCase {
         let wishRepository: MockWishRepository
         let conditionRepository: MockConditionRepository
         let progressRepository: MockProgressRepository
+        let pausePeriodRepository: MockWishPausePeriodRepository
         let imageStorage: MockImageStorageService
     }
 
@@ -66,29 +67,47 @@ final class WishDetailViewModelTests: XCTestCase {
             conditionLifecycleService: conditionService,
             wishProgressService: wishProgressService,
             lifecycleService: lifecycleService,
-            imageStorage: imageStorage
+            imageStorage: imageStorage,
+            progressRepository: progressRepository,
+            clock: clock
         )
         return SUT(
             viewModel: viewModel,
             wishRepository: wishRepository,
             conditionRepository: conditionRepository,
             progressRepository: progressRepository,
+            pausePeriodRepository: pauseRepository,
             imageStorage: imageStorage
         )
     }
 
     private func makeCondition(
         title: String,
-        sortOrder: Int
+        sortOrder: Int,
+        type: ConditionType = .count,
+        targetValue: Decimal = 10,
+        unit: String? = "次",
+        isRequired: Bool = true
     ) throws -> Condition {
         try Condition(
             wishID: wishID,
             title: title,
-            type: .count,
-            targetValue: 10,
-            unit: "次",
+            type: type,
+            targetValue: targetValue,
+            unit: unit,
+            isRequired: isRequired,
             sortOrder: sortOrder,
             createdAt: now
+        )
+    }
+
+    private func makeWish(status: WishStatus) throws -> Wish {
+        try Wish(
+            id: wishID,
+            title: "Kindle",
+            status: status,
+            createdAt: now,
+            updatedAt: now
         )
     }
 
@@ -204,6 +223,162 @@ final class WishDetailViewModelTests: XCTestCase {
 
         XCTAssertEqual(try XCTUnwrap(sut.viewModel.progress).overallRatio, 0.5, accuracy: 0.0001)
         XCTAssertEqual(sut.viewModel.snapshot(for: partialCondition)?.currentValue, 5)
+    }
+
+    func testRecentRecordsAreRealNewestFirstAndLimitedToThree() throws {
+        let first = try makeCondition(title: "健身", sortOrder: 0)
+        let second = try makeCondition(title: "阅读", sortOrder: 1)
+        let sut = try makeSUT(conditions: [first, second])
+
+        for day in [5, 6, 7, 8] {
+            let condition = day.isMultiple(of: 2) ? second : first
+            try sut.progressRepository.save(
+                try ProgressRecord(
+                    conditionID: condition.id,
+                    value: Decimal(day),
+                    note: day == 8 ? "最后一次" : nil,
+                    recordedAt: TestDates.make(year: 2026, month: 11, day: day),
+                    createdAt: TestDates.make(year: 2026, month: 11, day: day),
+                    updatedAt: TestDates.make(year: 2026, month: 11, day: day)
+                )
+            )
+        }
+
+        sut.viewModel.load()
+
+        XCTAssertEqual(sut.viewModel.recentRecords.count, 3)
+        XCTAssertEqual(
+            sut.viewModel.recentRecords.map(\.record.recordedAt),
+            [
+                TestDates.make(year: 2026, month: 11, day: 8),
+                TestDates.make(year: 2026, month: 11, day: 7),
+                TestDates.make(year: 2026, month: 11, day: 6)
+            ]
+        )
+        XCTAssertEqual(
+            sut.viewModel.recentRecords.first?.conditionTitle,
+            "阅读"
+        )
+        XCTAssertEqual(
+            sut.viewModel.recentRecords.first?.valueText,
+            "8 次"
+        )
+        XCTAssertEqual(sut.viewModel.recentRecords.first?.record.note, "最后一次")
+    }
+
+    func testRecentRecordsAreEmptyWithoutRecords() throws {
+        let condition = try makeCondition(title: "健身", sortOrder: 0)
+        let sut = try makeSUT(conditions: [condition])
+
+        sut.viewModel.load()
+
+        XCTAssertTrue(sut.viewModel.recentRecords.isEmpty)
+    }
+
+    func testCanRecordOnlyForActiveWish() throws {
+        let condition = try makeCondition(title: "健身", sortOrder: 0)
+        let active = try makeSUT(conditions: [condition])
+        active.viewModel.load()
+        XCTAssertTrue(active.viewModel.canRecord(for: condition))
+
+        for status in [WishStatus.paused, .unlocked, .completed] {
+            let sut = try makeSUT(wish: try makeWish(status: status))
+            try sut.conditionRepository.save(condition)
+            sut.viewModel.load()
+            XCTAssertFalse(
+                sut.viewModel.canRecord(for: condition),
+                "Expected \(status.rawValue) wishes to reject new records"
+            )
+        }
+    }
+
+    func testCheckpointCannotRecordWhenComplete() throws {
+        let condition = try makeCondition(
+            title: "完成项目",
+            sortOrder: 0,
+            type: .checkpoint,
+            targetValue: 1,
+            unit: nil
+        )
+        let sut = try makeSUT(conditions: [condition])
+        sut.viewModel.load()
+        XCTAssertTrue(sut.viewModel.canRecord(for: condition))
+
+        try sut.progressRepository.save(
+            try ProgressRecord(
+                conditionID: condition.id,
+                value: 1,
+                recordedAt: now,
+                createdAt: now,
+                updatedAt: now
+            )
+        )
+        sut.viewModel.load()
+
+        XCTAssertFalse(sut.viewModel.canRecord(for: condition))
+    }
+
+    func testStreakCannotRecordTwiceOnSameDayButCanRecordNextDay() throws {
+        let condition = try makeCondition(
+            title: "连续坚持",
+            sortOrder: 0,
+            type: .streak,
+            targetValue: 3,
+            unit: "天"
+        )
+
+        let today = try makeSUT(conditions: [condition])
+        try today.progressRepository.save(
+            try ProgressRecord(
+                conditionID: condition.id,
+                value: 1,
+                recordedAt: now,
+                createdAt: now,
+                updatedAt: now
+            )
+        )
+        today.viewModel.load()
+        XCTAssertFalse(today.viewModel.canRecord(for: condition))
+
+        let yesterday = try makeSUT(conditions: [condition])
+        let yesterdayDate = TestDates.make(year: 2026, month: 11, day: 7)
+        try yesterday.progressRepository.save(
+            try ProgressRecord(
+                conditionID: condition.id,
+                value: 1,
+                recordedAt: yesterdayDate,
+                createdAt: yesterdayDate,
+                updatedAt: yesterdayDate
+            )
+        )
+        yesterday.viewModel.load()
+        XCTAssertTrue(yesterday.viewModel.canRecord(for: condition))
+    }
+
+    func testPauseAndResumeReloadDetailStatus() throws {
+        let condition = try makeCondition(title: "健身", sortOrder: 0)
+        let sut = try makeSUT(conditions: [condition])
+        sut.viewModel.load()
+
+        sut.viewModel.pauseWish()
+
+        XCTAssertEqual(sut.viewModel.wish.status, .paused)
+        XCTAssertEqual(
+            try sut.wishRepository.fetch(id: wishID)?.status,
+            .paused
+        )
+        XCTAssertEqual(sut.pausePeriodRepository.periods.count, 1)
+        XCTAssertFalse(sut.viewModel.canRecord(for: condition))
+
+        sut.viewModel.resumeWish()
+
+        XCTAssertEqual(sut.viewModel.wish.status, .active)
+        XCTAssertEqual(
+            try sut.wishRepository.fetch(id: wishID)?.status,
+            .active
+        )
+        XCTAssertNotNil(sut.pausePeriodRepository.periods.first?.endedAt)
+        XCTAssertTrue(sut.viewModel.canRecord(for: condition))
     }
 
     func testCompleteUnlockedWish() throws {
