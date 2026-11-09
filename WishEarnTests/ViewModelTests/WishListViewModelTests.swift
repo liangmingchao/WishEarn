@@ -144,12 +144,14 @@ final class WishListViewModelTests: XCTestCase {
         XCTAssertEqual(sut.viewModel.error, .persistence(.fetchFailed("conditions")))
     }
 
-    func testEmptyLoadKeepsEmptyState() {
+    func testEmptyLoadKeepsEmptyStateAndResetsStaleFilter() {
         let sut = makeSUT()
+        sut.viewModel.filter = .paused
 
         sut.viewModel.load()
 
         XCTAssertTrue(sut.viewModel.filteredWishes.isEmpty)
+        XCTAssertEqual(sut.viewModel.filter, .all)
         XCTAssertNil(sut.viewModel.error)
         XCTAssertTrue(sut.viewModel.hasLoaded)
         XCTAssertEqual(sut.wishRepository.fetchAllCallCount, 1)
@@ -271,6 +273,165 @@ final class WishListViewModelTests: XCTestCase {
         sut.viewModel.load()
 
         XCTAssertEqual(sut.viewModel.activeWishCount, 1)
+    }
+
+    func testFeaturedWishSelectionPreservesSourceOrderAndFilterBehavior() throws {
+        let sut = makeSUT()
+        let firstActive = try makeWish(title: "Kindle", createdAt: now)
+        let unlocked = try makeWish(
+            title: "跑鞋",
+            status: .unlocked,
+            createdAt: now.addingTimeInterval(-10)
+        )
+        let secondActive = try makeWish(
+            title: "京都",
+            createdAt: now.addingTimeInterval(-20)
+        )
+        let paused = try makeWish(
+            title: "相机",
+            status: .paused,
+            createdAt: now.addingTimeInterval(-30)
+        )
+        sut.wishRepository.wishes = [paused, secondActive, unlocked, firstActive]
+
+        sut.viewModel.load()
+
+        XCTAssertEqual(sut.viewModel.filteredWishes.map(\.id), [
+            firstActive.id,
+            unlocked.id,
+            secondActive.id,
+            paused.id
+        ])
+        XCTAssertEqual(sut.viewModel.featuredWish?.id, firstActive.id)
+        XCTAssertEqual(sut.viewModel.secondaryWishes.map(\.id), [
+            unlocked.id,
+            secondActive.id,
+            paused.id
+        ])
+
+        sut.viewModel.filter = .active
+        XCTAssertEqual(sut.viewModel.featuredWish?.id, firstActive.id)
+        XCTAssertEqual(sut.viewModel.secondaryWishes.map(\.id), [secondActive.id])
+
+        sut.viewModel.filter = .unlocked
+        XCTAssertNil(sut.viewModel.featuredWish)
+        XCTAssertEqual(sut.viewModel.secondaryWishes.map(\.id), [unlocked.id])
+
+        sut.viewModel.filter = .paused
+        XCTAssertNil(sut.viewModel.featuredWish)
+        XCTAssertEqual(sut.viewModel.secondaryWishes.map(\.id), [paused.id])
+    }
+
+    func testFeaturedWishSkipsNewerNonActiveWishes() throws {
+        let sut = makeSUT()
+        let paused = try makeWish(title: "相机", status: .paused, createdAt: now)
+        let active = try makeWish(
+            title: "Kindle",
+            createdAt: now.addingTimeInterval(-10)
+        )
+        sut.wishRepository.wishes = [active, paused]
+
+        sut.viewModel.load()
+
+        XCTAssertEqual(sut.viewModel.filteredWishes.map(\.id), [paused.id, active.id])
+        XCTAssertEqual(sut.viewModel.featuredWish?.id, active.id)
+        XCTAssertEqual(sut.viewModel.secondaryWishes.map(\.id), [paused.id])
+    }
+
+    func testFeaturedWishIsNilWhenNoActiveWishExists() throws {
+        let sut = makeSUT()
+        let unlocked = try makeWish(title: "跑鞋", status: .unlocked, createdAt: now)
+        let completed = try makeWish(
+            title: "相机",
+            status: .completed,
+            createdAt: now.addingTimeInterval(-10)
+        )
+        sut.wishRepository.wishes = [completed, unlocked]
+
+        sut.viewModel.load()
+
+        XCTAssertNil(sut.viewModel.featuredWish)
+        XCTAssertEqual(
+            sut.viewModel.secondaryWishes.map(\.id),
+            [unlocked.id, completed.id]
+        )
+    }
+
+    func testProgressSummaryUsesRequiredConditionsOnly() throws {
+        let sut = makeSUT()
+        let wish = try makeWish(title: "Kindle")
+        sut.wishRepository.wishes = [wish]
+
+        let required = try Condition(
+            wishID: wish.id,
+            title: "健身",
+            type: .count,
+            targetValue: 10,
+            unit: "次",
+            sortOrder: 0,
+            createdAt: now
+        )
+        let optional = try Condition(
+            wishID: wish.id,
+            title: "阅读",
+            type: .count,
+            targetValue: 10,
+            unit: "次",
+            isRequired: false,
+            sortOrder: 1,
+            createdAt: now
+        )
+        try sut.conditionRepository.save(required)
+        try sut.conditionRepository.save(optional)
+        try sut.progressRepository.save(
+            try ProgressRecord(
+                conditionID: required.id,
+                value: 10,
+                recordedAt: now,
+                createdAt: now,
+                updatedAt: now
+            )
+        )
+        try sut.progressRepository.save(
+            try ProgressRecord(
+                conditionID: optional.id,
+                value: 10,
+                recordedAt: now,
+                createdAt: now,
+                updatedAt: now
+            )
+        )
+
+        sut.viewModel.load()
+
+        let summary = try XCTUnwrap(sut.viewModel.progressSummary(for: wish))
+        XCTAssertEqual(summary.completedConditionCount, 1)
+        XCTAssertEqual(summary.totalConditionCount, 1)
+        XCTAssertEqual(summary.ratio, 1, accuracy: 0.0001)
+        XCTAssertTrue(summary.isComplete)
+        XCTAssertEqual(summary.text, "已完成 1 / 1 项条件")
+        XCTAssertEqual(sut.viewModel.conditionCount(for: wish), 2)
+    }
+
+    func testProgressSummaryIsNilWithoutRequiredConditions() throws {
+        let sut = makeSUT()
+        let wish = try makeWish(title: "Kindle")
+        sut.wishRepository.wishes = [wish]
+        try sut.conditionRepository.save(
+            try Condition(
+                wishID: wish.id,
+                title: "阅读",
+                type: .count,
+                targetValue: 10,
+                unit: "次",
+                isRequired: false,
+                createdAt: now
+            )
+        )
+
+        sut.viewModel.load()
+
+        XCTAssertNil(sut.viewModel.progressSummary(for: wish))
     }
 
     func testOverallProgress() throws {
