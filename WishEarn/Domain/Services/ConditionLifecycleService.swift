@@ -14,17 +14,20 @@ final class ConditionLifecycleService: ConditionLifecycleServicing {
     private let conditionRepository: ConditionRepository
     private let clock: ClockProviding
     private let unlockService: WishUnlockServicing?
+    private let unlockFailureReporter: UnlockFailureReporting?
 
     init(
         wishRepository: WishRepository,
         conditionRepository: ConditionRepository,
         clock: ClockProviding,
-        unlockService: WishUnlockServicing? = nil
+        unlockService: WishUnlockServicing? = nil,
+        unlockFailureReporter: UnlockFailureReporting? = nil
     ) {
         self.wishRepository = wishRepository
         self.conditionRepository = conditionRepository
         self.clock = clock
         self.unlockService = unlockService
+        self.unlockFailureReporter = unlockFailureReporter
     }
 
     func createCondition(_ draft: ConditionDraft) throws -> Condition {
@@ -36,6 +39,7 @@ final class ConditionLifecycleService: ConditionLifecycleServicing {
         if draft.type == .checkpoint, draft.targetValue != 1 {
             throw DomainError.invalidInput("完成型条件的目标值必须为 1。")
         }
+        try draft.validate()
 
         let condition = try Condition(
             wishID: draft.wishID,
@@ -89,7 +93,8 @@ final class ConditionLifecycleService: ConditionLifecycleServicing {
         do {
             _ = try unlockService.evaluateUnlock(wishID: wishID)
         } catch {
-            // 条件已保存；解锁评估失败不阻断条件操作，下次记录或条件变更会再次评估。
+            // 条件已保存；解锁评估失败不阻断条件操作，但必须可观察。
+            unlockFailureReporter?.reportUnlockFailure(error, wishID: wishID)
         }
     }
 

@@ -102,12 +102,8 @@ final class SwiftDataWishRepository: WishRepository {
                     store.context.delete(condition)
                 }
 
-                let eventDescriptor = FetchDescriptor<UnlockEventEntity>(
-                    predicate: #Predicate { $0.wishID == id }
-                )
-                for event in try store.context.fetch(eventDescriptor) {
-                    store.context.delete(event)
-                }
+                // 解锁事件是已发生的历史事实，不随心愿删除（ADR-010）。
+                // 孤立事件保留在库中，由启动恢复报告，不在此处删除或覆盖。
 
                 let pauseDescriptor = FetchDescriptor<WishPausePeriodEntity>(
                     predicate: #Predicate { $0.wishID == id }

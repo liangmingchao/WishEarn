@@ -8,7 +8,9 @@ struct WishEarnApp: App {
 
     init() {
         do {
-            container = try AppContainer.live()
+            let container = try AppContainer.live()
+            container.performStartupRecovery()
+            self.container = container
             startupError = nil
         } catch {
             container = nil

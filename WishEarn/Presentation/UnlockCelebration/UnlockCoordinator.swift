@@ -10,7 +10,7 @@ struct UnlockPresentation: Identifiable {
 
 @MainActor
 @Observable
-final class UnlockCoordinator: UnlockEventPublishing {
+final class UnlockCoordinator: UnlockEventPublishing, UnlockFailureReporting {
     private let wishRepository: WishRepository
     private let conditionRepository: ConditionRepository
     private let imageStorage: ImageStorageService
@@ -71,5 +71,9 @@ final class UnlockCoordinator: UnlockEventPublishing {
 
     func dismiss() {
         presentation = nil
+    }
+
+    func reportUnlockFailure(_ error: Error, wishID: UUID) {
+        self.error = AppError.wrap(error)
     }
 }

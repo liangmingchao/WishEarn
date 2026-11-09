@@ -14,17 +14,20 @@ final class ProgressRecordService: ProgressRecordServicing {
     private let progressRepository: ProgressRepository
     private let clock: ClockProviding
     private let unlockService: WishUnlockServicing?
+    private let unlockFailureReporter: UnlockFailureReporting?
 
     init(
         conditionRepository: ConditionRepository,
         progressRepository: ProgressRepository,
         clock: ClockProviding,
-        unlockService: WishUnlockServicing? = nil
+        unlockService: WishUnlockServicing? = nil,
+        unlockFailureReporter: UnlockFailureReporting? = nil
     ) {
         self.conditionRepository = conditionRepository
         self.progressRepository = progressRepository
         self.clock = clock
         self.unlockService = unlockService
+        self.unlockFailureReporter = unlockFailureReporter
     }
 
     func createRecord(_ draft: ProgressRecordDraft) throws -> ProgressRecord {
@@ -159,7 +162,8 @@ final class ProgressRecordService: ProgressRecordServicing {
         do {
             _ = try unlockService.evaluateUnlock(wishID: wishID)
         } catch {
-            // 记录已保存；解锁评估失败不阻断记录操作，下次记录变更会再次评估。
+            // 记录已保存；解锁评估失败不阻断记录操作，但必须可观察。
+            unlockFailureReporter?.reportUnlockFailure(error, wishID: wishID)
         }
     }
 }

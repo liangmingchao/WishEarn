@@ -1,4 +1,5 @@
 import Foundation
+import OSLog
 
 @MainActor
 final class AppContainer {
@@ -21,6 +22,11 @@ final class AppContainer {
     let wishProgressService: WishProgressService
     let unlockService: WishUnlockServicing
     let unlockCoordinator: UnlockCoordinator
+    private(set) var startupRecoveryReport: UnlockRecoveryReport?
+    private let logger = Logger(
+        subsystem: "com.wishearn.app",
+        category: "UnlockRecovery"
+    )
 
     init(
         dependencies: AppDependencies = .live,
@@ -84,14 +90,56 @@ final class AppContainer {
             wishRepository: self.wishRepository,
             conditionRepository: self.conditionRepository,
             clock: dependencies.clock,
-            unlockService: self.unlockService
+            unlockService: self.unlockService,
+            unlockFailureReporter: unlockCoordinator
         )
         self.progressRecordService = ProgressRecordService(
             conditionRepository: self.conditionRepository,
             progressRepository: self.progressRepository,
             clock: dependencies.clock,
-            unlockService: self.unlockService
+            unlockService: self.unlockService,
+            unlockFailureReporter: unlockCoordinator
         )
+    }
+
+    /// 启动时修复解锁事件与心愿状态的不一致。
+    ///
+    /// 恢复只补写状态，不会删除/覆盖历史事件；部分失败通过报告与日志
+    /// 观察，不阻断 App 启动。
+    func performStartupRecovery() {
+        do {
+            let report = try unlockService.recoverUnlockConsistency()
+            startupRecoveryReport = report
+
+            logger.info(
+                "解锁恢复完成：恢复 \(report.restoredWishIDs.count) 个，新增解锁 \(report.newlyUnlockedWishIDs.count) 个，缺少事件 \(report.missingEventWishIDs.count) 个，孤立事件 \(report.orphanedEventWishIDs.count) 个，失败 \(report.failures.count) 个"
+            )
+
+            if !report.missingEventWishIDs.isEmpty {
+                logger.warning(
+                    "发现已解锁/已完成但缺少解锁事件的心愿：\(report.missingEventWishIDs.map(\.uuidString).joined(separator: ","), privacy: .public)"
+                )
+            }
+            if !report.orphanedEventWishIDs.isEmpty {
+                logger.warning(
+                    "发现没有对应心愿的解锁事件：\(report.orphanedEventWishIDs.map(\.uuidString).joined(separator: ","), privacy: .public)"
+                )
+            }
+
+            if let failure = report.failures.first {
+                let message = report.failures.count == 1
+                    ? "启动恢复失败：\(failure.message)"
+                    : "\(report.failures.count) 个心愿的启动恢复失败：\(failure.message)"
+                unlockCoordinator.error = .unexpected(message)
+            }
+        } catch {
+            let appError = AppError.wrap(error)
+            startupRecoveryReport = nil
+            logger.error(
+                "解锁恢复失败：\(appError.message, privacy: .public)"
+            )
+            unlockCoordinator.error = appError
+        }
     }
 
     static func live() throws -> AppContainer {

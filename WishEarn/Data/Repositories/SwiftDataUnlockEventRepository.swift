@@ -23,6 +23,19 @@ final class SwiftDataUnlockEventRepository: UnlockEventRepository {
         }
     }
 
+    func fetchAll() throws -> [UnlockEvent] {
+        do {
+            let descriptor = FetchDescriptor<UnlockEventEntity>(
+                sortBy: [SortDescriptor(\UnlockEventEntity.unlockedAt, order: .forward)]
+            )
+            return try store.context.fetch(descriptor).map(UnlockEventMapper.toDomain)
+        } catch let error as PersistenceError {
+            throw error
+        } catch {
+            throw PersistenceError.fetchFailed(error.localizedDescription)
+        }
+    }
+
     func hasEvent(wishID: UUID) throws -> Bool {
         do {
             var descriptor = FetchDescriptor<UnlockEventEntity>(

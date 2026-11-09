@@ -13,7 +13,8 @@ final class ProgressRecordServiceTests: XCTestCase {
     }
 
     private func makeSUT(
-        unlockService: WishUnlockServicing? = nil
+        unlockService: WishUnlockServicing? = nil,
+        unlockFailureReporter: UnlockFailureReporting? = nil
     ) -> SUT {
         let conditionRepository = MockConditionRepository()
         let progressRepository = MockProgressRepository()
@@ -21,7 +22,8 @@ final class ProgressRecordServiceTests: XCTestCase {
             conditionRepository: conditionRepository,
             progressRepository: progressRepository,
             clock: FixedClock(now: now, calendar: TestDates.calendar),
-            unlockService: unlockService
+            unlockService: unlockService,
+            unlockFailureReporter: unlockFailureReporter
         )
         return SUT(
             service: service,
@@ -307,7 +309,11 @@ final class ProgressRecordServiceTests: XCTestCase {
     func testUnlockEvaluationFailureDoesNotFailRecordCreation() throws {
         let unlockService = MockWishUnlockService()
         unlockService.error = PersistenceError.saveFailed("解锁失败")
-        let sut = makeSUT(unlockService: unlockService)
+        let reporter = MockUnlockFailureReporter()
+        let sut = makeSUT(
+            unlockService: unlockService,
+            unlockFailureReporter: reporter
+        )
         let condition = try makeCondition()
         try sut.conditionRepository.save(condition)
 
@@ -318,6 +324,11 @@ final class ProgressRecordServiceTests: XCTestCase {
         XCTAssertEqual(
             try sut.progressRepository.fetchRecords(conditionID: condition.id),
             [record]
+        )
+        XCTAssertEqual(reporter.reportedWishIDs, [wishID])
+        XCTAssertEqual(
+            reporter.reportedMessages,
+            ["保存数据失败：解锁失败"]
         )
     }
 }

@@ -1,0 +1,5 @@
+# `xcode-27` is a GitHub-hosted macOS preview runner label, not a
+# self-hosted label. actionlint's built-in runner list lags preview images.
+self-hosted-runner:
+  labels:
+    - xcode-27
