@@ -61,4 +61,11 @@ struct Condition: Identifiable, Equatable, Sendable {
         self.sortOrder = sortOrder
         self.createdAt = createdAt
     }
+
+    mutating func updateSortOrder(_ sortOrder: Int) throws {
+        guard sortOrder >= 0 else {
+            throw DomainError.invalidInput("条件排序值不能为负数。")
+        }
+        self.sortOrder = sortOrder
+    }
 }

@@ -19,6 +19,15 @@ final class AppErrorTests: XCTestCase {
         XCTAssertTrue(error.isRetryable)
     }
 
+    func testWrapImageStorageError() {
+        let error = AppError.wrap(ImageStorageError.saveFailed("磁盘已满"))
+
+        XCTAssertEqual(error, .image(.saveFailed("磁盘已满")))
+        XCTAssertEqual(error.title, "图片处理失败")
+        XCTAssertEqual(error.message, "保存图片失败：磁盘已满")
+        XCTAssertTrue(error.isRetryable)
+    }
+
     func testWrapUnexpectedError() {
         struct TestError: LocalizedError {
             var errorDescription: String? { "未知错误" }

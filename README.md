@@ -28,7 +28,14 @@
 
 ## 当前阶段
 
-**Phase 3 — 心愿管理。** Phase 0–2 已完成：工程骨架、四 Tab、设计系统、错误处理、领域模型与 SwiftData 持久化均已就绪。详见 [PROJECT_STATUS.md](PROJECT_STATUS.md)。
+**Phase 9 — 发布准备。** Phase 0–8 已完成：功能开发、测试与真机验证均已通过；Release Archive 和 IPA 已构建，等待 TestFlight / App Store 提交流程。详见 [PROJECT_STATUS.md](PROJECT_STATUS.md)。
+
+## 发布文档
+
+| 文件 | 作用 |
+|---|---|
+| [docs/APP_STORE.md](docs/APP_STORE.md) | App Store 文案、关键词、隐私说明、截图清单 |
+| [docs/RELEASE_CHECKLIST.md](docs/RELEASE_CHECKLIST.md) | 发布前检查清单与阻塞项 |
 
 ## 技术栈（MVP）
 

@@ -12,6 +12,8 @@ settings:
     # MVP 使用 Swift 5 语言模式，避免过早引入 Swift 6 严格并发约束。
     SWIFT_VERSION: "5.0"
     IPHONEOS_DEPLOYMENT_TARGET: "17.0"
+    MARKETING_VERSION: "0.15.0"
+    CURRENT_PROJECT_VERSION: "1"
     TARGETED_DEVICE_FAMILY: "1"
     GENERATE_INFOPLIST_FILE: YES
     INFOPLIST_KEY_CFBundleDisplayName: WishEarn

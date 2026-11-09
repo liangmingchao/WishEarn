@@ -4,9 +4,11 @@ import SwiftData
 @MainActor
 final class SwiftDataWishRepository: WishRepository {
     private let store: SwiftDataStore
+    private let imageStorage: ImageStorageService?
 
-    init(store: SwiftDataStore) {
+    init(store: SwiftDataStore, imageStorage: ImageStorageService? = nil) {
         self.store = store
+        self.imageStorage = imageStorage
     }
 
     func fetch(id: UUID) throws -> Wish? {
@@ -73,6 +75,8 @@ final class SwiftDataWishRepository: WishRepository {
     }
 
     func delete(id: UUID) throws {
+        var imagePathToDelete: String?
+
         do {
             try store.transaction {
                 let wishDescriptor = FetchDescriptor<WishEntity>(
@@ -81,6 +85,7 @@ final class SwiftDataWishRepository: WishRepository {
                 guard let wish = try store.context.fetch(wishDescriptor).first else {
                     throw PersistenceError.notFound
                 }
+                imagePathToDelete = wish.imagePath
 
                 let conditionDescriptor = FetchDescriptor<ConditionEntity>(
                     predicate: #Predicate { $0.wishID == id }
@@ -117,6 +122,14 @@ final class SwiftDataWishRepository: WishRepository {
             throw error
         } catch {
             throw PersistenceError.deleteFailed(error.localizedDescription)
+        }
+
+        if let imagePathToDelete {
+            do {
+                try imageStorage?.deleteImage(at: imagePathToDelete)
+            } catch {
+                // 图片清理失败不阻断心愿删除；孤立文件可由后续清理流程处理。
+            }
         }
     }
 }

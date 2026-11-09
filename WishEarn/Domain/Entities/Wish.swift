@@ -56,6 +56,24 @@ struct Wish: Identifiable, Equatable, Sendable {
         self.completedAt = completedAt
     }
 
+    mutating func applyStatus(_ newStatus: WishStatus, at date: Date) {
+        status = newStatus
+        updatedAt = date
+
+        switch newStatus {
+        case .unlocked:
+            if unlockedAt == nil {
+                unlockedAt = date
+            }
+        case .completed:
+            if completedAt == nil {
+                completedAt = date
+            }
+        case .active, .paused, .archived:
+            break
+        }
+    }
+
     mutating func updateDetails(
         title: String,
         description: String?,

@@ -4,61 +4,56 @@
 
 ## Project Overview
 
-- Current Version: 0.3.0
-- Current Phase: Phase 3 — 心愿管理
+- Current Version: 0.15.0
+- Current Phase: Phase 9 — 发布准备
 - Current Branch: main
 - Last Updated: 2026-11-08
 
 ## Current Milestone
 
-- Milestone: M3 — 心愿管理
-- Description: 心愿列表、创建、编辑、删除、暂停 / 恢复、心愿详情
-- Status: TODO
+- Milestone: M9 — 发布准备
+- Description: 应用信息、数据导出、Release 构建、TestFlight 与 App Store 上架
+- Status: IN_PROGRESS（Archive / IPA 完成，TestFlight 待账号与上传）
 
 ## Completed Tasks
 
-- TASK-000 准备开发环境（2026-11-08）
-- TASK-001 创建项目工程（2026-11-08）
-- TASK-101 建立目录结构（2026-11-08）
-- TASK-102 建立 App 入口与导航（2026-11-08）
-- TASK-103 建立依赖注入（2026-11-08）
-- TASK-104 建立统一错误处理（2026-11-08）
-- TASK-105 建立基础设计系统（2026-11-08）
-- TASK-201 实现领域枚举（2026-11-08）
-- TASK-202 实现 Wish Domain Model（2026-11-08）
-- TASK-203 实现 Condition Domain Model（2026-11-08）
-- TASK-204 实现 ProgressRecord Domain Model（2026-11-08）
-- TASK-205 实现 UnlockEvent（2026-11-08）
-- TASK-206 建立 SwiftData Model（2026-11-08）
-- TASK-207 实现 Repository（2026-11-08）
-- TASK-208 实现数据映射（2026-11-08）
-- TASK-209 实现 WishPausePeriod（2026-11-08）
+- TASK-000 ～ TASK-001 工程初始化（2026-11-08）
+- TASK-101 ～ TASK-105 基础架构（2026-11-08）
+- TASK-201 ～ TASK-209 领域模型与持久化（2026-11-08）
+- TASK-301 ～ TASK-307 心愿管理（2026-11-08）
+- TASK-401 ～ TASK-406 条件管理（2026-11-08）
+- TASK-501 ～ TASK-509 行动记录（2026-11-08）
+- TASK-601 ～ TASK-607 进度与解锁（2026-11-08）
+- TASK-701 ～ TASK-709 核心 UI 与交互（2026-11-08）
+- TASK-801 ～ TASK-805 测试与质量保障（2026-11-08）
+- TASK-806 真机测试（2026-11-08，安装 / 启动 / 解锁即时性通过）
+- TASK-901 应用信息（2026-11-08，图标 / 隐私清单 / App Store 文案）
+- TASK-902 数据导出（2026-11-08，JSON 导出 + 文件导出 UI）
+- TASK-903 发布构建（2026-11-08，Release Archive + Development IPA）
 
 ## In Progress
 
-- Task ID: TASK-301
-- Task Name: 心愿列表查询
-- Current Progress: 未开始
+- Task ID: TASK-904
+- Task Name: 发布验收
+- Current Progress: Release 0.15.0 已安装并启动；TestFlight / App Store 提交待账号
 - Modified Files: 无
-- Remaining Work: 实现 WishListViewModel 与真实列表展示，按状态筛选、按创建时间排序
+- Remaining Work: TestFlight 上传、App Store 元数据与截图、最终真机检查
 
 ## Pending Tasks
 
-- TASK-301 心愿列表查询
-- TASK-302 创建心愿
-- TASK-303 图片管理
-- TASK-304 编辑心愿
-- TASK-305 删除心愿
-- TASK-306 心愿暂停与恢复
-- TASK-307 心愿生命周期管理
+- TASK-904 发布验收（TestFlight / App Store）
+- App Store Connect 创建 App 记录
+- 截图 / 预览视频 / 支持 URL / 隐私政策 URL
+- 正式 App 名称与 Bundle ID 确认
+- TASK-806 剩余真机项：图片选择、键盘、滚动确认
 
 ## Known Issues
 
-- Bundle Identifier `com.wishearn.app` 为占位值，正式签名前需确认。
-- App 图标为纯色占位图，正式发布前需替换。
-- 尚未配置 Apple Developer Team；当前仅验证模拟器构建。
-- 心愿列表与详情仍为占位页面，尚未接入已实现的 Repository。
-- 图片管理（PhotosPicker、压缩、沙盒存储）尚未实现。
+- TestFlight 上传与 App Store 提交需要 App Store Connect 账号与凭据，当前未配置。
+- App 名称 `WishEarn` 与 Bundle ID `com.wishearn.app` 仍为占位，上架前确认。
+- App Store 截图、支持 URL、隐私政策 URL 尚未准备。
+- 真机图片选择、键盘遮挡、滚动性能尚未逐项确认（解锁即时性已确认）。
+- 无 UI 自动化测试覆盖真实用户流程。
 
 ## Technical Debt
 
@@ -66,56 +61,66 @@
 - `WishEarn.xcodeproj` 由 XcodeGen（`project.yml`）生成；修改工程结构后需运行 `xcodegen generate`。
 - 设计系统颜色使用代码定义，后续可迁移到 Asset Catalog 以支持主题扩展。
 - `WishEarnMigrationPlan` 目前只有 Schema V1，尚无实际迁移阶段；后续修改模型时需补充。
+- 列表 / 详情 / 今日 / 成就存在按条件逐条查询的 N+1 模式，后续可批量查询或增加汇总字段。
+- 图片使用 `_PhotosUI_SwiftUI` 模块导入 `PhotosPickerItem`，属于当前 SDK 的 SwiftUI Photos 集成方式。
+- 图片压缩与读取仍在主线程执行，后续可移到后台任务。
+- `WishLifecycleService` 跨 Repository 的操作采用尽力回滚，尚未引入统一事务边界。
+- 解锁事件写入与心愿状态更新分两步保存；事件已持久化时可恢复状态，但尚无统一事务。
+- 数据导出为 JSON 文本，不包含图片二进制；图片路径会随导出保留。
 
 ## Architecture Decisions
 
-- 见 [DECISIONS.md](DECISIONS.md)（ADR-001 ～ ADR-008）
-- 决策结论已收敛，开发时按 DECISIONS.md 执行
+- 见 [DECISIONS.md](DECISIONS.md)（ADR-001 ～ ADR-010）
+- 解锁与历史事件规则见 ADR-010
 
 ## Implemented Features
 
-- 领域枚举：`WishStatus`、`ConditionType`、`AmountDirection`、`ProgressUnit`。
-- 领域实体：`Wish`、`Condition`、`ProgressRecord`、`UnlockEvent`、`WishPausePeriod`，含基础校验。
-- 领域 Repository 协议：Wish / Condition / Progress / UnlockEvent / PausePeriod。
-- SwiftData 持久化模型与 `ModelContainerFactory`（支持内存数据库与迁移计划）。
-- SwiftData Repository 实现：CRUD、按状态 / 所属关系查询、级联删除。
-- Domain ↔ Entity 映射器。
-- `AppContainer` 已注册全部 Repository。
-- 四 Tab 导航与基础设计系统。
-- 统一错误处理与启动失败兜底页面。
-- 单元测试 35 项通过（领域模型、映射、Repository、错误处理、依赖注入）。
+- 领域模型、SwiftData 持久化、Repository 与映射。
+- 心愿管理、条件管理、行动记录、进度计算、连续打卡、自动解锁、总体进度与兑现。
+- 解锁庆祝由 `UnlockCoordinator` 即时触发（真机确认）。
+- 成就页、我的页、深色模式。
+- App 图标：爱心 + 星光正式占位设计。
+- 隐私清单：不追踪、不收集数据。
+- 数据导出：JSON 文件导出，包含心愿、条件、记录、解锁事件、暂停区间。
+- 发布材料：`docs/APP_STORE.md`、`docs/RELEASE_CHECKLIST.md`。
+- Release Archive 与 Development IPA 构建成功。
+- 测试体系：207 项，业务层主要文件覆盖率 88%–100%。
 
 ## Last Verification
 
-- Build: PASS — `xcodebuild build`，generic iOS Simulator，2026-11-08 19:56
-- Unit Tests: PASS — 35 项，iPhone 18 Pro / iOS 27.2，2026-11-08 19:56
-- Integration Tests: NOT RUN
-- Simulator Launch: PASS — SwiftData 容器初始化成功，四 Tab 正常
-- Last Verified Commit: N/A（工作区尚未提交）
+- Build: PASS — Debug / Release Archive
+- Unit Tests: PASS — 207 项，iPhone 18 Pro / iOS 27.2，2026-11-08 22:33
+- Integration Tests: PASS
+- Archive: PASS — `build/WishEarn.xcarchive`（0.15.0 / 1）
+- IPA: PASS — `build/export/WishEarn.ipa`
+- Device: PASS — Release 0.15.0 安装并启动（iPhone 17）
+- Privacy Manifest: PASS — 已打包
+- Last Verified Commit: `95a08ed`（Phase 0–2）；后续工作尚未提交
 
 ## Current Risks
 
-- 未提交 Git，当前成果仅存在于工作区；建议 Phase 3 Gate 后提交。
-- 心愿管理 UI 尚未接入 Repository，Phase 3 需重点验证真实数据读写。
-- 图片存储、删除级联和暂停区间尚未在 UI 流程中联调。
+- 后续工作（TASK-301～904）尚未提交，位于工作区。
+- TestFlight / App Store 账号与凭据缺失。
+- App Store 截图、支持 URL、隐私政策 URL 未准备。
+- 真机图片选择 / 键盘 / 滚动仍需手动确认。
 
-## Files Changed（Phase 2）
+## Files Changed（Phase 9）
 
-- `WishEarn/Domain/Enums/`：WishStatus、ConditionType、AmountDirection、ProgressUnit
-- `WishEarn/Domain/Entities/`：Wish、Condition、ProgressRecord、UnlockEvent、WishPausePeriod
-- `WishEarn/Domain/Repositories/`：五类 Repository 协议
-- `WishEarn/Data/Models/`：五类 SwiftData Entity
-- `WishEarn/Data/Database/`：ModelContainerFactory、SwiftDataStore、SchemaMigrationPlan
-- `WishEarn/Data/Mappers/`：五类 Mapper
-- `WishEarn/Data/Repositories/`：五类 SwiftData Repository
-- `WishEarn/App/AppContainer.swift`：注册 Repository
-- `WishEarn/App/WishEarnApp.swift`：启动失败兜底
-- `WishEarnTests/{DomainTests,RepositoryTests}/`
+- `WishEarn/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon.png`
+- `WishEarn/Resources/PrivacyInfo.xcprivacy`
+- `WishEarn/Infrastructure/Export/DataExportService.swift`
+- `WishEarn/Presentation/Settings/{SettingsView,WishEarnExportDocument}.swift`
+- `WishEarn/App/AppContainer.swift`
+- `WishEarn/Presentation/Navigation/RootTabView.swift`
+- `WishEarnTests/IntegrationTests/DataExportTests.swift`
+- `docs/APP_STORE.md`
+- `docs/RELEASE_CHECKLIST.md`
+- `project.yml`（0.15.0）
 
 ## Next Recommended Action
 
-- Task ID: TASK-301
-- Description: 实现心愿列表查询与展示
-- Dependencies: Phase 2 已完成
-- Expected Outcome: 心愿列表读取真实 Repository 数据，支持状态筛选与创建时间排序
-- Acceptance Criteria: 不同状态正确显示、空数据状态正确、不影响其他数据扩展设计
+- Task ID: TASK-904
+- Description: 配置 App Store Connect、上传 TestFlight 并完成截图 / 支持 URL / 隐私政策 URL
+- Dependencies: Archive 与 IPA 已就绪
+- Expected Outcome: TestFlight 可安装测试，App Store 元数据完整
+- Acceptance Criteria: TestFlight 构建可用、截图与隐私信息完整、无 P0 缺陷

@@ -19,7 +19,11 @@ struct WishEarnApp: App {
     var body: some Scene {
         WindowGroup {
             if let container {
-                RootTabView(router: container.router, container: container)
+                RootTabView(
+                    router: container.router,
+                    unlockCoordinator: container.unlockCoordinator,
+                    container: container
+                )
             } else {
                 ErrorStateView(
                     title: "启动失败",

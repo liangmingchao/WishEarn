@@ -9,6 +9,7 @@ final class RepositoryTests: XCTestCase {
         let progressRepository: SwiftDataProgressRepository
         let unlockEventRepository: SwiftDataUnlockEventRepository
         let pausePeriodRepository: SwiftDataWishPausePeriodRepository
+        let imageStorage: MockImageStorageService
     }
 
     private let now = TestDates.make(year: 2026, month: 11, day: 8)
@@ -17,12 +18,14 @@ final class RepositoryTests: XCTestCase {
     private func makeSUT() throws -> SUT {
         let container = try ModelContainerFactory.make(inMemory: true)
         let store = SwiftDataStore(container: container)
+        let imageStorage = MockImageStorageService()
         return SUT(
-            wishRepository: SwiftDataWishRepository(store: store),
+            wishRepository: SwiftDataWishRepository(store: store, imageStorage: imageStorage),
             conditionRepository: SwiftDataConditionRepository(store: store),
             progressRepository: SwiftDataProgressRepository(store: store),
             unlockEventRepository: SwiftDataUnlockEventRepository(store: store),
-            pausePeriodRepository: SwiftDataWishPausePeriodRepository(store: store)
+            pausePeriodRepository: SwiftDataWishPausePeriodRepository(store: store),
+            imageStorage: imageStorage
         )
     }
 
@@ -172,6 +175,21 @@ final class RepositoryTests: XCTestCase {
         XCTAssertTrue(try sut.progressRepository.fetchRecords(conditionID: condition.id).isEmpty)
         XCTAssertTrue(try sut.unlockEventRepository.fetchEvents(wishID: wish.id).isEmpty)
         XCTAssertTrue(try sut.pausePeriodRepository.fetchPeriods(wishID: wish.id).isEmpty)
+    }
+
+    func testDeletingWishRemovesImage() throws {
+        let sut = try makeSUT()
+        let wish = try Wish(
+            title: "Kindle",
+            imagePath: "WishImages/wish.jpg",
+            createdAt: now,
+            updatedAt: now
+        )
+        try sut.wishRepository.save(wish)
+
+        try sut.wishRepository.delete(id: wish.id)
+
+        XCTAssertEqual(sut.imageStorage.deletedPaths, ["WishImages/wish.jpg"])
     }
 
     func testUnlockEventAppendOnlyAndExistsCheck() throws {

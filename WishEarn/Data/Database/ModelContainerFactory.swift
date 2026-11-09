@@ -1,3 +1,4 @@
+import Foundation
 import SwiftData
 
 enum ModelContainerFactory {
@@ -13,6 +14,18 @@ enum ModelContainerFactory {
         let configuration = ModelConfiguration(
             schema: schema,
             isStoredInMemoryOnly: inMemory
+        )
+        return try ModelContainer(
+            for: schema,
+            migrationPlan: WishEarnMigrationPlan.self,
+            configurations: [configuration]
+        )
+    }
+
+    static func make(storeURL: URL) throws -> ModelContainer {
+        let configuration = ModelConfiguration(
+            schema: schema,
+            url: storeURL
         )
         return try ModelContainer(
             for: schema,

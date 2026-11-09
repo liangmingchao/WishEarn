@@ -40,7 +40,7 @@ WishEarn 是一个通过行动解锁心愿奖励的 iOS App：Swift + SwiftUI + 
 
 ## 当前阶段
 
-Phase 3：心愿管理。详见 [PROJECT_STATUS.md](PROJECT_STATUS.md)。
+Phase 9：发布准备。详见 [PROJECT_STATUS.md](PROJECT_STATUS.md)。
 
 ## 工程与命令
 

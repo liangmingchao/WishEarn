@@ -3,6 +3,7 @@ import Foundation
 enum AppError: Error, Equatable, Identifiable, LocalizedError {
     case domain(DomainError)
     case persistence(PersistenceError)
+    case image(ImageStorageError)
     case unexpected(String)
 
     var id: String { title + message }
@@ -13,6 +14,8 @@ enum AppError: Error, Equatable, Identifiable, LocalizedError {
             return "无法完成操作"
         case .persistence:
             return "数据保存失败"
+        case .image:
+            return "图片处理失败"
         case .unexpected:
             return "出了点问题"
         }
@@ -24,6 +27,8 @@ enum AppError: Error, Equatable, Identifiable, LocalizedError {
             return error.errorDescription ?? "操作未完成。"
         case .persistence(let error):
             return error.errorDescription ?? "数据操作未完成。"
+        case .image(let error):
+            return error.errorDescription ?? "图片操作未完成。"
         case .unexpected(let message):
             return message
         }
@@ -31,9 +36,12 @@ enum AppError: Error, Equatable, Identifiable, LocalizedError {
 
     var isRetryable: Bool {
         switch self {
-        case .persistence(.saveFailed), .persistence(.fetchFailed), .persistence(.containerUnavailable):
+        case .persistence(.saveFailed),
+             .persistence(.fetchFailed),
+             .persistence(.containerUnavailable),
+             .image(.saveFailed):
             return true
-        case .domain, .persistence, .unexpected:
+        case .domain, .persistence, .image, .unexpected:
             return false
         }
     }
@@ -48,6 +56,8 @@ enum AppError: Error, Equatable, Identifiable, LocalizedError {
             return .domain(domainError)
         case let persistenceError as PersistenceError:
             return .persistence(persistenceError)
+        case let imageError as ImageStorageError:
+            return .image(imageError)
         default:
             return .unexpected(error.localizedDescription)
         }
