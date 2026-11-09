@@ -199,7 +199,9 @@ final class AppContainer {
             conditionLifecycleService: conditionLifecycleService,
             wishProgressService: wishProgressService,
             lifecycleService: lifecycleService,
-            imageStorage: imageStorageService
+            imageStorage: imageStorageService,
+            progressRepository: progressRepository,
+            clock: dependencies.clock
         )
     }
 

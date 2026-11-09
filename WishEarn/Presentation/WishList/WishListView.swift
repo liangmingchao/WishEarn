@@ -248,6 +248,7 @@ struct WishListView: View {
         NavigationLink {
             WishDetailView(
                 viewModel: makeDetailViewModel(wish),
+                makeWishEditorViewModel: { makeEditorViewModel($0) },
                 makeConditionEditorViewModel: { condition, sortOrder in
                     makeConditionEditorViewModel(wish.id, condition, sortOrder)
                 },
