@@ -22,6 +22,7 @@ struct WishEditorView: View {
                         helperText: viewModel.titleHelperText
                     ) {
                         TextField("例如：Kindle Paperwhite", text: $viewModel.title)
+                            .accessibilityIdentifier("wishTitleField")
                     }
 
                     EditorField(

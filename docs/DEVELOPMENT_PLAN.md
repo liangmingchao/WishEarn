@@ -1252,17 +1252,17 @@ Phase 2 UI 改版作为独立交付序列完成：
 - Issue #8–#13 通过 PR #14–#19 合并：设计系统、首页、详情、Today、Editors、Unlock / Achievements / Settings。
 - Issue #20 完成首页主图比例与过渡配色；Issue #21 完成 Playful Editorial / Sunny Pop Journal 正式配色。
 - 设计基线：`docs/design/DESIGN_SYSTEM.md`；截图：`docs/design/screenshots/issue-21/`。
-- 测试基线：274 项单元 / 集成测试通过。
+- 测试基线：274 项单元 / 集成 + 1 项关键旅程 UI 测试通过。
 
 ## 12.2 Release Candidate 验收（Issue #22）
 
-- 自动化回归：PASS（274 项）。
+- 自动化回归：PASS（274 项单元/集成 + 1 项 UI 测试）。
 - Release Simulator Build：PASS。
 - Release Archive：PASS — `build/Issue22.xcarchive`。
 - Development IPA：PASS — `build/Issue22Export/WishEarn.ipa`。
-- CI：BLOCKED（GitHub Actions billing / spending limit，在 job 启动前失败）。
+- CI：PR #26 已恢复绿色（274 单元/集成 + 1 UI 测试）；main 合并后待确认。
 - 真机：当前 Playful 构建未安装验收；PhotosPicker、键盘、滚动、导航与重启为 NOT TESTED。
-- UI Automation：仓库无 UI test target；CI 不可用，本轮未新增 UI 自动化，不虚报覆盖。
+- UI Automation：Issue #25 新增 `WishEarnUITests`，覆盖一条关键旅程；CI 仍受 billing 阻塞，其他页面与真实设备交互未自动化。
 - 结论：**NO-GO** for App Store / TestFlight，详见 `docs/qa/ISSUE_22_RC_REPORT.md`。
 - RC 转 GO 的条件：CI 恢复且绿色、真机清单通过、App Store 元数据 / 凭据 / App Icon 确认、无 P0/P1。
 

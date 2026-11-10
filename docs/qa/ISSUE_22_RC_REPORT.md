@@ -1,5 +1,7 @@
 # Issue #22 — Phase 2 RC QA Report
 
+> Update: Issue #25 later added a critical-journey UI test target. Sections 2–8 describe the #22 snapshot; see section 10 for the current UI-test status.
+
 **Date:** 2026-11-10  
 **Code commit:** `d9b1888` (`main`, merge of PR #23)  
 **QA branch:** `qa/issue-22-rc` (documentation/evidence only; no product-code changes)
@@ -112,3 +114,13 @@ The code is buildable and all 274 automated tests pass. An internal QA build can
 - [Design system baseline](../design/DESIGN_SYSTEM.md)
 - [Release checklist](../RELEASE_CHECKLIST.md)
 - [App Store materials](../APP_STORE.md)
+
+
+## 10. Issue #25 follow-up — UI automation (2026-11-10)
+
+- Added a `WishEarnUITests` target and a Debug-only `-ui-testing` in-memory launch mode.
+- Added one critical-journey test: create wish → add CHECKPOINT condition → record completion → unlock → claim.
+- Local result: **1 UI test passed, 0 failures** (`xcodebuild test-without-building ... -only-testing:WishEarnUITests/CriticalJourneyUITests/testCreateConditionRecordUnlockAndClaim`).
+- The test found a stale Wish Detail state after claiming from the full-screen celebration; the detail now reloads when the coordinator presentation closes.
+- Full local suite: **274 unit/integration + 1 UI test**, all passing.
+- CI billing was restored during Issue #25; PR #26 run [42761975702](https://github.com/liangmingchao/WishEarn/actions/runs/42761975702) passed with 274 unit/integration tests + 1 UI test (8m27s). Real-device checks remain NOT TESTED; the main-branch run should be confirmed after merge.

@@ -110,6 +110,7 @@
 		BE0C8FA00786E2D2A1877A4D /* UnlockCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7F9FE4CC644FD68398F70FCE /* UnlockCoordinator.swift */; };
 		BEB35DC1D324F195CA86DA69 /* UnlockRecoveryReport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 26E6E799C05E77B4A2A099F8 /* UnlockRecoveryReport.swift */; };
 		C347A77EC2A3BAF3A8EA54D7 /* MockRepositories.swift in Sources */ = {isa = PBXBuildFile; fileRef = D032BC6682D0E1DAD187F43D /* MockRepositories.swift */; };
+		C6572FCA9DE753E431C6AE41 /* CriticalJourneyUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2DEA3219A927169970BCC63F /* CriticalJourneyUITests.swift */; };
 		C7C0EFBE4364D4B919334268 /* AppErrorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 44F34D58B131AFECE3F4A22A /* AppErrorTests.swift */; };
 		CAE18C7D214F8AEE9526AE48 /* WishListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40D26C9F6BBAC181E381F1B9 /* WishListViewModel.swift */; };
 		CB13C70EB1DEEB622BFE6DC0 /* ClockProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = E920D44F48803F303B4B12F8 /* ClockProviding.swift */; };
@@ -151,6 +152,13 @@
 			remoteGlobalIDString = 7A7E9A1309DFC8248D45D895;
 			remoteInfo = WishEarn;
 		};
+		0BBC873CE3CEA9D0E70356ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D94402B286BDB75A38D7AA1A /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 7A7E9A1309DFC8248D45D895;
+			remoteInfo = WishEarn;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
@@ -182,10 +190,12 @@
 		2790C9E8964C8C9889C89D3B /* ProgressRecordEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressRecordEntity.swift; sourceTree = "<group>"; };
 		280771C854B74A68188C32E3 /* ConditionType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConditionType.swift; sourceTree = "<group>"; };
 		28618F2D71B80C16BE8A47C9 /* ConditionTargetValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConditionTargetValidator.swift; sourceTree = "<group>"; };
+		2DEA3219A927169970BCC63F /* CriticalJourneyUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CriticalJourneyUITests.swift; sourceTree = "<group>"; };
 		2F9FA7F7FA616C232DA890C6 /* ConditionDraft.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConditionDraft.swift; sourceTree = "<group>"; };
 		2FB8422A1A45C995C9D0E76C /* DesignSystemTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignSystemTests.swift; sourceTree = "<group>"; };
 		34C605D33168179419CFC001 /* AppRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRouter.swift; sourceTree = "<group>"; };
 		36811AFE8456EF41D32D21C8 /* WishUnlockServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WishUnlockServiceTests.swift; sourceTree = "<group>"; };
+		37F3EE57A0993E1FEFDB56D6 /* WishEarnUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = WishEarnUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A7011E5F72EF1D978173CD1 /* ProgressRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressRecord.swift; sourceTree = "<group>"; };
 		3A90AF76A4A378EB72394DAB /* WishTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WishTheme.swift; sourceTree = "<group>"; };
 		3BE0A05885DDE2F635645D07 /* ProgressIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressIndicator.swift; sourceTree = "<group>"; };
@@ -361,6 +371,7 @@
 			children = (
 				0CD325503EA5DAC8370121A5 /* WishEarn.app */,
 				5A0387CDC8FBB4DB9A41AD68 /* WishEarnTests.xctest */,
+				37F3EE57A0993E1FEFDB56D6 /* WishEarnUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -526,6 +537,14 @@
 			path = RecordEditor;
 			sourceTree = "<group>";
 		};
+		7B0C2FA79DD8754B0EB9651E /* WishEarnUITests */ = {
+			isa = PBXGroup;
+			children = (
+				2DEA3219A927169970BCC63F /* CriticalJourneyUITests.swift */,
+			);
+			path = WishEarnUITests;
+			sourceTree = "<group>";
+		};
 		7D59B1365A29D35AB521D91D /* Time */ = {
 			isa = PBXGroup;
 			children = (
@@ -644,6 +663,7 @@
 			children = (
 				12A34A093A4151D61336329B /* WishEarn */,
 				E6D8C97339094012F5DCF5B4 /* WishEarnTests */,
+				7B0C2FA79DD8754B0EB9651E /* WishEarnUITests */,
 				36F5B5EBD00A8E2AA1FF7894 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -766,6 +786,24 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		40FE14A647F7E724406925EB /* WishEarnUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 635585DFC6C262D69AC5E304 /* Build configuration list for PBXNativeTarget "WishEarnUITests" */;
+			buildPhases = (
+				3A99732C4F66505F0727C55F /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				D5CDA161BAAC48A8DF5A71FC /* PBXTargetDependency */,
+			);
+			name = WishEarnUITests;
+			packageProductDependencies = (
+			);
+			productName = WishEarnUITests;
+			productReference = 37F3EE57A0993E1FEFDB56D6 /* WishEarnUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 		7A7E9A1309DFC8248D45D895 /* WishEarn */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 2367F53F99444F87710D91F0 /* Build configuration list for PBXNativeTarget "WishEarn" */;
@@ -811,6 +849,9 @@
 				BuildIndependentTargetsInParallel = YES;
 				LastUpgradeCheck = 1430;
 				TargetAttributes = {
+					40FE14A647F7E724406925EB = {
+						TestTargetID = 7A7E9A1309DFC8248D45D895;
+					};
 				};
 			};
 			buildConfigurationList = F4E15A415C0C62B7FDA44F22 /* Build configuration list for PBXProject "WishEarn" */;
@@ -829,6 +870,7 @@
 			targets = (
 				7A7E9A1309DFC8248D45D895 /* WishEarn */,
 				94CC4EDACBEBB5E6D640DC5A /* WishEarnTests */,
+				40FE14A647F7E724406925EB /* WishEarnUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -846,6 +888,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		3A99732C4F66505F0727C55F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C6572FCA9DE753E431C6AE41 /* CriticalJourneyUITests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		BAC3AD20375376BB58D4E675 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1000,6 +1050,11 @@
 			target = 7A7E9A1309DFC8248D45D895 /* WishEarn */;
 			targetProxy = 040E4ABD8AF3DB92C40D5903 /* PBXContainerItemProxy */;
 		};
+		D5CDA161BAAC48A8DF5A71FC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 7A7E9A1309DFC8248D45D895 /* WishEarn */;
+			targetProxy = 0BBC873CE3CEA9D0E70356ED /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
@@ -1017,6 +1072,23 @@
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WishEarn.app/WishEarn";
+			};
+			name = Debug;
+		};
+		19A8C22F11012F92D6E22401 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.wishearn.app.uitests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = WishEarn;
 			};
 			name = Debug;
 		};
@@ -1120,6 +1192,23 @@
 			};
 			name = Release;
 		};
+		944D702D42691707CC27B3CD /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.wishearn.app.uitests;
+				SDKROOT = iphoneos;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = WishEarn;
+			};
+			name = Release;
+		};
 		97511398B3CA7C3E218AB04D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -1218,6 +1307,15 @@
 			buildConfigurations = (
 				5191E1D274F37F631E5800EF /* Debug */,
 				97511398B3CA7C3E218AB04D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		635585DFC6C262D69AC5E304 /* Build configuration list for PBXNativeTarget "WishEarnUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				19A8C22F11012F92D6E22401 /* Debug */,
+				944D702D42691707CC27B3CD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;

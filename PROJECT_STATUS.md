@@ -43,6 +43,7 @@
 - Remaining Work: TestFlight 上传、App Store 元数据与截图、最终真机检查
 
 - Issue #22 Phase 2 RC QA：自动化回归、Release Archive / IPA 已完成；真机交互与 CI 阻塞，结论 NO-GO
+- Issue #25 UI Automation：新增 WishEarnUITests + 临界旅程测试；发现并修复解锁 celebration 领取后详情页状态不刷新的问题
 
 ## Pending Tasks
 
@@ -58,9 +59,9 @@
 - App 名称 `WishEarn` 与 Bundle ID `com.wishearn.app` 仍为占位，上架前确认。
 - App Store 截图、支持 URL、隐私政策 URL 尚未准备。
 - 当前 Playful Editorial 构建尚未在真机完成图片选择、键盘、滚动、导航与重启验收。
-- 无 UI 自动化测试覆盖真实用户流程。
+- UI 自动化仅覆盖一条关键旅程；其它页面与真实设备交互仍未自动化。
 - App Icon 仍为 petrol 版本；Playful Editorial 图标提案待品牌确认后替换。
-- GitHub Actions 因账户 billing / spending limit 在 workflow 启动前失败；最新 main 无绿色 CI。
+- GitHub Actions billing 已恢复；PR #26 CI 绿色（274 单元/集成 + 1 UI 测试），main 合并后需再确认。
 - 构建存在非致命方向声明警告：All interface orientations must be supported unless the app requires full screen。
 
 ## Technical Debt
@@ -95,25 +96,26 @@
 - Phase 2 设计系统、心愿首页、心愿详情、Today 行动页、Editors、Unlock / Achievements / Settings 改版。
 - Playful Editorial / Sunny Pop Journal 配色：Violet 主色、Coral 辅助色、六种 Wish 主题色与 WCAG 对比度测试。
 - 首页、详情、Today、Editor、Unlock、Achievements、Settings 已完成 Light / Dark 配色落地。
-- 测试体系：274 项，业务层主要文件覆盖率 88%–100%。
+- 测试体系：274 项单元 / 集成 + 1 项关键旅程 UI 测试，业务层主要文件覆盖率 88%–100%。
 
 ## Last Verification
 
 - Build: PASS — Debug / Release
-- Unit Tests: PASS — 274 项，iPhone 18 Pro / iOS 27.2，2026-11-10 12:53
+- Unit Tests: PASS — 274 项，iPhone 18 Pro / iOS 27.2，2026-11-10 13:22
+- UI Test: PASS — 1 项关键旅程（创建 → 条件 → 记录 → 解锁 → 领取）
 - Playful Editorial: PASS — 七个核心页面 Light / Dark 模拟器截图
 - Archive: PASS — `build/Issue22.xcarchive`（0.15.0 / 1）
 - IPA: PASS — `build/Issue22Export/WishEarn.ipa`
 - Device: NOT TESTED — 当前 Playful 构建未在 iPhone 17 上完成安装与交互验收
-- CI: BLOCKED — GitHub Actions billing / spending limit 在 job 启动前阻止执行
+- CI: PASS — PR #26 run 42761975702（274 单元/集成 + 1 UI 测试）；main 合并后待确认
 - Privacy Manifest: PASS — 已打包
-- Last Verified Commit: `d9b1888`（main，PR #23）
+- Last Verified Commit: `c545259`（main，PR #24）；Issue #25 在 `qa/issue-25-ui-automation` 验证
 - RC 报告：`docs/qa/ISSUE_22_RC_REPORT.md`
 
 ## Current Risks
 
 - 真机图片选择 / 键盘 / 滚动 / 导航 / 重启仍需手动确认。
-- GitHub Actions billing 阻塞 CI 门禁。
+- PR #26 CI 已恢复绿色；main 合并后的运行仍需确认。
 - TestFlight / App Store 账号与凭据缺失。
 - App Store 截图、支持 URL、隐私政策 URL 未准备。
 - App Icon 尚未替换为 Playful 方案。

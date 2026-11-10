@@ -52,12 +52,28 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.wishearn.app.tests
         GENERATE_INFOPLIST_FILE: YES
 
+  WishEarnUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: WishEarnUITests
+        excludes:
+          - "**/.gitkeep"
+    dependencies:
+      - target: WishEarn
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.wishearn.app.uitests
+        TEST_TARGET_NAME: WishEarn
+        GENERATE_INFOPLIST_FILE: YES
+
 schemes:
   WishEarn:
     build:
       targets:
         WishEarn: all
         WishEarnTests: [test]
+        WishEarnUITests: [test]
     run:
       config: Debug
     test:
@@ -65,6 +81,7 @@ schemes:
       gatherCoverageData: true
       targets:
         - name: WishEarnTests
+        - name: WishEarnUITests
     profile:
       config: Release
     analyze:

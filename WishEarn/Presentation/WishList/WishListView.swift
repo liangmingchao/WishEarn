@@ -259,6 +259,7 @@ struct WishListView: View {
             label()
         }
         .buttonStyle(.plain)
+        .accessibilityIdentifier("wishCard-\(wish.title)")
         .contextMenu {
             wishContextMenu(for: wish)
         }
@@ -323,5 +324,6 @@ struct WishListView: View {
             makeConditionDetailViewModel: container.makeConditionDetailViewModel(condition:),
             makeRecordEditorViewModel: container.makeRecordEditorViewModel(condition:record:)
         )
+        .environment(container.unlockCoordinator)
     }
 }

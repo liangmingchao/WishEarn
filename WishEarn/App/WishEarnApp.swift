@@ -7,6 +7,16 @@ struct WishEarnApp: App {
     private let startupError: AppError?
 
     init() {
+#if DEBUG
+        if ProcessInfo.processInfo.arguments.contains("-ui-testing") {
+            let container = AppContainer.preview()
+            container.performStartupRecovery()
+            self.container = container
+            startupError = nil
+            return
+        }
+#endif
+
         do {
             let container = try AppContainer.live()
             container.performStartupRecovery()
