@@ -1,14 +1,14 @@
 # WishEarn — 开发实施计划（DEVELOPMENT_PLAN）
 
-**版本：** V1.1  
-**项目阶段：** MVP  
+**版本：** V1.2
+**项目阶段：** Phase 9 — 发布准备（Phase 2 UI 改版已完成，RC 验收中）
 **关联文档：** PRD.md、ARCHITECTURE.md、DECISIONS.md  
 **开发方式：** AI-assisted Development  
 **技术栈：** Swift + SwiftUI + SwiftData  
 **最低系统版本：** iOS 17  
 **开发原则：** 小步开发、持续编译、自动化测试、阶段验收
 
-**版本记录：** V1.1 按 [DECISIONS.md](../DECISIONS.md) 增加 TASK-209（WishPausePeriod），调整 TASK-201（移除 ConditionStatus）、TASK-306（暂停区间）、TASK-507（CUSTOM 数值累计）、TASK-602（STREAK 暂停冻结）。
+**版本记录：** V1.1 按 [DECISIONS.md](../DECISIONS.md) 增加 TASK-209（WishPausePeriod），调整 TASK-201（移除 ConditionStatus）、TASK-306（暂停区间）、TASK-507（CUSTOM 数值累计）、TASK-602（STREAK 暂停冻结）。V1.2 补充 Phase 2 UI 改版完成状态、RC 验收结果与发布阻塞项。
 
 ---
 
@@ -64,6 +64,14 @@
 | P9 | 发布准备 | 必须 |
 
 开发顺序以业务依赖为准，不建议为了尽早看到页面而跳过数据模型和业务逻辑。
+
+### 1.4 当前执行状态补充（2026-11-10）
+
+- MVP P0–P9 已实现并进入发布准备。
+- Phase 2 UI 改版已完成：设计系统 #8、首页 #9、详情 #10、Today #11、Editors #12、Unlock / Achievements / Settings #13，以及后续主图比例 #20、Playful Editorial 配色 #21。
+- 当前测试基线为 **274 项**，Playful Editorial 七个核心页面 Light / Dark 截图已归档。
+- Issue #22 RC 验收：自动化回归、Release Archive / IPA 已完成；GitHub Actions billing 阻塞、真机交互未验收，当前结论为 **NO-GO**。
+- 历史阶段记录保留；不以本文档替代 [PROJECT_STATUS.md](../PROJECT_STATUS.md) 的实际验证状态。
 
 ## 1.3 工作量估计
 
@@ -1234,6 +1242,29 @@ Phase 8 Gate：
 - 所有核心功能正常。
 - 隐私说明完整。
 - 发布配置正确。
+
+---
+
+## 12.1 Post-MVP：Phase 2 UI 改版（2026-11-10 记录）
+
+Phase 2 UI 改版作为独立交付序列完成：
+
+- Issue #8–#13 通过 PR #14–#19 合并：设计系统、首页、详情、Today、Editors、Unlock / Achievements / Settings。
+- Issue #20 完成首页主图比例与过渡配色；Issue #21 完成 Playful Editorial / Sunny Pop Journal 正式配色。
+- 设计基线：`docs/design/DESIGN_SYSTEM.md`；截图：`docs/design/screenshots/issue-21/`。
+- 测试基线：274 项单元 / 集成测试通过。
+
+## 12.2 Release Candidate 验收（Issue #22）
+
+- 自动化回归：PASS（274 项）。
+- Release Simulator Build：PASS。
+- Release Archive：PASS — `build/Issue22.xcarchive`。
+- Development IPA：PASS — `build/Issue22Export/WishEarn.ipa`。
+- CI：BLOCKED（GitHub Actions billing / spending limit，在 job 启动前失败）。
+- 真机：当前 Playful 构建未安装验收；PhotosPicker、键盘、滚动、导航与重启为 NOT TESTED。
+- UI Automation：仓库无 UI test target；CI 不可用，本轮未新增 UI 自动化，不虚报覆盖。
+- 结论：**NO-GO** for App Store / TestFlight，详见 `docs/qa/ISSUE_22_RC_REPORT.md`。
+- RC 转 GO 的条件：CI 恢复且绿色、真机清单通过、App Store 元数据 / 凭据 / App Icon 确认、无 P0/P1。
 
 ---
 
