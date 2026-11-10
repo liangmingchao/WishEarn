@@ -17,6 +17,7 @@ struct ConditionEditorView: View {
                         helperText: viewModel.titleHelperText
                     ) {
                         TextField("例如：健身", text: $viewModel.title)
+                            .accessibilityIdentifier("conditionTitleField")
                     }
 
                     typeField
@@ -137,6 +138,7 @@ struct ConditionEditorView: View {
                     EditorMenuLabel(title: viewModel.type.displayName)
                 }
                 .buttonStyle(.plain)
+                .accessibilityIdentifier("conditionTypeField")
                 .accessibilityLabel("条件类型")
                 .accessibilityValue(viewModel.type.displayName)
             }

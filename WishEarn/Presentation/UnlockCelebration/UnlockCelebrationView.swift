@@ -104,6 +104,7 @@ struct UnlockCelebrationView: View {
         VStack(spacing: AppSpacing.sm) {
             Button("领取这份奖励", action: onClaim)
                 .buttonStyle(.appPrimary)
+                .accessibilityIdentifier("unlockClaimButton")
 
             Button("稍后再说", action: onDismiss)
                 .font(AppTypography.callout)

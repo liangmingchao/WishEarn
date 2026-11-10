@@ -35,6 +35,20 @@
                ReferencedContainer = "container:WishEarn.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "NO"
+            buildForProfiling = "NO"
+            buildForArchiving = "NO"
+            buildForAnalyzing = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "40FE14A647F7E724406925EB"
+               BuildableName = "WishEarnUITests.xctest"
+               BlueprintName = "WishEarnUITests"
+               ReferencedContainer = "container:WishEarn.xcodeproj">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -62,6 +76,17 @@
                BlueprintIdentifier = "94CC4EDACBEBB5E6D640DC5A"
                BuildableName = "WishEarnTests.xctest"
                BlueprintName = "WishEarnTests"
+               ReferencedContainer = "container:WishEarn.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO"
+            parallelizable = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "40FE14A647F7E724406925EB"
+               BuildableName = "WishEarnUITests.xctest"
+               BlueprintName = "WishEarnUITests"
                ReferencedContainer = "container:WishEarn.xcodeproj">
             </BuildableReference>
          </TestableReference>

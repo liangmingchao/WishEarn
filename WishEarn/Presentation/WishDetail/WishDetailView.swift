@@ -2,6 +2,7 @@ import SwiftUI
 import UIKit
 
 struct WishDetailView: View {
+    @Environment(UnlockCoordinator.self) private var unlockCoordinator
     @State private var viewModel: WishDetailViewModel
     @State private var listEditMode: EditMode = .inactive
     @State private var isPresentingNewCondition = false
@@ -170,6 +171,14 @@ struct WishDetailView: View {
         .appErrorAlert(error: $viewModel.actionError)
         .onAppear {
             viewModel.load()
+        }
+        .onChange(of: unlockCoordinator.presentation?.id) { oldValue, newValue in
+            // The detail remains mounted behind the full-screen celebration.
+            // Reload after claim/dismiss so the underlying screen shows the
+            // authoritative completed or unlocked state.
+            if oldValue != nil && newValue == nil {
+                viewModel.load()
+            }
         }
     }
 
@@ -555,4 +564,5 @@ private struct RecentRecordRow: View {
             )
         }
     }
+    .environment(container.unlockCoordinator)
 }
