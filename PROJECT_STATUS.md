@@ -61,7 +61,7 @@
 - 当前 Playful Editorial 构建尚未在真机完成图片选择、键盘、滚动、导航与重启验收。
 - UI 自动化仅覆盖一条关键旅程；其它页面与真实设备交互仍未自动化。
 - App Icon 仍为 petrol 版本；Playful Editorial 图标提案待品牌确认后替换。
-- GitHub Actions 因账户 billing / spending limit 在 workflow 启动前失败；最新 main 无绿色 CI。
+- GitHub Actions billing 已恢复；PR #26 CI 绿色（274 单元/集成 + 1 UI 测试），main 合并后需再确认。
 - 构建存在非致命方向声明警告：All interface orientations must be supported unless the app requires full screen。
 
 ## Technical Debt
@@ -107,7 +107,7 @@
 - Archive: PASS — `build/Issue22.xcarchive`（0.15.0 / 1）
 - IPA: PASS — `build/Issue22Export/WishEarn.ipa`
 - Device: NOT TESTED — 当前 Playful 构建未在 iPhone 17 上完成安装与交互验收
-- CI: BLOCKED — GitHub Actions billing / spending limit 在 job 启动前阻止执行
+- CI: PASS — PR #26 run 42761975702（274 单元/集成 + 1 UI 测试）；main 合并后待确认
 - Privacy Manifest: PASS — 已打包
 - Last Verified Commit: `c545259`（main，PR #24）；Issue #25 在 `qa/issue-25-ui-automation` 验证
 - RC 报告：`docs/qa/ISSUE_22_RC_REPORT.md`
@@ -115,7 +115,7 @@
 ## Current Risks
 
 - 真机图片选择 / 键盘 / 滚动 / 导航 / 重启仍需手动确认。
-- GitHub Actions billing 阻塞 CI 门禁。
+- PR #26 CI 已恢复绿色；main 合并后的运行仍需确认。
 - TestFlight / App Store 账号与凭据缺失。
 - App Store 截图、支持 URL、隐私政策 URL 未准备。
 - App Icon 尚未替换为 Playful 方案。

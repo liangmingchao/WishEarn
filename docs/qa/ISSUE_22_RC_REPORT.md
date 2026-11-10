@@ -123,4 +123,4 @@ The code is buildable and all 274 automated tests pass. An internal QA build can
 - Local result: **1 UI test passed, 0 failures** (`xcodebuild test-without-building ... -only-testing:WishEarnUITests/CriticalJourneyUITests/testCreateConditionRecordUnlockAndClaim`).
 - The test found a stale Wish Detail state after claiming from the full-screen celebration; the detail now reloads when the coordinator presentation closes.
 - Full local suite: **274 unit/integration + 1 UI test**, all passing.
-- CI remains blocked by GitHub Actions billing; real-device checks remain NOT TESTED.
+- CI billing was restored during Issue #25; PR #26 run [42761975702](https://github.com/liangmingchao/WishEarn/actions/runs/42761975702) passed with 274 unit/integration tests + 1 UI test (8m27s). Real-device checks remain NOT TESTED; the main-branch run should be confirmed after merge.

@@ -1260,7 +1260,7 @@ Phase 2 UI 改版作为独立交付序列完成：
 - Release Simulator Build：PASS。
 - Release Archive：PASS — `build/Issue22.xcarchive`。
 - Development IPA：PASS — `build/Issue22Export/WishEarn.ipa`。
-- CI：BLOCKED（GitHub Actions billing / spending limit，在 job 启动前失败）。
+- CI：PR #26 已恢复绿色（274 单元/集成 + 1 UI 测试）；main 合并后待确认。
 - 真机：当前 Playful 构建未安装验收；PhotosPicker、键盘、滚动、导航与重启为 NOT TESTED。
 - UI Automation：Issue #25 新增 `WishEarnUITests`，覆盖一条关键旅程；CI 仍受 billing 阻塞，其他页面与真实设备交互未自动化。
 - 结论：**NO-GO** for App Store / TestFlight，详见 `docs/qa/ISSUE_22_RC_REPORT.md`。

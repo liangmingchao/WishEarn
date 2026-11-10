@@ -17,7 +17,7 @@
 - [ ] 无编译警告（仍有非致命方向声明警告）
 - [x] 版本号与构建号正确（0.15.0 / 1）
 - [x] 隐私清单 `PrivacyInfo.xcprivacy` 已打包
-- [ ] 最新 main 的 CI 为绿色（GitHub Actions 被账户 billing / spending limit 阻止）
+- [ ] 最新 main 的 CI 为绿色（PR #26 CI 已通过；main 合并后的 run 待确认）
 
 ## 2. 核心功能
 
@@ -66,7 +66,7 @@
 
 ## 阻塞项
 
-- GitHub Actions billing / spending limit 阻止最新 CI run 启动。
+- PR #26 CI 已恢复绿色；main 合并后的 CI run 仍需确认。
 - 真机当前不可用，图片选择、键盘、滚动、导航、重启均未验收。
 - App Store Connect / TestFlight 账号与凭据缺失。
 - 正式名称、Bundle ID、截图、支持 URL、隐私政策 URL 未确认。
