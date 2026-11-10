@@ -99,7 +99,7 @@
 - Integration Tests: PASS
 - Archive: PASS — `build/WishEarn.xcarchive`（0.15.0 / 1）
 - IPA: PASS — `build/export/WishEarn.ipa`
-- Device: PASS — Release 0.15.0 安装并启动（iPhone 17）
+- Device: PASS — Release 0.15.0 安装并启动（iPhone 17）；petrol/eucalyptus 配色已重新安装启动
 - Privacy Manifest: PASS — 已打包
 - Last Verified Commit: `c376cd4`（main，PR #19）；配色与首页主图调整在 `fix/home-featured-image-size` 验证
 
