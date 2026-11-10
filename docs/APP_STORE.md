@@ -66,8 +66,8 @@ WishEarn 采用本地优先设计，心愿与行动记录只保存在你的设�
 | 首发语言范围 | **PENDING** — 当前 UI 为简体中文 |
 | App Store Connect 应用记录 | **BLOCKED** — 账号 / 凭据未配置 |
 | TestFlight 上传与测试 | **BLOCKED** — 账号 / 凭据未配置 |
-| CI 绿色门禁 | **IN PROGRESS** — PR #26 CI 绿色；main 合并后待确认 |
-| 真机交互验收 | **NOT TESTED** — 当前构建未在设备完成图片选择 / 键盘 / 滚动 / 导航 / 重启 |
+| CI 绿色门禁 | **PASS** — main CI run 42840733123 绿色（274 单元/集成 + 1 UI 测试） |
+| 真机交互验收 | **PARTIAL** — Playful Release 已在 iPhone 17 安装并启动；图片选择 / 键盘 / 滚动 / 导航 / 重启 **NOT TESTED** |
 
 App Icon 方案预览：[`docs/design/assets/app-icon-playful-proposal.png`](design/assets/app-icon-playful-proposal.png)（未接入生产资产）。
 

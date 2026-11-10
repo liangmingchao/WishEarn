@@ -100,6 +100,8 @@ Reasons:
 4. App Icon is pending brand confirmation.
 5. No UI automation coverage.
 
+> Update 2026-11-10: reason 1 is resolved (main CI run 42840733123 passed); reason 5 is partially addressed by Issue #25. The overall recommendation remains **NO-GO** because reasons 2–4 remain open.
+
 ### Conditional internal QA build
 
 The code is buildable and all 274 automated tests pass. An internal QA build can proceed once:
@@ -123,4 +125,13 @@ The code is buildable and all 274 automated tests pass. An internal QA build can
 - Local result: **1 UI test passed, 0 failures** (`xcodebuild test-without-building ... -only-testing:WishEarnUITests/CriticalJourneyUITests/testCreateConditionRecordUnlockAndClaim`).
 - The test found a stale Wish Detail state after claiming from the full-screen celebration; the detail now reloads when the coordinator presentation closes.
 - Full local suite: **274 unit/integration + 1 UI test**, all passing.
-- CI billing was restored during Issue #25; PR #26 run [42761975702](https://github.com/liangmingchao/WishEarn/actions/runs/42761975702) passed with 274 unit/integration tests + 1 UI test (8m27s). Real-device checks remain NOT TESTED; the main-branch run should be confirmed after merge.
+- CI billing was restored during Issue #25; PR #26 run [42761975702](https://github.com/liangmingchao/WishEarn/actions/runs/42761975702) passed with 274 unit/integration tests + 1 UI test (8m27s).
+
+## 11. Post-merge and device install addendum (2026-11-10)
+
+- PR #26 merged to `main` as `2592574`; Issue #25 closed.
+- Main CI run [42840733123](https://github.com/liangmingchao/WishEarn/actions/runs/42840733123) passed with 274 unit/integration tests + 1 UI test.
+- Release 0.15.0 (branch `qa/issue-25-ui-automation`, commit `e9b9f63`) was built with device signing, installed, and launched on the physical iPhone 17 (iOS 27.0, UDID `00008150-000611A8368A401C`) using `devicectl`.
+- Existing local data was preserved. A launch screenshot was inspected locally; it is not committed because it contains personal wish data.
+- No real-device interaction checklist item was executed. PhotosPicker, keyboard, scrolling, navigation, and restart remain **NOT TESTED**.
+- Remaining NO-GO reasons are unchanged: real-device interactions, App Store materials / credentials, and App Icon confirmation.

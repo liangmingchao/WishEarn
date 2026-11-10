@@ -70,7 +70,7 @@
 - MVP P0–P9 已实现并进入发布准备。
 - Phase 2 UI 改版已完成：设计系统 #8、首页 #9、详情 #10、Today #11、Editors #12、Unlock / Achievements / Settings #13，以及后续主图比例 #20、Playful Editorial 配色 #21。
 - 当前测试基线为 **274 项**，Playful Editorial 七个核心页面 Light / Dark 截图已归档。
-- Issue #22 RC 验收：自动化回归、Release Archive / IPA 已完成；GitHub Actions billing 阻塞、真机交互未验收，当前结论为 **NO-GO**。
+- Issue #22 RC 验收：自动化回归、Release Archive / IPA 已完成；CI 已恢复绿色，真机安装 / 启动通过、交互未验收，当前结论为 **NO-GO**。
 - 历史阶段记录保留；不以本文档替代 [PROJECT_STATUS.md](../PROJECT_STATUS.md) 的实际验证状态。
 
 ## 1.3 工作量估计
@@ -1260,9 +1260,9 @@ Phase 2 UI 改版作为独立交付序列完成：
 - Release Simulator Build：PASS。
 - Release Archive：PASS — `build/Issue22.xcarchive`。
 - Development IPA：PASS — `build/Issue22Export/WishEarn.ipa`。
-- CI：PR #26 已恢复绿色（274 单元/集成 + 1 UI 测试）；main 合并后待确认。
-- 真机：当前 Playful 构建未安装验收；PhotosPicker、键盘、滚动、导航与重启为 NOT TESTED。
-- UI Automation：Issue #25 新增 `WishEarnUITests`，覆盖一条关键旅程；CI 仍受 billing 阻塞，其他页面与真实设备交互未自动化。
+- CI：PR #26 与 main 合并后 run 42840733123 均绿色（274 单元/集成 + 1 UI 测试）。
+- 真机：Playful Release 0.15.0 已在 iPhone 17 / iOS 27.0 安装并启动；PhotosPicker、键盘、滚动、导航与重启仍未验收。
+- UI Automation：Issue #25 已合并，新增 `WishEarnUITests` 覆盖一条关键旅程；其他页面与真实设备交互未自动化。
 - 结论：**NO-GO** for App Store / TestFlight，详见 `docs/qa/ISSUE_22_RC_REPORT.md`。
 - RC 转 GO 的条件：CI 恢复且绿色、真机清单通过、App Store 元数据 / 凭据 / App Icon 确认、无 P0/P1。
 

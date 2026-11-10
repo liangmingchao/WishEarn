@@ -13,7 +13,7 @@
 
 - Milestone: M9 — 发布准备
 - Description: 应用信息、数据导出、Release 构建、TestFlight 与 App Store 上架
-- Status: IN_PROGRESS — RC NO-GO（Archive / IPA 完成；CI billing、真机验收与上架材料仍阻塞）
+- Status: IN_PROGRESS — RC NO-GO（Archive / IPA 与 main CI 完成；真机交互、上架材料与账号仍阻塞）
 
 ## Completed Tasks
 
@@ -33,6 +33,8 @@
 - Phase 2 UI redesign：Issue #8 设计系统、#9 心愿首页、#10 心愿详情、#11 Today 行动页、#12 Editors、#13 Unlock / Achievements / Settings（2026-11-09 已合并）
 - Issue #20 首页主图比例与过渡配色（已合并，随后由 #21 取代品牌主色）
 - Issue #21 Playful Editorial / Sunny Pop Journal 配色与七个核心页面（2026-11-10 已合并）
+- Issue #22 Phase 2 RC QA：自动化回归、Release Archive / IPA 完成，结论 NO-GO；报告已合并（2026-11-10）
+- Issue #25 关键旅程 UI 自动化：新增 `WishEarnUITests`，修复领取后详情状态不刷新；PR #26 已合并（2026-11-10）
 
 ## In Progress
 
@@ -42,8 +44,7 @@
 - Modified Files: 无
 - Remaining Work: TestFlight 上传、App Store 元数据与截图、最终真机检查
 
-- Issue #22 Phase 2 RC QA：自动化回归、Release Archive / IPA 已完成；真机交互与 CI 阻塞，结论 NO-GO
-- Issue #25 UI Automation：新增 WishEarnUITests + 临界旅程测试；发现并修复解锁 celebration 领取后详情页状态不刷新的问题
+- RC 真机验收：Playful Release 0.15.0 已在 iPhone 17 安装并启动（2026-11-10）；PhotosPicker、键盘、滚动、导航、重启仍未验收
 
 ## Pending Tasks
 
@@ -58,10 +59,10 @@
 - TestFlight 上传与 App Store 提交需要 App Store Connect 账号与凭据，当前未配置。
 - App 名称 `WishEarn` 与 Bundle ID `com.wishearn.app` 仍为占位，上架前确认。
 - App Store 截图、支持 URL、隐私政策 URL 尚未准备。
-- 当前 Playful Editorial 构建尚未在真机完成图片选择、键盘、滚动、导航与重启验收。
+- Playful Release 0.15.0 已在 iPhone 17 安装并启动；图片选择、键盘、滚动、导航与重启仍未验收。
 - UI 自动化仅覆盖一条关键旅程；其它页面与真实设备交互仍未自动化。
 - App Icon 仍为 petrol 版本；Playful Editorial 图标提案待品牌确认后替换。
-- GitHub Actions billing 已恢复；PR #26 CI 绿色（274 单元/集成 + 1 UI 测试），main 合并后需再确认。
+- GitHub Actions billing 已恢复；PR #26 与 main 合并后 CI 均已绿色（274 单元/集成 + 1 UI 测试）。
 - 构建存在非致命方向声明警告：All interface orientations must be supported unless the app requires full screen。
 
 ## Technical Debt
@@ -106,16 +107,17 @@
 - Playful Editorial: PASS — 七个核心页面 Light / Dark 模拟器截图
 - Archive: PASS — `build/Issue22.xcarchive`（0.15.0 / 1）
 - IPA: PASS — `build/Issue22Export/WishEarn.ipa`
-- Device: NOT TESTED — 当前 Playful 构建未在 iPhone 17 上完成安装与交互验收
-- CI: PASS — PR #26 run 42761975702（274 单元/集成 + 1 UI 测试）；main 合并后待确认
+- Device Install / Launch: PASS — Release 0.15.0 在 iPhone 17 / iOS 27.0 安装并启动（2026-11-10）
+- Device Interaction: NOT TESTED — PhotosPicker、键盘、滚动、导航、重启
+- CI: PASS — main run 42840733123（274 单元/集成 + 1 UI 测试）
 - Privacy Manifest: PASS — 已打包
-- Last Verified Commit: `c545259`（main，PR #24）；Issue #25 在 `qa/issue-25-ui-automation` 验证
+- Last Verified Commit: `2592574`（main，PR #26）
 - RC 报告：`docs/qa/ISSUE_22_RC_REPORT.md`
 
 ## Current Risks
 
 - 真机图片选择 / 键盘 / 滚动 / 导航 / 重启仍需手动确认。
-- PR #26 CI 已恢复绿色；main 合并后的运行仍需确认。
+- main CI 已确认绿色；后续提交仍需维持门禁。
 - TestFlight / App Store 账号与凭据缺失。
 - App Store 截图、支持 URL、隐私政策 URL 未准备。
 - App Icon 尚未替换为 Playful 方案。
@@ -136,7 +138,7 @@
 ## Next Recommended Action
 
 - Task ID: Issue #22 / TASK-904
-- Description: 恢复 GitHub Actions billing，重跑 CI；在 iPhone 17 上完成真机交互清单；确认 App Store 名称 / Bundle ID / 截图 / 支持 URL / 隐私政策 URL
+- Description: 在 iPhone 17 上完成真机交互清单（PhotosPicker、键盘、滚动、导航、重启）；确认 App Store 名称 / Bundle ID / 截图 / 支持 URL / 隐私政策 URL
 - Dependencies: `build/Issue22.xcarchive`、`build/Issue22Export/WishEarn.ipa`、可用真机、App Store Connect
-- Expected Outcome: CI 绿色、真机清单完成、RC 从 NO-GO 转为 GO
+- Expected Outcome: 真机清单完成、上架材料与凭据就绪、RC 从 NO-GO 转为 GO
 - Acceptance Criteria: 无 P0/P1；CI Build/Test 通过；真机图片选择 / 键盘 / 滚动 / 导航 / 重启通过；App Store 材料完整

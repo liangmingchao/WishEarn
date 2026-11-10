@@ -25,6 +25,7 @@
 - 重新设计为 Playful Editorial / Sunny Pop Journal：Violet 主色、Coral 辅助色、六种 Wish 主题色，并落地七个核心页面 Light / Dark；测试扩展至 274 项。
 - 新增 `WishTheme` 确定性 Wish 主题色系统；App Icon 仅提供提案预览，未替换生产资产。
 - 新增 `WishEarnUITests` 关键旅程测试（创建 → 条件 → 记录 → 解锁 → 领取）；修复庆祝页领取后详情状态不刷新的问题。测试基线为 274 项单元/集成 + 1 项 UI 测试。
+- Issue #25 的 PR #26 已合并，main CI 绿色；Playful Release 0.15.0 在 iPhone 17 安装并启动（真机交互项未验收）。
 
 ### Planned
 
