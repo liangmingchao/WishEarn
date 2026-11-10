@@ -1,6 +1,8 @@
 # Editorial Paper v1 — 今日 / 心愿详情
 
-Captured on iPhone 18 Pro Simulator (iOS 27.2), Debug build, in-memory preview data.
+Captured on iPhone 18 Pro Simulator (iOS 27.2), Debug build. Data came from a
+temporary in-memory seeding hook that was removed before the commit; reproduce
+by creating three wishes and a few records in the simulator.
 
 | Page | File | Notes |
 |---|---|---|
