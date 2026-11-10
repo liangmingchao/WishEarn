@@ -14,7 +14,7 @@ final class WishPhotoCropUITests: XCTestCase {
         XCTAssertTrue(app.buttons["cropCancelButton"].exists)
         XCTAssertTrue(app.buttons["cropConfirmButton"].exists)
         XCTAssertTrue(app.buttons["cropResetButton"].exists)
-        XCTAssertTrue(app.staticTexts["16:10"].exists)
+        XCTAssertTrue(app.staticTexts["自由裁剪"].exists)
 
         app.buttons["cropResetButton"].tap()
 

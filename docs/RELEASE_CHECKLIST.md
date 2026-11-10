@@ -12,7 +12,7 @@
 - [x] Release 构建通过（Simulator）
 - [x] Release Archive 构建通过（`build/Issue22.xcarchive`）
 - [x] Development IPA 导出通过（`build/Issue22Export/WishEarn.ipa`）
-- [x] 单元 / 集成测试通过（**290 项**）+ 2 项 UI 测试，iPhone 18 Pro / 18 Pro Max / iOS 27.2
+- [x] 单元 / 集成测试通过（**295 项**）+ 2 项 UI 测试，iPhone 18 Pro / 18 Pro Max / iOS 27.2
 - [x] 自动化测试未发现 P0 / P1 缺陷
 - [ ] 无编译警告（仍有非致命方向声明警告）
 - [x] 版本号与构建号正确（0.15.0 / 1）

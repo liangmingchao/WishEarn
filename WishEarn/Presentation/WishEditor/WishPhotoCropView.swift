@@ -10,6 +10,9 @@ struct WishPhotoCropView: View {
     @State private var lastZoom: CGFloat = 1
     @State private var offset: CGSize = .zero
     @State private var lastOffset: CGSize = .zero
+    @State private var cropRect: CGRect = .zero
+    @State private var resizeStartRect: CGRect?
+    @State private var containerSize: CGSize = .zero
     @State private var isCropping = false
     @State private var errorMessage: String?
 
@@ -49,10 +52,7 @@ struct WishPhotoCropView: View {
 
     private var cropArea: some View {
         GeometryReader { proxy in
-            let layout = WishPhotoCropLayout(
-                containerSize: proxy.size,
-                imageSize: image.size
-            )
+            let layout = makeLayout(containerSize: proxy.size)
 
             ZStack {
                 Color.black
@@ -64,8 +64,8 @@ struct WishPhotoCropView: View {
                         height: layout.imageFrameSize(zoom: zoom).height
                     )
                     .position(
-                        x: layout.cropRect.midX + offset.width,
-                        y: layout.cropRect.midY + offset.height
+                        x: layout.containerSize.width / 2 + offset.width,
+                        y: layout.containerSize.height / 2 + offset.height
                     )
                     .accessibilityLabel("裁剪预览")
                     .accessibilityValue("缩放 \(Int((zoom * 100).rounded()))%")
@@ -92,6 +92,7 @@ struct WishPhotoCropView: View {
                     .accessibilityAction(named: "向下移动") {
                         pan(by: CGSize(width: 0, height: 32), layout: layout)
                     }
+                    .gesture(panGesture(layout: layout))
 
                 CropMask(
                     containerSize: layout.containerSize,
@@ -107,11 +108,12 @@ struct WishPhotoCropView: View {
                 .stroke(.white.opacity(0.9), lineWidth: 1)
                 .frame(width: layout.cropRect.width, height: layout.cropRect.height)
                 .position(x: layout.cropRect.midX, y: layout.cropRect.midY)
+                .allowsHitTesting(false)
+
+                resizeHandles(layout: layout)
             }
             .frame(width: proxy.size.width, height: proxy.size.height)
             .clipped()
-            .contentShape(Rectangle())
-            .gesture(dragGesture(layout: layout))
             .simultaneousGesture(magnificationGesture(layout: layout))
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -129,6 +131,12 @@ struct WishPhotoCropView: View {
                     .accessibilityIdentifier("cropConfirmButton")
                 }
             }
+            .onAppear {
+                syncCropRect(for: proxy.size)
+            }
+            .onChange(of: proxy.size) { _, newSize in
+                syncCropRect(for: newSize)
+            }
         }
     }
 
@@ -138,7 +146,7 @@ struct WishPhotoCropView: View {
                 cropInstructions
                 Spacer(minLength: AppSpacing.sm)
                 resetButton
-                ratioBadge
+                freeformBadge
             }
 
             VStack(alignment: .leading, spacing: AppSpacing.sm) {
@@ -146,15 +154,15 @@ struct WishPhotoCropView: View {
                 HStack(spacing: AppSpacing.md) {
                     Spacer()
                     resetButton
-                    ratioBadge
+                    freeformBadge
                 }
             }
         }
-        .padding(.horizontal, WishPhotoCropLayout.cropInset)
+        .padding(.horizontal, AppSpacing.md)
     }
 
     private var cropInstructions: some View {
-        Text("拖动调整位置，双指缩放")
+        Text("拖动画面移动，双指缩放；拖动边角调整范围")
             .font(AppTypography.footnote)
             .foregroundStyle(.white.opacity(0.72))
     }
@@ -169,16 +177,41 @@ struct WishPhotoCropView: View {
         .accessibilityIdentifier("cropResetButton")
     }
 
-    private var ratioBadge: some View {
-        Text(WishPhotoCropLayout.aspectRatioLabel)
+    private var freeformBadge: some View {
+        Text("自由")
             .font(AppTypography.caption.weight(.semibold))
             .foregroundStyle(.white.opacity(0.6))
             .padding(.horizontal, AppSpacing.sm)
             .padding(.vertical, AppSpacing.xs)
             .background(.white.opacity(0.1), in: Capsule())
+            .accessibilityLabel("自由裁剪")
     }
 
-    private func dragGesture(layout: WishPhotoCropLayout) -> some Gesture {
+    private func makeLayout(containerSize: CGSize) -> WishPhotoCropLayout {
+        WishPhotoCropLayout(
+            containerSize: containerSize,
+            imageSize: image.size,
+            cropRect: cropRect == .zero ? nil : cropRect
+        )
+    }
+
+    private func syncCropRect(for newSize: CGSize) {
+        containerSize = newSize
+        let layout = makeLayout(containerSize: newSize)
+        cropRect = layout.cropRect
+        offset = layout.clampedOffset(offset, zoom: zoom)
+        lastOffset = offset
+    }
+
+    private func resizeHandles(layout: WishPhotoCropLayout) -> some View {
+        ForEach(WishPhotoCropHandle.allCases) { handle in
+            CropHandleView(handle: handle)
+                .position(handle.point(in: layout.cropRect))
+                .gesture(resizeGesture(handle: handle, layout: layout))
+        }
+    }
+
+    private func panGesture(layout: WishPhotoCropLayout) -> some Gesture {
         DragGesture()
             .onChanged { value in
                 let proposed = CGSize(
@@ -208,12 +241,48 @@ struct WishPhotoCropView: View {
             }
     }
 
+    private func resizeGesture(
+        handle: WishPhotoCropHandle,
+        layout: WishPhotoCropLayout
+    ) -> some Gesture {
+        DragGesture(minimumDistance: 0)
+            .onChanged { value in
+                let start = resizeStartRect ?? layout.cropRect
+                resizeStartRect = start
+
+                let newRect = WishPhotoCropLayout.resizedCropRect(
+                    from: start,
+                    handle: handle,
+                    translation: value.translation,
+                    cropBounds: layout.imageRect
+                )
+                cropRect = newRect
+
+                let newLayout = WishPhotoCropLayout(
+                    containerSize: layout.containerSize,
+                    imageSize: image.size,
+                    cropRect: newRect
+                )
+                offset = newLayout.clampedOffset(offset, zoom: zoom)
+                lastOffset = offset
+            }
+            .onEnded { _ in
+                resizeStartRect = nil
+            }
+    }
+
     private func reset() {
+        let layout = WishPhotoCropLayout(
+            containerSize: containerSize,
+            imageSize: image.size
+        )
+
         withAnimation(.easeOut(duration: 0.2)) {
+            cropRect = layout.cropRect
             zoom = 1
             lastZoom = 1
-            offset = .zero
-            lastOffset = .zero
+            offset = layout.clampedOffset(.zero, zoom: 1)
+            lastOffset = offset
         }
     }
 
@@ -251,6 +320,24 @@ struct WishPhotoCropView: View {
         }
 
         onCrop(data)
+    }
+}
+
+private struct CropHandleView: View {
+    let handle: WishPhotoCropHandle
+
+    var body: some View {
+        Circle()
+            .fill(.white)
+            .frame(width: 14, height: 14)
+            .overlay {
+                Circle()
+                    .stroke(.black.opacity(0.25), lineWidth: 1)
+            }
+            .frame(width: AppLayout.touchTarget, height: AppLayout.touchTarget)
+            .contentShape(Rectangle())
+            .accessibilityLabel(handle.accessibilityLabel)
+            .accessibilityHint("拖动调整裁剪范围")
     }
 }
 

@@ -143,7 +143,7 @@ Do not add category, tags, shopping URL, budget, account, or recommendation fiel
 
 | Field | Required | Interaction | Guidance |
 |---|---|---|---|
-| Image | No | PhotosPicker, then 16:10 crop screen | Large visual invitation; never block save |
+| Image | No | PhotosPicker, then freeform crop screen | Large visual invitation; never block save |
 | Title | Yes | Single-line text input, may expand/scroll for long content | Placeholder: “例如：Kindle Paperwhite” |
 | Target price | No | Decimal/currency-aware input if supported | Optional metadata; do not assume a currency |
 | Description/reason | No | Multiline text | Prompt: “为什么这件事对你重要？” |
@@ -173,8 +173,8 @@ Currency:
 |---|---|
 | No image | Neutral surface, restrained photo symbol, “添加心愿照片” |
 | Picker open | Use native PhotosPicker |
-| Cropping | Full-screen 16:10 crop window with drag and pinch; Cancel keeps the previous image, Done replaces it |
-| Image selected | Preview uses the 16:10 crop; Home still presents a 2:1 frame and Detail a 16:10 frame |
+| Cropping | Full-screen freeform crop window with the full image shown by default, drag, pinch, and corner resizing; Cancel keeps the previous image, Done replaces it |
+| Image selected | Preview uses the cropped image’s natural aspect; Home still presents a 2:1 frame and Detail a 16:10 frame |
 | Replacing image | Allow selecting another image through existing flow |
 | Image load/save error | Keep title and other fields; show a local error and allow retry |
 | Existing image during edit | Show current image before replacement; offer a re-crop action |

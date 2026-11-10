@@ -105,7 +105,10 @@ struct WishEditorView: View {
             if let imageData = viewModel.selectedImageData,
                let image = UIImage(data: imageData) {
                 Color.clear
-                    .aspectRatio(WishPhotoCropLayout.aspectRatio, contentMode: .fit)
+                    .aspectRatio(
+                        image.size.width / max(image.size.height, 1),
+                        contentMode: .fit
+                    )
                     .overlay {
                         Image(uiImage: image)
                             .resizable()
@@ -140,6 +143,7 @@ struct WishEditorView: View {
                         .accessibilityHint("调整照片构图")
                         .accessibilityIdentifier("editPhotoCropButton")
                     }
+                    .frame(maxHeight: 320)
 
                 HStack(spacing: AppSpacing.md) {
                     PhotosPicker(
