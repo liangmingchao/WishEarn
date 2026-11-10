@@ -11,12 +11,20 @@ struct UnlockCelebrationView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var appeared = false
 
+    private var theme: WishTheme {
+        .forWish(wish)
+    }
+
     var body: some View {
         ZStack(alignment: .topTrailing) {
             LinearGradient(
-                colors: [AppColors.accentSoft, AppColors.canvas],
-                startPoint: .top,
-                endPoint: .bottom
+                colors: [
+                    theme.tint.opacity(0.34),
+                    AppColors.canvas,
+                    AppColors.coralSoft
+                ],
+                startPoint: .topLeading,
+                endPoint: .bottomTrailing
             )
             .ignoresSafeArea()
 
@@ -28,6 +36,8 @@ struct UnlockCelebrationView: View {
                         imageView
                             .scaleEffect(reduceMotion ? 1 : (appeared ? 1 : 0.94))
                             .opacity(appeared ? 1 : 0)
+
+                        WishThemeMark(theme: theme, width: 42)
 
                         Text("你做到了")
                             .font(AppTypography.display)
@@ -106,7 +116,7 @@ struct UnlockCelebrationView: View {
 
     private var imageView: some View {
         ZStack {
-            AppColors.surface
+            theme.softTint
 
             if let imageData, let image = UIImage(data: imageData) {
                 Image(uiImage: image)
@@ -116,7 +126,7 @@ struct UnlockCelebrationView: View {
             } else {
                 Image(systemName: "photo")
                     .font(.system(size: 52, weight: .light))
-                    .foregroundStyle(AppColors.textTertiary)
+                    .foregroundStyle(theme.onSoftTint)
                     .accessibilityHidden(true)
             }
         }

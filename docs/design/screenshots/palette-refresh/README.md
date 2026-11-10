@@ -1,4 +1,6 @@
-# Palette Refresh — Petrol & Eucalyptus
+# Palette Refresh — Petrol & Eucalyptus (Historical)
+
+> Superseded by Issue #21 Playful Editorial / Sunny Pop Journal. Kept as before-state evidence.
 
 Replaces the previous terracotta/warm-paper palette with a soft ivory canvas, deep petrol-teal accent, and eucalyptus-mint containers. The editorial serif composition is unchanged.
 

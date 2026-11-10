@@ -174,16 +174,24 @@ private struct AchievementWishRow: View {
     let imageData: Data?
     let dateText: String?
 
+    private var theme: WishTheme {
+        .forWish(wish)
+    }
+
     var body: some View {
         HStack(spacing: AppSpacing.md) {
             thumbnail
 
             VStack(alignment: .leading, spacing: AppSpacing.xs) {
-                Text(wish.title)
-                    .font(AppTypography.headline)
-                    .foregroundStyle(AppColors.textPrimary)
-                    .lineLimit(2)
-                    .fixedSize(horizontal: false, vertical: true)
+                HStack(alignment: .firstTextBaseline, spacing: AppSpacing.sm) {
+                    WishThemeDot(theme: theme)
+
+                    Text(wish.title)
+                        .font(AppTypography.headline)
+                        .foregroundStyle(AppColors.textPrimary)
+                        .lineLimit(2)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
 
                 if let dateText {
                     Text(dateText)
@@ -214,10 +222,10 @@ private struct AchievementWishRow: View {
         } else {
             ZStack {
                 RoundedRectangle(cornerRadius: AppRadius.md, style: .continuous)
-                    .fill(AppColors.surfaceSecondary)
+                    .fill(theme.tint)
                 Image(systemName: "photo")
                     .font(.system(size: 22, weight: .light))
-                    .foregroundStyle(AppColors.textTertiary)
+                    .foregroundStyle(theme.onTint)
             }
             .frame(width: 64, height: 64)
             .accessibilityHidden(true)

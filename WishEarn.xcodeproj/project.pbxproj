@@ -67,6 +67,7 @@
 		70896C5BD26D3F0952D2777E /* UIImage+Resize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098FBF39C0B673683C377EE8 /* UIImage+Resize.swift */; };
 		70A9A3F25DD8BF01CB760A54 /* MockImageStorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF25DA76B8C78C01A0DB6DE1 /* MockImageStorageService.swift */; };
 		721E38956BC61A16097EF440 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6998123A4C11D48D1A43B262 /* Assets.xcassets */; };
+		73CDBCDE9E468DA7249B306D /* WishTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A90AF76A4A378EB72394DAB /* WishTheme.swift */; };
 		780DD93AA44F730C6247AD22 /* ProgressRecordTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0F8D8686BCB9670A34D830 /* ProgressRecordTests.swift */; };
 		7836FE09C32EED578E631474 /* WishListViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ED7FEED6990E7FF3B58661A /* WishListViewModelTests.swift */; };
 		7ACB83DC4F4AEEDC38D6184F /* ProgressRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A7011E5F72EF1D978173CD1 /* ProgressRecord.swift */; };
@@ -186,6 +187,7 @@
 		34C605D33168179419CFC001 /* AppRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRouter.swift; sourceTree = "<group>"; };
 		36811AFE8456EF41D32D21C8 /* WishUnlockServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WishUnlockServiceTests.swift; sourceTree = "<group>"; };
 		3A7011E5F72EF1D978173CD1 /* ProgressRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressRecord.swift; sourceTree = "<group>"; };
+		3A90AF76A4A378EB72394DAB /* WishTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WishTheme.swift; sourceTree = "<group>"; };
 		3BE0A05885DDE2F635645D07 /* ProgressIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressIndicator.swift; sourceTree = "<group>"; };
 		405465564D1713C60BC914BD /* ImageStorageServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageStorageServiceTests.swift; sourceTree = "<group>"; };
 		40ADD84E9B2E2CCEC22F6606 /* WishEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WishEntity.swift; sourceTree = "<group>"; };
@@ -560,6 +562,7 @@
 				73D0146060FCF2879AB6ED13 /* FilterChip.swift */,
 				3BE0A05885DDE2F635645D07 /* ProgressIndicator.swift */,
 				EC5C52C4C652B1E06A9598C9 /* StatusBadge.swift */,
+				3A90AF76A4A378EB72394DAB /* WishTheme.swift */,
 			);
 			path = DesignSystem;
 			sourceTree = "<group>";
@@ -984,6 +987,7 @@
 				F254EA34BFB7160DE5725E42 /* WishRepository.swift in Sources */,
 				D8DD39F032F8455F9A54C3F7 /* WishStatus+Presentation.swift in Sources */,
 				6DBFCFE7FEFCDED849446E65 /* WishStatus.swift in Sources */,
+				73CDBCDE9E468DA7249B306D /* WishTheme.swift in Sources */,
 				8D63A33F9708CC73379EA3CA /* WishUnlockService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -15,9 +15,15 @@ struct SettingsView: View {
                     ZStack {
                         RoundedRectangle(cornerRadius: AppRadius.md, style: .continuous)
                             .fill(AppColors.primarySoft)
-                        Image(systemName: "sparkles")
-                            .font(.system(size: 24, weight: .light))
+
+                        Image(systemName: "heart.fill")
+                            .font(.system(size: 25, weight: .regular))
                             .foregroundStyle(AppColors.primary)
+
+                        Image(systemName: "sparkles")
+                            .font(.system(size: 13, weight: .semibold))
+                            .foregroundStyle(AppColors.coral)
+                            .offset(x: 19, y: -19)
                     }
                     .frame(width: 56, height: 56)
 

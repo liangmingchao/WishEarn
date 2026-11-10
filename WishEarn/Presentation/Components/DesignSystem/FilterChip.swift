@@ -10,14 +10,14 @@ struct FilterChip: View {
             Text(title)
                 .font(AppTypography.callout.weight(.semibold))
                 .foregroundStyle(
-                    isSelected ? AppColors.accent : AppColors.textSecondary
+                    isSelected ? AppColors.primary : AppColors.textSecondary
                 )
                 .lineLimit(1)
                 .fixedSize(horizontal: true, vertical: false)
                 .padding(.horizontal, AppSpacing.md)
                 .frame(minHeight: 36)
                 .background(
-                    isSelected ? AppColors.accentSoft : AppColors.surface,
+                    isSelected ? AppColors.primarySoft : AppColors.elevated,
                     in: Capsule()
                 )
                 .overlay {

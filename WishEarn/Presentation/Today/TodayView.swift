@@ -193,10 +193,14 @@ private struct TodayActionRow: View {
 
     private var content: some View {
         VStack(alignment: .leading, spacing: AppSpacing.xs) {
-            Text(item.wish.title)
-                .font(AppTypography.caption)
-                .foregroundStyle(AppColors.textSecondary)
-                .lineLimit(1)
+            HStack(spacing: AppSpacing.xs) {
+                WishThemeDot(theme: .forWish(item.wish))
+
+                Text(item.wish.title)
+                    .font(AppTypography.caption)
+                    .foregroundStyle(AppColors.textSecondary)
+                    .lineLimit(1)
+            }
 
             Text(item.condition.title)
                 .font(AppTypography.headline)
@@ -278,10 +282,14 @@ private struct TodayReadOnlyRow: View {
 
     private var content: some View {
         VStack(alignment: .leading, spacing: AppSpacing.xs) {
-            Text(item.wish.title)
-                .font(AppTypography.caption)
-                .foregroundStyle(AppColors.textSecondary)
-                .lineLimit(1)
+            HStack(spacing: AppSpacing.xs) {
+                WishThemeDot(theme: .forWish(item.wish))
+
+                Text(item.wish.title)
+                    .font(AppTypography.caption)
+                    .foregroundStyle(AppColors.textSecondary)
+                    .lineLimit(1)
+            }
 
             Text(item.condition.title)
                 .font(AppTypography.callout.weight(.semibold))

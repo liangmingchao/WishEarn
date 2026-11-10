@@ -1,6 +1,6 @@
 # WishEarn Design System
 
-> Status: Proposed implementation specification
+> Status: Active implementation baseline (Playful Editorial, Issue #21)
 > Platform: SwiftUI, iOS 17+
 > Principle: Centralized semantic tokens; no per-screen ad hoc styling.
 
@@ -8,30 +8,61 @@
 
 ### 1.1 Color tokens
 
-Use semantic names. Values below are initial targets; verify contrast in implementation and adjust only while preserving roles.
+Use semantic names. Values below are the validated implementation baseline; keep roles intact when adjusting.
 
 | Token | Light | Dark | Use |
 |---|---|---|---|
-| canvas | #F6F4F0 | #0D1516 | App background |
-| surface | #FCFBF8 | #172021 | Main cards and sheets |
-| surfaceSecondary | #E4ECE7 | #223031 | Quiet grouped surfaces |
-| textPrimary | #161B1C | #F1F5F3 | Primary text |
-| textSecondary | #5A6868 | #B7C5C3 | Supporting text |
-| textTertiary | #637271 | #8FA19F | Metadata only |
-| accent | #194E57 | #7ECFC3 | Primary action / active progress |
-| accentSoft | #DDEAE6 | #1A3737 | Accent container |
-| success | #2E7A55 | #78C69A | Completed state |
-| warning | #8E641F | #D8B36B | Caution only |
-| danger | #B14B46 | #E88B85 | Destructive / error |
-| separator | #E3E5E0 | #2A3838 | Hairlines |
-| progressTrack | #E5ECE8 | #2A3838 | Progress background |
+| canvas | #FFF9F1 | #171725 | App background |
+| surface | #FFFFFF | #222235 | Sheets and primary rows |
+| elevated | #FFFDF9 | #2C2B42 | Cards / raised surfaces |
+| surfaceSecondary | #F7EFE5 | #2A293D | Inputs / quiet grouped surfaces |
+| textPrimary | #2E3040 | #F7F3FF | Primary text |
+| textSecondary | #6A6878 | #C2BED2 | Supporting text |
+| textTertiary | #716E7C | #A19CB5 | Metadata only |
+| primary | #6554C0 | #A99AFF | Main action / active progress |
+| primaryPressed | #5142A8 | #8F7EE8 | Primary pressed state |
+| primarySoft | #EFEBFF | #352F55 | Primary container |
+| onPrimary | #FFFFFF | #171725 | Text on primary |
+| coral | #FF806B | #FF9A86 | Secondary emphasis / decorative fill |
+| coralSoft | #FFE6E0 | #4B2A2E | Secondary container |
+| coralText | #B5412F | #FF9A86 | Coral text on light surfaces |
+| onCoral | #2E3040 | #171725 | Text on coral fills |
+| success | #2F7F57 | #7BD3A6 | Completed state |
+| successSoft | #E7F4ED | #1F3A2C | Completed container |
+| warning | #A06017 | #E5B86E | Caution only |
+| danger | #C24751 | #FF9AA5 | Destructive / error |
+| separator | #ECE4DA | #3A3852 | Hairlines |
+| progressTrack | #F0E8DE | #38364E | Progress background |
 
 Rules:
-- Accent is used for one primary action and active progress, not every icon.
-- Success is reserved for completed states.
+- Primary is used for one main action and active progress, not every icon.
+- Coral is secondary emphasis only; it must not replace success, warning, or danger.
+- Success is reserved for completed states; warning and danger remain semantic.
 - Never rely on color alone to communicate state.
 - Verify text contrast at normal and large text sizes.
 - Dark mode is a deliberate palette, not a simple inversion.
+- `accent` / `accentSoft` / `onAccent` are compatibility aliases for primary tokens; new code should use the primary names.
+
+### 1.1.1 Wish theme colors
+
+Each wish receives a stable decorative theme derived from its UUID. This is presentation-only and adds no persisted model field. Theme colors are limited to small marks, thumbnail/placeholder washes, and icon plates; they are never used for semantic status.
+
+| Wish theme | Light tint | Dark tint | Foreground |
+|---|---|---|---|
+| Butter | #FFD66E | #F6D57B | Ink / dark canvas |
+| Mint | #A8E3CF | #9BDFC7 | Ink / dark canvas |
+| Sky | #A9D7F2 | #9CCBEA | Ink / dark canvas |
+| Blush | #F6C6D1 | #F3B9C8 | Ink / dark canvas |
+| Lavender | #DCD4FF | #C9BEFF | Ink / dark canvas |
+| Peach | #FFE0D2 | #F8CBB7 | Ink / dark canvas |
+
+Rules:
+- Do not place multiple wish palette colors on the same card.
+- Solid wish tints may carry only the validated dark foreground.
+- Large placeholder areas use `softTint`; small marks use the solid tint.
+- Theme color never replaces primary action color or semantic state color.
+- Brand primary remains the main action; wish color is identity, not status.
+- Gradients are limited to Unlock, hero, and empty-state decoration.
 
 ### 1.2 Typography
 
@@ -88,7 +119,7 @@ Prefer subtle border separation over drop shadows. If shadow is needed: low opac
 Wish imagery is the strongest visual differentiator.
 - Detail hero: wide crop, 16:10 target, rounded 26 pt corners; preserve subject via center crop and allow user-selected image focal behavior if available.
 - Home card: 104 × 116 pt editorial thumbnail on standard width; do not force 64 pt generic icon tiles.
-- No-image state: soft eucalyptus-neutral surface with a restrained line illustration / symbol and a subtle “Add a photo” affordance only in edit context.
+- No-image state: a soft wish-theme tinted surface with a restrained line illustration / symbol and a subtle “Add a photo” affordance only in edit context.
 - Do not show broken-image glyphs.
 - Respect stored image data and existing image-loading path; do not add remote image dependencies.
 
