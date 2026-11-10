@@ -44,6 +44,7 @@
 
 - Issue #22 Phase 2 RC QA：自动化回归、Release Archive / IPA 已完成；真机交互与 CI 阻塞，结论 NO-GO
 - Issue #25 UI Automation：新增 WishEarnUITests + 临界旅程测试；发现并修复解锁 celebration 领取后详情页状态不刷新的问题
+- Issue #28 心愿照片裁剪：自由裁剪页（默认完整原图）、拖动 / 缩放 / 边角调整、取消保留旧图、编辑时可重新裁剪；实现与测试完成，PR #29 待合并
 
 ## Pending Tasks
 
@@ -59,7 +60,8 @@
 - App 名称 `WishEarn` 与 Bundle ID `com.wishearn.app` 仍为占位，上架前确认。
 - App Store 截图、支持 URL、隐私政策 URL 尚未准备。
 - 当前 Playful Editorial 构建尚未在真机完成图片选择、键盘、滚动、导航与重启验收。
-- UI 自动化仅覆盖一条关键旅程；其它页面与真实设备交互仍未自动化。
+- UI 自动化仅覆盖关键旅程与裁剪页 smoke test；其它页面与真实设备交互仍未自动化。
+- 裁剪页目前仅模拟器与自动化验证，尚未真机验收。
 - App Icon 仍为 petrol 版本；Playful Editorial 图标提案待品牌确认后替换。
 - GitHub Actions billing 已恢复；PR #26 CI 绿色（274 单元/集成 + 1 UI 测试），main 合并后需再确认。
 - 构建存在非致命方向声明警告：All interface orientations must be supported unless the app requires full screen。
@@ -72,7 +74,7 @@
 - `WishEarnMigrationPlan` 目前只有 Schema V1，尚无实际迁移阶段；后续修改模型时需补充。
 - 列表 / 详情 / 今日 / 成就存在按条件逐条查询的 N+1 模式，后续可批量查询或增加汇总字段。
 - 图片使用 `_PhotosUI_SwiftUI` 模块导入 `PhotosPickerItem`，属于当前 SDK 的 SwiftUI Photos 集成方式。
-- 图片压缩与读取仍在主线程执行，后续可移到后台任务。
+- 图片裁剪、压缩与读取仍在主线程执行，后续可移到后台任务。
 - `WishLifecycleService` 跨 Repository 的操作采用尽力回滚，尚未引入统一事务边界。
 - 解锁事件写入与心愿状态更新分两步保存；事件已持久化时可恢复状态，但尚无统一事务。
 - 数据导出为 JSON 文本，不包含图片二进制；图片路径会随导出保留。
@@ -96,13 +98,14 @@
 - Phase 2 设计系统、心愿首页、心愿详情、Today 行动页、Editors、Unlock / Achievements / Settings 改版。
 - Playful Editorial / Sunny Pop Journal 配色：Violet 主色、Coral 辅助色、六种 Wish 主题色与 WCAG 对比度测试。
 - 首页、详情、Today、Editor、Unlock、Achievements、Settings 已完成 Light / Dark 配色落地。
-- 测试体系：274 项单元 / 集成 + 1 项关键旅程 UI 测试，业务层主要文件覆盖率 88%–100%。
+- 心愿照片裁剪：选图后自由构图（默认完整原图），支持拖动、缩放、边角调整、还原与编辑时重新裁剪。
+- 测试体系：295 项单元 / 集成 + 2 项 UI 测试，业务层主要文件覆盖率 88%–100%。
 
 ## Last Verification
 
 - Build: PASS — Debug / Release
-- Unit Tests: PASS — 274 项，iPhone 18 Pro / iOS 27.2，2026-11-10 13:22
-- UI Test: PASS — 1 项关键旅程（创建 → 条件 → 记录 → 解锁 → 领取）
+- Unit Tests: PASS — 295 项，iPhone 18 Pro Max / iOS 27.2，2026-11-11 00:27
+- UI Test: PASS — 2 项（关键旅程 + 裁剪页 smoke）
 - Playful Editorial: PASS — 七个核心页面 Light / Dark 模拟器截图
 - Archive: PASS — `build/Issue22.xcarchive`（0.15.0 / 1）
 - IPA: PASS — `build/Issue22Export/WishEarn.ipa`

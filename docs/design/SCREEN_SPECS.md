@@ -234,6 +234,7 @@ Capture the reward with as little friction as possible.
 ### Rules
 - Title is the only required field.
 - Photo is encouraged but optional.
+- After picking a photo, show a freeform crop screen with drag, pinch, and corner resizing (default full image); Cancel must preserve the previous image.
 - Price, description, and target date are secondary and visibly optional.
 - Save remains disabled until title is valid; validation text is inline.
 - Do not add category, tags, budget tracking, or shopping links.
