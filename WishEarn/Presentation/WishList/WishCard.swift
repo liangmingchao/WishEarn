@@ -6,9 +6,14 @@ struct WishCard: View {
     let progressSummary: WishProgressSummary?
     var imageData: Data? = nil
 
+    private var theme: WishTheme {
+        .forWish(wish)
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: AppSpacing.md) {
-            FeaturedWishImage(imageData: imageData)
+            WishThemeMark(theme: theme)
+            FeaturedWishImage(imageData: imageData, theme: theme)
 
             VStack(alignment: .leading, spacing: AppSpacing.sm) {
                 Text(wish.title)
@@ -86,11 +91,15 @@ struct WishRow: View {
 
     private var textContent: some View {
         VStack(alignment: .leading, spacing: AppSpacing.xs) {
-            Text(wish.title)
-                .font(AppTypography.headline)
-                .foregroundStyle(AppColors.textPrimary)
-                .lineLimit(2)
-                .fixedSize(horizontal: false, vertical: true)
+            HStack(alignment: .firstTextBaseline, spacing: AppSpacing.sm) {
+                WishThemeDot(theme: .forWish(wish))
+
+                Text(wish.title)
+                    .font(AppTypography.headline)
+                    .foregroundStyle(AppColors.textPrimary)
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
 
             if wish.status == .active {
                 if let progressSummary {
@@ -112,12 +121,13 @@ struct WishRow: View {
     }
 
     private var thumbnail: some View {
-        WishThumbnail(imageData: imageData)
+        WishThumbnail(imageData: imageData, theme: .forWish(wish))
     }
 }
 
 private struct FeaturedWishImage: View {
     let imageData: Data?
+    let theme: WishTheme
 
     var body: some View {
         // Color.clear establishes the crop before the image is overlaid; using
@@ -128,7 +138,11 @@ private struct FeaturedWishImage: View {
             .aspectRatio(2.0, contentMode: .fit)
             .overlay {
                 ZStack {
-                    WishImagePlaceholder(iconSize: 38)
+                    WishImagePlaceholder(
+                        iconSize: 38,
+                        background: theme.softTint,
+                        foreground: theme.onSoftTint
+                    )
 
                     if let imageData, let image = UIImage(data: imageData) {
                         Image(uiImage: image)
@@ -146,10 +160,15 @@ private struct FeaturedWishImage: View {
 
 private struct WishThumbnail: View {
     let imageData: Data?
+    let theme: WishTheme
 
     var body: some View {
         ZStack {
-            WishImagePlaceholder(iconSize: 24)
+            WishImagePlaceholder(
+                iconSize: 24,
+                background: theme.tint,
+                foreground: theme.onTint
+            )
 
             if let imageData, let image = UIImage(data: imageData) {
                 Image(uiImage: image)
@@ -167,14 +186,16 @@ private struct WishThumbnail: View {
 
 private struct WishImagePlaceholder: View {
     let iconSize: CGFloat
+    let background: Color
+    let foreground: Color
 
     var body: some View {
         ZStack {
-            AppColors.surfaceSecondary
+            background
 
             Image(systemName: "photo")
                 .font(.system(size: iconSize, weight: .light))
-                .foregroundStyle(AppColors.textTertiary)
+                .foregroundStyle(foreground)
         }
     }
 }

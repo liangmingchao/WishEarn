@@ -30,7 +30,8 @@
 - TASK-901 应用信息（2026-11-08，图标 / 隐私清单 / App Store 文案）
 - TASK-902 数据导出（2026-11-08，JSON 导出 + 文件导出 UI）
 - TASK-903 发布构建（2026-11-08，Release Archive + Development IPA）
-- Phase 2 UI redesign：Issue #8 设计系统、#9 心愿首页、#10 心愿详情、#11 Today 行动页、#12 Editors（2026-11-09 已合并）
+- Phase 2 UI redesign：Issue #8 设计系统、#9 心愿首页、#10 心愿详情、#11 Today 行动页、#12 Editors、#13 Unlock / Achievements / Settings（2026-11-09 已合并）
+- Issue #20 首页主图比例与过渡配色（已合并，随后由 #21 取代品牌主色）
 
 ## In Progress
 
@@ -40,7 +41,7 @@
 - Modified Files: 无
 - Remaining Work: TestFlight 上传、App Store 元数据与截图、最终真机检查
 
-- Issue #13 Unlock / Achievements / Settings：实现与测试完成，等待 PR Review
+- Issue #21 Playful Editorial 视觉体系：Token、Wish 主题与七个核心页面已实现，等待 PR Review
 
 ## Pending Tasks
 
@@ -57,6 +58,7 @@
 - App Store 截图、支持 URL、隐私政策 URL 尚未准备。
 - 真机图片选择、键盘遮挡、滚动性能尚未逐项确认（解锁即时性已确认）。
 - 无 UI 自动化测试覆盖真实用户流程。
+- App Icon 仍为 petrol 版本；Playful Editorial 图标提案待品牌确认后替换。
 
 ## Technical Debt
 
@@ -88,20 +90,21 @@
 - 发布材料：`docs/APP_STORE.md`、`docs/RELEASE_CHECKLIST.md`。
 - Release Archive 与 Development IPA 构建成功。
 - Phase 2 设计系统、心愿首页、心愿详情、Today 行动页、Editors、Unlock / Achievements / Settings 改版。
-- 配色刷新：petrol teal + eucalyptus 冷色体系与同色系 App Icon。
-- 测试体系：272 项，业务层主要文件覆盖率 88%–100%。
+- Playful Editorial / Sunny Pop Journal 配色：Violet 主色、Coral 辅助色、六种 Wish 主题色与 WCAG 对比度测试。
+- 首页、详情、Today、Editor、Unlock、Achievements、Settings 已完成 Light / Dark 配色落地。
+- 测试体系：274 项，业务层主要文件覆盖率 88%–100%。
 
 ## Last Verification
 
 - Build: PASS — Debug / Release
-- Unit Tests: PASS — 272 项，iPhone 18 Pro / iOS 27.2，2026-11-10 00:13
-- Palette refresh: PASS — Light / Dark / Detail / Today / Achievements / Settings / Unlock / Editor 截图
+- Unit Tests: PASS — 274 项，iPhone 18 Pro / iOS 27.2，2026-11-10 12:45
+- Playful Editorial: PASS — 七个核心页面 Light / Dark 模拟器截图
 - Integration Tests: PASS
 - Archive: PASS — `build/WishEarn.xcarchive`（0.15.0 / 1）
 - IPA: PASS — `build/export/WishEarn.ipa`
 - Device: PASS — Release 0.15.0 安装并启动（iPhone 17）；petrol/eucalyptus 配色已重新安装启动
 - Privacy Manifest: PASS — 已打包
-- Last Verified Commit: `c376cd4`（main，PR #19）；配色与首页主图调整在 `fix/home-featured-image-size` 验证
+- Last Verified Commit: `e8abbb3`（main，PR #20）；Issue #21 在 `feat/issue-21-playful-editorial` 验证
 
 ## Current Risks
 

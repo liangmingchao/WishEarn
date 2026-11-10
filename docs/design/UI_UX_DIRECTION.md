@@ -91,7 +91,7 @@ Avoid:
 - Cartoon mascots, XP, coins, rankings, or punishment language.
 - Making a missing wish image look like a broken image placeholder.
 
-Use a soft ivory canvas with a single deep petrol-teal accent and eucalyptus-mint containers. The editorial composition stays; the palette should feel fresh and optimistic rather than warm/terracotta. Color must communicate role, not decorate every element.
+Use the **Playful Editorial / Sunny Pop Journal** palette: warm cream canvas, violet primary actions, coral secondary emphasis, and a small wish palette (butter, mint, sky, blush, lavender, peach) for personal wish identity. The editorial composition stays; the result should feel youthful, sunny, and optimistic without becoming rainbow UI. Color must communicate role, not decorate every element.
 
 ## 6. Content and microcopy
 

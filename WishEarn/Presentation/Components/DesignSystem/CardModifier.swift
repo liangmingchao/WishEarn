@@ -8,7 +8,7 @@ struct CardModifier: ViewModifier {
         content
             .padding(padding)
             .background(
-                AppColors.surface,
+                AppColors.elevated,
                 in: RoundedRectangle(cornerRadius: radius, style: .continuous)
             )
             .overlay(

@@ -4,42 +4,54 @@ import UIKit
 enum AppColors {
     // MARK: Canvas and surfaces
 
-    static let canvas = Color.dynamic(light: 0xF6F4F0, dark: 0x0D1516)
-    static let surface = Color.dynamic(light: 0xFCFBF8, dark: 0x172021)
-    static let surfaceSecondary = Color.dynamic(light: 0xE4ECE7, dark: 0x223031)
+    static let canvas = Color.dynamic(light: 0xFFF9F1, dark: 0x171725)
+    static let surface = Color.dynamic(light: 0xFFFFFF, dark: 0x222235)
+    static let elevated = Color.dynamic(light: 0xFFFDF9, dark: 0x2C2B42)
+    static let surfaceSecondary = Color.dynamic(light: 0xF7EFE5, dark: 0x2A293D)
 
     // MARK: Text
 
-    static let textPrimary = Color.dynamic(light: 0x161B1C, dark: 0xF1F5F3)
-    // Light values are tuned so normal-size supporting text still meets
-    // 4.5:1 contrast on canvas and surface.
-    static let textSecondary = Color.dynamic(light: 0x5A6868, dark: 0xB7C5C3)
-    static let textTertiary = Color.dynamic(light: 0x637271, dark: 0x8FA19F)
+    static let textPrimary = Color.dynamic(light: 0x2E3040, dark: 0xF7F3FF)
+    // Secondary and tertiary text are tuned to pass 4.5:1 on canvas, surface,
+    // and elevated surfaces in both appearances.
+    static let textSecondary = Color.dynamic(light: 0x6A6878, dark: 0xC2BED2)
+    static let textTertiary = Color.dynamic(light: 0x716E7C, dark: 0xA19CB5)
 
-    // MARK: Action and state
+    // MARK: Brand and action
 
-    // Deep petrol teal in light mode, eucalyptus mint in dark mode. The light
-    // accent is dark enough for text; the dark accent takes dark labels.
-    static let accent = Color.dynamic(light: 0x194E57, dark: 0x7ECFC3)
-    static let accentSoft = Color.dynamic(light: 0xDDEAE6, dark: 0x1A3737)
-    static let onAccent = Color.dynamic(light: 0xFFFFFF, dark: 0x0D1516)
-    static let success = Color.dynamic(light: 0x2E7A55, dark: 0x78C69A)
-    static let warning = Color.dynamic(light: 0x8E641F, dark: 0xD8B36B)
-    static let danger = Color.dynamic(light: 0xB14B46, dark: 0xE88B85)
+    static let primary = Color.dynamic(light: 0x6554C0, dark: 0xA99AFF)
+    static let primaryPressed = Color.dynamic(light: 0x5142A8, dark: 0x8F7EE8)
+    static let primarySoft = Color.dynamic(light: 0xEFEBFF, dark: 0x352F55)
+    static let onPrimary = Color.dynamic(light: 0xFFFFFF, dark: 0x171725)
+
+    /// Secondary emphasis. Coral is a decorative/emphasis fill; use
+    /// `coralText` for coral-colored text on light surfaces.
+    static let coral = Color.dynamic(light: 0xFF806B, dark: 0xFF9A86)
+    static let coralSoft = Color.dynamic(light: 0xFFE6E0, dark: 0x4B2A2E)
+    static let coralText = Color.dynamic(light: 0xB5412F, dark: 0xFF9A86)
+    static let onCoral = Color.dynamic(light: 0x2E3040, dark: 0x171725)
+
+    // MARK: Semantic state
+
+    static let success = Color.dynamic(light: 0x2F7F57, dark: 0x7BD3A6)
+    static let successSoft = Color.dynamic(light: 0xE7F4ED, dark: 0x1F3A2C)
+    static let warning = Color.dynamic(light: 0xA06017, dark: 0xE5B86E)
+    static let danger = Color.dynamic(light: 0xC24751, dark: 0xFF9AA5)
 
     // MARK: Structure
 
-    static let separator = Color.dynamic(light: 0xE3E5E0, dark: 0x2A3838)
-    static let progressTrack = Color.dynamic(light: 0xE5ECE8, dark: 0x2A3838)
+    static let separator = Color.dynamic(light: 0xECE4DA, dark: 0x3A3852)
+    static let progressTrack = Color.dynamic(light: 0xF0E8DE, dark: 0x38364E)
 
     // MARK: Compatibility aliases
     //
-    // Existing screens still use the pre-Phase-2 names. New components should
+    // Existing screens still use the pre-refresh names. New components should
     // use the semantic names above; pages migrate as they are redesigned.
 
+    static let accent = primary
+    static let accentSoft = primarySoft
+    static let onAccent = onPrimary
     static let background = canvas
-    static let primary = accent
-    static let primarySoft = accentSoft
     static let border = separator
 }
 

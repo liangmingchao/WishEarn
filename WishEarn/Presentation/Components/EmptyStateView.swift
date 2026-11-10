@@ -23,14 +23,25 @@ struct EmptyStateView: View {
 
     var body: some View {
         VStack(spacing: AppSpacing.md) {
-            Image(systemName: systemImage)
-                .font(.system(size: 38, weight: .light))
-                .foregroundStyle(AppColors.accent)
-                .frame(
-                    width: AppLayout.touchTarget,
-                    height: AppLayout.touchTarget
-                )
-                .accessibilityHidden(true)
+            ZStack {
+                Circle()
+                    .fill(AppColors.primarySoft)
+                    .frame(width: 92, height: 92)
+
+                Circle()
+                    .fill(AppColors.coralSoft)
+                    .frame(width: 44, height: 44)
+                    .offset(x: 34, y: -30)
+
+                Image(systemName: systemImage)
+                    .font(.system(size: 38, weight: .light))
+                    .foregroundStyle(AppColors.primary)
+                    .frame(
+                        width: AppLayout.touchTarget,
+                        height: AppLayout.touchTarget
+                    )
+            }
+            .accessibilityHidden(true)
 
             Text(title)
                 .font(AppTypography.title)

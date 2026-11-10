@@ -280,7 +280,8 @@ struct WishDetailView: View {
             } label: {
                 ConditionRow(
                     condition: condition,
-                    snapshot: viewModel.snapshot(for: condition)
+                    snapshot: viewModel.snapshot(for: condition),
+                    theme: .forWish(viewModel.wish)
                 )
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
@@ -349,9 +350,14 @@ private struct WishDetailHero: View {
     let hasOptionalConditionsOnly: Bool
     let onAddCondition: () -> Void
 
+    private var theme: WishTheme {
+        .forWish(wish)
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: AppSpacing.md) {
             heroImage
+            WishThemeMark(theme: theme)
 
             Text(wish.title)
                 .font(AppTypography.display)
@@ -408,7 +414,7 @@ private struct WishDetailHero: View {
 
     private var heroImage: some View {
         ZStack {
-            AppColors.surfaceSecondary
+            theme.softTint
 
             if let imageData, let image = UIImage(data: imageData) {
                 Image(uiImage: image)
@@ -417,7 +423,7 @@ private struct WishDetailHero: View {
             } else {
                 Image(systemName: "photo")
                     .font(.system(size: 40, weight: .light))
-                    .foregroundStyle(AppColors.textTertiary)
+                    .foregroundStyle(theme.onSoftTint)
             }
         }
         .aspectRatio(16.0 / 10.0, contentMode: .fit)

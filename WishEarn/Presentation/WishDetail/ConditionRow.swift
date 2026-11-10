@@ -3,6 +3,7 @@ import SwiftUI
 struct ConditionRow: View {
     let condition: Condition
     var snapshot: ProgressSnapshot?
+    var theme: WishTheme = .butter
 
     var body: some View {
         HStack(alignment: .top, spacing: AppSpacing.md) {
@@ -69,10 +70,16 @@ struct ConditionRow: View {
         Image(systemName: condition.type.symbolName)
             .font(.system(size: 16, weight: .regular))
             .foregroundStyle(
-                snapshot?.isCompleted == true ? AppColors.success : AppColors.accent
+                snapshot?.isCompleted == true
+                    ? AppColors.success
+                    : theme.onTint
             )
             .frame(width: 34, height: 34)
-            .background(AppColors.accentSoft)
+            .background(
+                snapshot?.isCompleted == true
+                    ? AppColors.successSoft
+                    : theme.tint
+            )
             .clipShape(Circle())
             .accessibilityHidden(true)
     }

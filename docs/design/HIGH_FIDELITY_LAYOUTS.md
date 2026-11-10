@@ -7,7 +7,7 @@
 ## 1. Design composition rules
 
 ### Visual rhythm
-- Page canvas: soft ivory background with a subtle eucalyptus tint.
+- Page canvas: warm cream background; wish-specific pastel accents stay small and do not tint the whole page.
 - Main content horizontal inset: 20 pt.
 - Section spacing: 28–32 pt.
 - Card internal inset: 16–20 pt.

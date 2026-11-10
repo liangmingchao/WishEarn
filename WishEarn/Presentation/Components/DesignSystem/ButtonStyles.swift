@@ -4,14 +4,16 @@ struct PrimaryButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(AppTypography.headline)
-            .foregroundStyle(AppColors.onAccent)
+            .foregroundStyle(AppColors.onPrimary)
             .frame(
                 maxWidth: .infinity,
                 minHeight: AppLayout.buttonHeight
             )
             .padding(.horizontal, AppSpacing.screenInset)
             .background(
-                AppColors.accent.opacity(configuration.isPressed ? 0.82 : 1)
+                configuration.isPressed
+                    ? AppColors.primaryPressed
+                    : AppColors.primary
             )
             .clipShape(
                 RoundedRectangle(cornerRadius: AppRadius.md, style: .continuous)
@@ -23,14 +25,14 @@ struct SecondaryButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(AppTypography.headline)
-            .foregroundStyle(AppColors.accent)
+            .foregroundStyle(AppColors.primary)
             .frame(
                 maxWidth: .infinity,
                 minHeight: AppLayout.buttonHeight
             )
             .padding(.horizontal, AppSpacing.screenInset)
             .background(
-                AppColors.surface.opacity(configuration.isPressed ? 0.72 : 1)
+                AppColors.elevated.opacity(configuration.isPressed ? 0.72 : 1)
             )
             .clipShape(
                 RoundedRectangle(cornerRadius: AppRadius.md, style: .continuous)
@@ -47,7 +49,7 @@ struct TertiaryButtonStyle: ButtonStyle {
         configuration.label
             .font(AppTypography.callout)
             .foregroundStyle(
-                AppColors.accent.opacity(configuration.isPressed ? 0.65 : 1)
+                AppColors.primary.opacity(configuration.isPressed ? 0.65 : 1)
             )
             .frame(minHeight: AppLayout.touchTarget)
             .padding(.horizontal, AppSpacing.sm)
