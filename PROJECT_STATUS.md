@@ -87,20 +87,21 @@
 - 数据导出：JSON 文件导出，包含心愿、条件、记录、解锁事件、暂停区间。
 - 发布材料：`docs/APP_STORE.md`、`docs/RELEASE_CHECKLIST.md`。
 - Release Archive 与 Development IPA 构建成功。
-- Phase 2 设计系统、心愿首页、心愿详情、Today 行动页、Editors 改版；Unlock / Achievements / Settings 待 PR Review。
+- Phase 2 设计系统、心愿首页、心愿详情、Today 行动页、Editors、Unlock / Achievements / Settings 改版。
+- 配色刷新：petrol teal + eucalyptus 冷色体系与同色系 App Icon。
 - 测试体系：272 项，业务层主要文件覆盖率 88%–100%。
 
 ## Last Verification
 
 - Build: PASS — Debug / Release
-- Unit Tests: PASS — 272 项，iPhone 18 Pro / iOS 27.2，2026-11-09 23:13
-- Issue #13 Unlock / Achievements / Settings: PASS — 解锁、成就、设置截图
+- Unit Tests: PASS — 272 项，iPhone 18 Pro / iOS 27.2，2026-11-10 00:13
+- Palette refresh: PASS — Light / Dark / Detail / Today / Achievements / Settings / Unlock / Editor 截图
 - Integration Tests: PASS
 - Archive: PASS — `build/WishEarn.xcarchive`（0.15.0 / 1）
 - IPA: PASS — `build/export/WishEarn.ipa`
-- Device: PASS — Release 0.15.0 安装并启动（iPhone 17）
+- Device: PASS — Release 0.15.0 安装并启动（iPhone 17）；petrol/eucalyptus 配色已重新安装启动
 - Privacy Manifest: PASS — 已打包
-- Last Verified Commit: `4e4bb71`（main，PR #18）；Issue #13 在 `feat/issue-13-unlock-achievements-settings` 验证
+- Last Verified Commit: `c376cd4`（main，PR #19）；配色与首页主图调整在 `fix/home-featured-image-size` 验证
 
 ## Current Risks
 

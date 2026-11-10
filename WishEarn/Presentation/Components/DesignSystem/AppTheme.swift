@@ -4,33 +4,33 @@ import UIKit
 enum AppColors {
     // MARK: Canvas and surfaces
 
-    static let canvas = Color.dynamic(light: 0xF7F4EF, dark: 0x151412)
-    static let surface = Color.dynamic(light: 0xFFFEFC, dark: 0x211F1C)
-    static let surfaceSecondary = Color.dynamic(light: 0xEEEAE3, dark: 0x2B2824)
+    static let canvas = Color.dynamic(light: 0xF6F4F0, dark: 0x0D1516)
+    static let surface = Color.dynamic(light: 0xFCFBF8, dark: 0x172021)
+    static let surfaceSecondary = Color.dynamic(light: 0xE4ECE7, dark: 0x223031)
 
     // MARK: Text
 
-    static let textPrimary = Color.dynamic(light: 0x282521, dark: 0xF4F0E9)
-    // Light values are darkened from the initial design targets so normal-size
-    // supporting text still meets 4.5:1 contrast on canvas and surface.
-    static let textSecondary = Color.dynamic(light: 0x5F5A52, dark: 0xB9B2A8)
-    static let textTertiary = Color.dynamic(light: 0x746F66, dark: 0x8E877E)
+    static let textPrimary = Color.dynamic(light: 0x161B1C, dark: 0xF1F5F3)
+    // Light values are tuned so normal-size supporting text still meets
+    // 4.5:1 contrast on canvas and surface.
+    static let textSecondary = Color.dynamic(light: 0x5A6868, dark: 0xB7C5C3)
+    static let textTertiary = Color.dynamic(light: 0x637271, dark: 0x8FA19F)
 
     // MARK: Action and state
 
-    // Light accent is darkened from #B85F3D for text contrast; the dark accent
-    // is intentionally light enough to use dark labels on top.
-    static let accent = Color.dynamic(light: 0x9C4A2E, dark: 0xE08A65)
-    static let accentSoft = Color.dynamic(light: 0xF1DED4, dark: 0x422B22)
-    static let onAccent = Color.dynamic(light: 0xFFFFFF, dark: 0x151412)
-    static let success = Color.dynamic(light: 0x397B5B, dark: 0x76B994)
-    static let warning = Color.dynamic(light: 0x94601E, dark: 0xD9A65C)
-    static let danger = Color.dynamic(light: 0xB94A45, dark: 0xE47C75)
+    // Deep petrol teal in light mode, eucalyptus mint in dark mode. The light
+    // accent is dark enough for text; the dark accent takes dark labels.
+    static let accent = Color.dynamic(light: 0x194E57, dark: 0x7ECFC3)
+    static let accentSoft = Color.dynamic(light: 0xDDEAE6, dark: 0x1A3737)
+    static let onAccent = Color.dynamic(light: 0xFFFFFF, dark: 0x0D1516)
+    static let success = Color.dynamic(light: 0x2E7A55, dark: 0x78C69A)
+    static let warning = Color.dynamic(light: 0x8E641F, dark: 0xD8B36B)
+    static let danger = Color.dynamic(light: 0xB14B46, dark: 0xE88B85)
 
     // MARK: Structure
 
-    static let separator = Color.dynamic(light: 0xE4DED5, dark: 0x39352F)
-    static let progressTrack = Color.dynamic(light: 0xEAE4DC, dark: 0x39352F)
+    static let separator = Color.dynamic(light: 0xE3E5E0, dark: 0x2A3838)
+    static let progressTrack = Color.dynamic(light: 0xE5ECE8, dark: 0x2A3838)
 
     // MARK: Compatibility aliases
     //

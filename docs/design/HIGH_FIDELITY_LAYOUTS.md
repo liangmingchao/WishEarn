@@ -7,7 +7,7 @@
 ## 1. Design composition rules
 
 ### Visual rhythm
-- Page canvas: warm neutral background.
+- Page canvas: soft ivory background with a subtle eucalyptus tint.
 - Main content horizontal inset: 20 pt.
 - Section spacing: 28–32 pt.
 - Card internal inset: 16–20 pt.
@@ -33,7 +33,7 @@ Do not give all three levels equal font weight or color contrast.
 
 ### Featured wish card
 - One lead active wish when active wishes exist.
-- Image aspect ratio: 16:10 for lead card; width fills content.
+- Image aspect ratio: 2:1 for lead card; width fills content. Detail hero remains 16:10.
 - Image radius: 22–26 pt.
 - Image overlays are prohibited unless needed for legibility; title and price should sit below the image.
 - Wish title: 25–28 pt serif semibold; max 2 lines, natural wrapping.

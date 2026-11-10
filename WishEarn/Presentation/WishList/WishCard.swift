@@ -120,21 +120,27 @@ private struct FeaturedWishImage: View {
     let imageData: Data?
 
     var body: some View {
-        ZStack {
-            WishImagePlaceholder(iconSize: 38)
+        // Color.clear establishes the crop before the image is overlaid; using
+        // the image itself as the aspect-ratio source lets a portrait source
+        // drive the card height. The home lead image is deliberately shallower
+        // than the Detail hero so it does not overpower the title below it.
+        Color.clear
+            .aspectRatio(2.0, contentMode: .fit)
+            .overlay {
+                ZStack {
+                    WishImagePlaceholder(iconSize: 38)
 
-            if let imageData, let image = UIImage(data: imageData) {
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFill()
+                    if let imageData, let image = UIImage(data: imageData) {
+                        Image(uiImage: image)
+                            .resizable()
+                            .scaledToFill()
+                    }
+                }
             }
-        }
-        .aspectRatio(16.0 / 10.0, contentMode: .fit)
-        .frame(maxWidth: .infinity)
-        .clipShape(
-            RoundedRectangle(cornerRadius: AppRadius.xl, style: .continuous)
-        )
-        .accessibilityHidden(true)
+            .clipShape(
+                RoundedRectangle(cornerRadius: AppRadius.xl, style: .continuous)
+            )
+            .accessibilityHidden(true)
     }
 }
 
