@@ -76,6 +76,17 @@ struct WishEditorView: View {
             .appErrorAlert(error: $viewModel.error)
             .environment(\.locale, Locale(identifier: "zh_CN"))
             .interactiveDismissDisabled(viewModel.isSaving)
+            .fullScreenCover(isPresented: $viewModel.isPresentingCrop) {
+                if let image = viewModel.pendingCropImage {
+                    WishPhotoCropView(
+                        image: image,
+                        onCrop: { viewModel.applyCroppedImage($0) },
+                        onCancel: { viewModel.cancelCrop() }
+                    )
+                } else {
+                    Color.black.ignoresSafeArea()
+                }
+            }
             .onChange(of: viewModel.selectedPhotoItem) { _, item in
                 Task {
                     await viewModel.loadSelectedImage(from: item)
@@ -93,19 +104,42 @@ struct WishEditorView: View {
         VStack(alignment: .leading, spacing: AppSpacing.md) {
             if let imageData = viewModel.selectedImageData,
                let image = UIImage(data: imageData) {
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(maxWidth: .infinity)
-                    .frame(height: 180)
-                    .clipped()
+                Color.clear
+                    .aspectRatio(WishPhotoCropLayout.aspectRatio, contentMode: .fit)
+                    .overlay {
+                        Image(uiImage: image)
+                            .resizable()
+                            .scaledToFill()
+                            .accessibilityLabel("已选择的心愿照片")
+                    }
                     .clipShape(
                         RoundedRectangle(
                             cornerRadius: AppRadius.md,
                             style: .continuous
                         )
                     )
-                    .accessibilityLabel("已选择的心愿照片")
+                    .overlay(alignment: .bottomTrailing) {
+                        Button {
+                            viewModel.beginCroppingSelectedImage()
+                        } label: {
+                            Label("裁剪", systemImage: "crop")
+                                .font(AppTypography.caption.weight(.semibold))
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, AppSpacing.sm)
+                                .padding(.vertical, AppSpacing.xs)
+                                .background(.black.opacity(0.55), in: Capsule())
+                        }
+                        .buttonStyle(.plain)
+                        .frame(
+                            minWidth: AppLayout.touchTarget,
+                            minHeight: AppLayout.touchTarget
+                        )
+                        .contentShape(Rectangle())
+                        .padding(AppSpacing.sm)
+                        .accessibilityLabel("裁剪照片")
+                        .accessibilityHint("调整照片构图")
+                        .accessibilityIdentifier("editPhotoCropButton")
+                    }
 
                 HStack(spacing: AppSpacing.md) {
                     PhotosPicker(

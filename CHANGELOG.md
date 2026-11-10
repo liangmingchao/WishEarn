@@ -25,6 +25,7 @@
 - 重新设计为 Playful Editorial / Sunny Pop Journal：Violet 主色、Coral 辅助色、六种 Wish 主题色，并落地七个核心页面 Light / Dark；测试扩展至 274 项。
 - 新增 `WishTheme` 确定性 Wish 主题色系统；App Icon 仅提供提案预览，未替换生产资产。
 - 新增 `WishEarnUITests` 关键旅程测试（创建 → 条件 → 记录 → 解锁 → 领取）；修复庆祝页领取后详情状态不刷新的问题。测试基线为 274 项单元/集成 + 1 项 UI 测试。
+- 心愿照片支持 16:10 裁剪：添加 / 更换照片后可拖动与缩放构图；取消保留旧图，编辑时可重新裁剪。测试扩展至 290 项单元/集成 + 2 项 UI 测试。
 
 ### Planned
 

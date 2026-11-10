@@ -1,3 +1,4 @@
+import UIKit
 import XCTest
 @testable import WishEarn
 
@@ -339,5 +340,108 @@ final class WishEditorViewModelTests: XCTestCase {
         XCTAssertEqual(imageStorage.deletedPaths, [imageStorage.savePath])
         XCTAssertEqual(viewModel.error, .persistence(.saveFailed("磁盘已满")))
         XCTAssertFalse(viewModel.isSaved)
+    }
+
+    func testSelectingPhotoPreparesCropWithoutReplacingImage() {
+        let (viewModel, _, _) = makeSUT()
+        let oldImage = Data([1, 2, 3])
+        viewModel.selectedImageData = oldImage
+
+        viewModel.prepareCrop(from: makeImageData())
+
+        XCTAssertTrue(viewModel.isPresentingCrop)
+        XCTAssertNotNil(viewModel.pendingCropImage)
+        XCTAssertEqual(viewModel.selectedImageData, oldImage)
+
+        viewModel.cancelCrop()
+
+        XCTAssertFalse(viewModel.isPresentingCrop)
+        XCTAssertNil(viewModel.pendingCropImage)
+        XCTAssertEqual(viewModel.selectedImageData, oldImage)
+    }
+
+    func testApplyingCropReplacesSelectedImage() {
+        let (viewModel, _, _) = makeSUT()
+        let cropped = makeImageData(size: CGSize(width: 12, height: 8))
+
+        viewModel.prepareCrop(from: makeImageData())
+        viewModel.applyCroppedImage(cropped)
+
+        XCTAssertEqual(viewModel.selectedImageData, cropped)
+        XCTAssertFalse(viewModel.isPresentingCrop)
+        XCTAssertNil(viewModel.pendingCropImage)
+    }
+
+    func testPrepareCropRejectsInvalidDataAndKeepsExistingImage() {
+        let (viewModel, _, _) = makeSUT()
+        let oldImage = Data([1, 2, 3])
+        viewModel.selectedImageData = oldImage
+
+        viewModel.prepareCrop(from: Data([0]))
+
+        XCTAssertEqual(
+            viewModel.error,
+            .domain(.invalidInput("无法读取所选图片。"))
+        )
+        XCTAssertFalse(viewModel.isPresentingCrop)
+        XCTAssertNil(viewModel.pendingCropImage)
+        XCTAssertEqual(viewModel.selectedImageData, oldImage)
+    }
+
+    func testBeginCroppingSelectedImage() {
+        let (viewModel, _, _) = makeSUT()
+        viewModel.selectedImageData = makeImageData()
+
+        viewModel.beginCroppingSelectedImage()
+
+        XCTAssertTrue(viewModel.isPresentingCrop)
+        XCTAssertNotNil(viewModel.pendingCropImage)
+    }
+
+    func testEditingExistingImageCanBeRecropped() throws {
+        let wish = try Wish(
+            title: "Kindle",
+            imagePath: "WishImages/old.jpg",
+            createdAt: now,
+            updatedAt: now
+        )
+        let (viewModel, repository, imageStorage) = makeEditingSUT(wish: wish)
+        imageStorage.storedImages["WishImages/old.jpg"] = makeImageData(
+            size: CGSize(width: 30, height: 20)
+        )
+        viewModel.loadExistingImageIfNeeded()
+
+        viewModel.beginCroppingSelectedImage()
+        let cropped = makeImageData(size: CGSize(width: 16, height: 10))
+        viewModel.applyCroppedImage(cropped)
+        viewModel.title = "Kindle 2"
+        viewModel.save()
+
+        XCTAssertEqual(imageStorage.savedData, cropped)
+        XCTAssertEqual(repository.wishes.first?.imagePath, imageStorage.savePath)
+        XCTAssertEqual(imageStorage.deletedPaths, ["WishImages/old.jpg"])
+    }
+
+    func testRemoveSelectedImageClearsPendingCrop() {
+        let (viewModel, _, _) = makeSUT()
+        viewModel.prepareCrop(from: makeImageData())
+
+        viewModel.removeSelectedImage()
+
+        XCTAssertNil(viewModel.pendingCropImage)
+        XCTAssertFalse(viewModel.isPresentingCrop)
+        XCTAssertNil(viewModel.selectedImageData)
+    }
+
+    private func makeImageData(
+        size: CGSize = CGSize(width: 20, height: 20)
+    ) -> Data {
+        let format = UIGraphicsImageRendererFormat.default()
+        format.scale = 1
+        let image = UIGraphicsImageRenderer(size: size, format: format).image { context in
+            UIColor.systemPink.setFill()
+            context.fill(CGRect(origin: .zero, size: size))
+        }
+        return image.jpegData(compressionQuality: 0.9)!
     }
 }

@@ -69,7 +69,7 @@
 
 - MVP P0–P9 已实现并进入发布准备。
 - Phase 2 UI 改版已完成：设计系统 #8、首页 #9、详情 #10、Today #11、Editors #12、Unlock / Achievements / Settings #13，以及后续主图比例 #20、Playful Editorial 配色 #21。
-- 当前测试基线为 **274 项**，Playful Editorial 七个核心页面 Light / Dark 截图已归档。
+- 当前测试基线为 **290 项单元 / 集成 + 2 项 UI 测试**，Playful Editorial 七个核心页面 Light / Dark 截图已归档。
 - Issue #22 RC 验收：自动化回归、Release Archive / IPA 已完成；GitHub Actions billing 阻塞、真机交互未验收，当前结论为 **NO-GO**。
 - 历史阶段记录保留；不以本文档替代 [PROJECT_STATUS.md](../PROJECT_STATUS.md) 的实际验证状态。
 
@@ -1265,6 +1265,15 @@ Phase 2 UI 改版作为独立交付序列完成：
 - UI Automation：Issue #25 新增 `WishEarnUITests`，覆盖一条关键旅程；CI 仍受 billing 阻塞，其他页面与真实设备交互未自动化。
 - 结论：**NO-GO** for App Store / TestFlight，详见 `docs/qa/ISSUE_22_RC_REPORT.md`。
 - RC 转 GO 的条件：CI 恢复且绿色、真机清单通过、App Store 元数据 / 凭据 / App Icon 确认、无 P0/P1。
+
+## 12.3 心愿照片裁剪（Issue #28）
+
+- 添加 / 更换心愿照片后进入 16:10 裁剪页，支持拖动、双指缩放与还原。
+- 取消裁剪保留原有图片；确认后才替换待保存数据。
+- 编辑已有图片时提供重新裁剪入口。
+- 裁剪结果先渲染为 JPEG，再交给现有 `ImageStorageService` 压缩、存储与清理。
+- 首页仍按 2:1 展示，详情与编辑预览按 16:10 展示；这是构图框与展示框的有意差异。
+- 测试：裁剪构图边界、裁剪输出尺寸、ViewModel 取消 / 确认 / 重新裁剪状态，以及裁剪页 UI smoke test；基线为 290 项单元/集成 + 2 项 UI 测试。
 
 ---
 

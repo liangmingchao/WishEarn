@@ -1,6 +1,7 @@
 import Foundation
 import Observation
 import PhotosUI
+import UIKit
 import _PhotosUI_SwiftUI
 
 @MainActor
@@ -19,6 +20,8 @@ final class WishEditorViewModel {
 
     var selectedPhotoItem: PhotosPickerItem?
     var selectedImageData: Data?
+    var pendingCropImage: UIImage?
+    var isPresentingCrop = false
 
     private(set) var isSaving = false
     private(set) var isSaved = false
@@ -129,23 +132,65 @@ final class WishEditorViewModel {
         // Opening and cancelling PhotosPicker must not clear an existing image;
         // removal is an explicit user action through removeSelectedImage().
         guard let item else { return }
+        selectedPhotoItem = nil
 
         do {
             guard let data = try await item.loadTransferable(type: Data.self) else {
                 error = .domain(.invalidInput("无法读取所选图片。"))
                 return
             }
-            selectedImageData = data
-            imageLoadedFromExisting = false
-            imageRemoved = false
+
+            prepareCrop(from: data)
         } catch {
             self.error = AppError.wrap(error)
         }
     }
 
+    func prepareCrop(from data: Data) {
+        guard let image = UIImage(data: data) else {
+            error = .domain(.invalidInput("无法读取所选图片。"))
+            return
+        }
+
+        pendingCropImage = image
+        isPresentingCrop = true
+    }
+
+    func beginCroppingSelectedImage() {
+        guard let selectedImageData,
+              let image = UIImage(data: selectedImageData) else {
+            error = .domain(.invalidInput("无法读取所选图片。"))
+            return
+        }
+
+        pendingCropImage = image
+        isPresentingCrop = true
+    }
+
+    func applyCroppedImage(_ data: Data) {
+        guard UIImage(data: data) != nil else {
+            error = .domain(.invalidInput("无法读取裁剪后的图片。"))
+            return
+        }
+
+        selectedImageData = data
+        pendingCropImage = nil
+        isPresentingCrop = false
+        imageLoadedFromExisting = false
+        imageRemoved = false
+    }
+
+    func cancelCrop() {
+        pendingCropImage = nil
+        isPresentingCrop = false
+        selectedPhotoItem = nil
+    }
+
     func removeSelectedImage() {
         selectedPhotoItem = nil
         selectedImageData = nil
+        pendingCropImage = nil
+        isPresentingCrop = false
         imageLoadedFromExisting = false
         imageRemoved = true
     }

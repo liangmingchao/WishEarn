@@ -143,7 +143,7 @@ Do not add category, tags, shopping URL, budget, account, or recommendation fiel
 
 | Field | Required | Interaction | Guidance |
 |---|---|---|---|
-| Image | No | Existing PhotosPicker/image flow | Large visual invitation; never block save |
+| Image | No | PhotosPicker, then 16:10 crop screen | Large visual invitation; never block save |
 | Title | Yes | Single-line text input, may expand/scroll for long content | Placeholder: “例如：Kindle Paperwhite” |
 | Target price | No | Decimal/currency-aware input if supported | Optional metadata; do not assume a currency |
 | Description/reason | No | Multiline text | Prompt: “为什么这件事对你重要？” |
@@ -173,14 +173,16 @@ Currency:
 |---|---|
 | No image | Neutral surface, restrained photo symbol, “添加心愿照片” |
 | Picker open | Use native PhotosPicker |
-| Image selected | Preview crop consistent with Home and Detail |
+| Cropping | Full-screen 16:10 crop window with drag and pinch; Cancel keeps the previous image, Done replaces it |
+| Image selected | Preview uses the 16:10 crop; Home still presents a 2:1 frame and Detail a 16:10 frame |
 | Replacing image | Allow selecting another image through existing flow |
 | Image load/save error | Keep title and other fields; show a local error and allow retry |
-| Existing image during edit | Show current image before replacement |
+| Existing image during edit | Show current image before replacement; offer a re-crop action |
 
 - Do not add remote image search or external image dependencies.
-- Do not discard the existing image merely because the picker is opened and cancelled.
+- Do not discard the existing image merely because the picker is opened, cancelled, or the crop is cancelled.
 - If the current implementation has image size/format limits, preserve them and expose a clear error.
+- Do not add rotation, filters, or selectable crop ratios in this scope.
 
 ## 4. Condition Editor — type-aware configuration
 
