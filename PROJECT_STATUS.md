@@ -5,15 +5,15 @@
 ## Project Overview
 
 - Current Version: 0.15.0
-- Current Phase: Phase 9 — 发布准备
+- Current Phase: Phase 9 — 发布准备（RC 验收）
 - Current Branch: main
-- Last Updated: 2026-11-09
+- Last Updated: 2026-11-10
 
 ## Current Milestone
 
 - Milestone: M9 — 发布准备
 - Description: 应用信息、数据导出、Release 构建、TestFlight 与 App Store 上架
-- Status: IN_PROGRESS（Archive / IPA 完成，TestFlight 待账号与上传）
+- Status: IN_PROGRESS — RC NO-GO（Archive / IPA 完成；CI billing、真机验收与上架材料仍阻塞）
 
 ## Completed Tasks
 
@@ -32,16 +32,17 @@
 - TASK-903 发布构建（2026-11-08，Release Archive + Development IPA）
 - Phase 2 UI redesign：Issue #8 设计系统、#9 心愿首页、#10 心愿详情、#11 Today 行动页、#12 Editors、#13 Unlock / Achievements / Settings（2026-11-09 已合并）
 - Issue #20 首页主图比例与过渡配色（已合并，随后由 #21 取代品牌主色）
+- Issue #21 Playful Editorial / Sunny Pop Journal 配色与七个核心页面（2026-11-10 已合并）
 
 ## In Progress
 
 - Task ID: TASK-904
 - Task Name: 发布验收
-- Current Progress: Release 0.15.0 已安装并启动；TestFlight / App Store 提交待账号
+- Current Progress: Release 0.15.0 已归档；TestFlight / App Store 提交待账号
 - Modified Files: 无
 - Remaining Work: TestFlight 上传、App Store 元数据与截图、最终真机检查
 
-- Issue #21 Playful Editorial 视觉体系：Token、Wish 主题与七个核心页面已实现，等待 PR Review
+- Issue #22 Phase 2 RC QA：自动化回归、Release Archive / IPA 已完成；真机交互与 CI 阻塞，结论 NO-GO
 
 ## Pending Tasks
 
@@ -56,9 +57,11 @@
 - TestFlight 上传与 App Store 提交需要 App Store Connect 账号与凭据，当前未配置。
 - App 名称 `WishEarn` 与 Bundle ID `com.wishearn.app` 仍为占位，上架前确认。
 - App Store 截图、支持 URL、隐私政策 URL 尚未准备。
-- 真机图片选择、键盘遮挡、滚动性能尚未逐项确认（解锁即时性已确认）。
+- 当前 Playful Editorial 构建尚未在真机完成图片选择、键盘、滚动、导航与重启验收。
 - 无 UI 自动化测试覆盖真实用户流程。
 - App Icon 仍为 petrol 版本；Playful Editorial 图标提案待品牌确认后替换。
+- GitHub Actions 因账户 billing / spending limit 在 workflow 启动前失败；最新 main 无绿色 CI。
+- 构建存在非致命方向声明警告：All interface orientations must be supported unless the app requires full screen。
 
 ## Technical Debt
 
@@ -97,21 +100,23 @@
 ## Last Verification
 
 - Build: PASS — Debug / Release
-- Unit Tests: PASS — 274 项，iPhone 18 Pro / iOS 27.2，2026-11-10 12:45
+- Unit Tests: PASS — 274 项，iPhone 18 Pro / iOS 27.2，2026-11-10 12:53
 - Playful Editorial: PASS — 七个核心页面 Light / Dark 模拟器截图
-- Integration Tests: PASS
-- Archive: PASS — `build/WishEarn.xcarchive`（0.15.0 / 1）
-- IPA: PASS — `build/export/WishEarn.ipa`
-- Device: PASS — Release 0.15.0 安装并启动（iPhone 17）；petrol/eucalyptus 配色已重新安装启动
+- Archive: PASS — `build/Issue22.xcarchive`（0.15.0 / 1）
+- IPA: PASS — `build/Issue22Export/WishEarn.ipa`
+- Device: NOT TESTED — 当前 Playful 构建未在 iPhone 17 上完成安装与交互验收
+- CI: BLOCKED — GitHub Actions billing / spending limit 在 job 启动前阻止执行
 - Privacy Manifest: PASS — 已打包
-- Last Verified Commit: `e8abbb3`（main，PR #20）；Issue #21 在 `feat/issue-21-playful-editorial` 验证
+- Last Verified Commit: `d9b1888`（main，PR #23）
+- RC 报告：`docs/qa/ISSUE_22_RC_REPORT.md`
 
 ## Current Risks
 
-- 后续工作（TASK-301～904）尚未提交，位于工作区。
+- 真机图片选择 / 键盘 / 滚动 / 导航 / 重启仍需手动确认。
+- GitHub Actions billing 阻塞 CI 门禁。
 - TestFlight / App Store 账号与凭据缺失。
 - App Store 截图、支持 URL、隐私政策 URL 未准备。
-- 真机图片选择 / 键盘 / 滚动仍需手动确认。
+- App Icon 尚未替换为 Playful 方案。
 
 ## Files Changed（Phase 9）
 
@@ -128,8 +133,8 @@
 
 ## Next Recommended Action
 
-- Task ID: TASK-904
-- Description: 配置 App Store Connect、上传 TestFlight 并完成截图 / 支持 URL / 隐私政策 URL
-- Dependencies: Archive 与 IPA 已就绪
-- Expected Outcome: TestFlight 可安装测试，App Store 元数据完整
-- Acceptance Criteria: TestFlight 构建可用、截图与隐私信息完整、无 P0 缺陷
+- Task ID: Issue #22 / TASK-904
+- Description: 恢复 GitHub Actions billing，重跑 CI；在 iPhone 17 上完成真机交互清单；确认 App Store 名称 / Bundle ID / 截图 / 支持 URL / 隐私政策 URL
+- Dependencies: `build/Issue22.xcarchive`、`build/Issue22Export/WishEarn.ipa`、可用真机、App Store Connect
+- Expected Outcome: CI 绿色、真机清单完成、RC 从 NO-GO 转为 GO
+- Acceptance Criteria: 无 P0/P1；CI Build/Test 通过；真机图片选择 / 键盘 / 滚动 / 导航 / 重启通过；App Store 材料完整
