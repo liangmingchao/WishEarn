@@ -8,6 +8,11 @@
 
 ### Changed
 
+- Editorial Paper v1 视觉方向：暖纸白画布、墨黑单一行动色、薄荷状态横幅；移除衬线标题与卡片阴影，改用 0.5pt 分隔线与留白建立层级。
+- 今日页重构：大标题 + 状态横幅 + 以用户图片为主视觉的心愿区 + 单一墨色胶囊 CTA + hairline 行动列表。
+- 心愿详情页重构：4:3 用户图片 Hero、分段进度（≤ 8 项条件）、hairline 条件行、底部固定「记录这一项进度」。
+- 新增 `StatusChip`、`SegmentedProgress`、`WishHeroPhoto`、`HairlineDivider` 与 `AppTabBar`；Tab 栏改为自绘平铺样式，push 页面自动隐藏。
+- 设计 token 更新：`AppSpacing.screenInset` 24、`AppLayout.buttonHeight` 56、4:3 Hero；对比度测试覆盖新增 chip 组合。
 - Today 行动页重构为低摩擦行动入口：Wish 作为次要上下文、条件标题主导、单一记录 CTA。
 - TodayViewModel 输出 actionable / 今天已记录 / 已完成条件三组状态，并暴露累计进度快照；CHECKPOINT 历史完成不再显示为今日完成。
 - 保持 STREAK 每日唯一记录和 COUNT / DURATION / AMOUNT / CUSTOM 可多次记录的现有语义。

@@ -66,10 +66,12 @@
 		6DBFCFE7FEFCDED849446E65 /* WishStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41C0EC4D29F6C60FB247B416 /* WishStatus.swift */; };
 		70896C5BD26D3F0952D2777E /* UIImage+Resize.swift in Sources */ = {isa = PBXBuildFile; fileRef = 098FBF39C0B673683C377EE8 /* UIImage+Resize.swift */; };
 		70A9A3F25DD8BF01CB760A54 /* MockImageStorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = DF25DA76B8C78C01A0DB6DE1 /* MockImageStorageService.swift */; };
+		70FE0603711456521DE8196A /* AppTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 35A5AB6C07E36A7405572BD1 /* AppTabBar.swift */; };
 		721E38956BC61A16097EF440 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6998123A4C11D48D1A43B262 /* Assets.xcassets */; };
 		73CDBCDE9E468DA7249B306D /* WishTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A90AF76A4A378EB72394DAB /* WishTheme.swift */; };
 		780DD93AA44F730C6247AD22 /* ProgressRecordTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6A0F8D8686BCB9670A34D830 /* ProgressRecordTests.swift */; };
 		7836FE09C32EED578E631474 /* WishListViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ED7FEED6990E7FF3B58661A /* WishListViewModelTests.swift */; };
+		7868BA2B507F46F32F19B700 /* StatusChip.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4B3E2350E6140340F38CE15B /* StatusChip.swift */; };
 		7ACB83DC4F4AEEDC38D6184F /* ProgressRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A7011E5F72EF1D978173CD1 /* ProgressRecord.swift */; };
 		7BDB3EF33A2188D730CFB9D3 /* RecordEditorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BBB91C78CEADC93F225B046E /* RecordEditorView.swift */; };
 		7BFAFFC103AA19D81E4DE885 /* CardModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90A7CF09A5B4E6238BC428B0 /* CardModifier.swift */; };
@@ -124,11 +126,13 @@
 		DA13246D2777E06BB523B482 /* DataExportTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59219164EAB55C813D71754 /* DataExportTests.swift */; };
 		DD3C5275352319D2A23AFF25 /* WishPausePeriodEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8FC5C5B5D92FA9A338E8EE8 /* WishPausePeriodEntity.swift */; };
 		DF9F45653789996C8F3F8F69 /* RecordEditorViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA82E97EDFDF5290727E454F /* RecordEditorViewModelTests.swift */; };
+		E11874B5EB369D43DD7E9B35 /* SegmentedProgress.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18337C185AAE75E08CF12B9 /* SegmentedProgress.swift */; };
 		E2FC4849D77E6D5C0A2EC87B /* ProgressRecordEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2790C9E8964C8C9889C89D3B /* ProgressRecordEntity.swift */; };
 		E31A055DFBC5BDC2DBD3CCE9 /* ConditionTargetValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28618F2D71B80C16BE8A47C9 /* ConditionTargetValidator.swift */; };
 		E3D5C004F42BAD2968DA2B04 /* ConditionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4D3A431CD7147D396D1021 /* ConditionDetailView.swift */; };
 		E3FFEA62347D2223222FA13C /* ConditionLifecycleServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 427657BF82CF5FEAD0F8076F /* ConditionLifecycleServiceTests.swift */; };
 		E7CFF573901899A0A0A2C24A /* SwiftDataWishRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDFDA7F38EB2E3C2DB4988AF /* SwiftDataWishRepository.swift */; };
+		E8B3DBDE27A48ED959E9466B /* WishHeroPhoto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00219A8B33866DC53D27D524 /* WishHeroPhoto.swift */; };
 		E8D9D224CB8C5E8D90F61056 /* ModelContainerFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0EE6D440F7514DBCA2652F1F /* ModelContainerFactory.swift */; };
 		EB1C111CE23755B59A169CD5 /* Condition.swift in Sources */ = {isa = PBXBuildFile; fileRef = E048115549498B23FF11280D /* Condition.swift */; };
 		ED8A4943D0C078C8226DD49C /* AchievementsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A71B8C9375FAB96B19BBC368 /* AchievementsView.swift */; };
@@ -162,6 +166,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		00219A8B33866DC53D27D524 /* WishHeroPhoto.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WishHeroPhoto.swift; sourceTree = "<group>"; };
 		0041E9CFFB869DED99EC665A /* AmountDirection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmountDirection.swift; sourceTree = "<group>"; };
 		017454612B5DD9FE027D6144 /* ErrorAlert.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorAlert.swift; sourceTree = "<group>"; };
 		038819055234352005C8FF4F /* ConditionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConditionTests.swift; sourceTree = "<group>"; };
@@ -194,6 +199,7 @@
 		2F9FA7F7FA616C232DA890C6 /* ConditionDraft.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConditionDraft.swift; sourceTree = "<group>"; };
 		2FB8422A1A45C995C9D0E76C /* DesignSystemTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignSystemTests.swift; sourceTree = "<group>"; };
 		34C605D33168179419CFC001 /* AppRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppRouter.swift; sourceTree = "<group>"; };
+		35A5AB6C07E36A7405572BD1 /* AppTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppTabBar.swift; sourceTree = "<group>"; };
 		36811AFE8456EF41D32D21C8 /* WishUnlockServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WishUnlockServiceTests.swift; sourceTree = "<group>"; };
 		37F3EE57A0993E1FEFDB56D6 /* WishEarnUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = WishEarnUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3A7011E5F72EF1D978173CD1 /* ProgressRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressRecord.swift; sourceTree = "<group>"; };
@@ -210,6 +216,7 @@
 		4535522D01F9500CE699CDA3 /* ButtonStyles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonStyles.swift; sourceTree = "<group>"; };
 		4ABE083E346060AB95C1E376 /* WishDetailViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WishDetailViewModelTests.swift; sourceTree = "<group>"; };
 		4B0111DE7E3C91AEB00C8CFA /* ProgressCalculatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressCalculatorTests.swift; sourceTree = "<group>"; };
+		4B3E2350E6140340F38CE15B /* StatusChip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusChip.swift; sourceTree = "<group>"; };
 		4D2A6B7BE8E1A1849101F8FB /* StreakCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreakCalculator.swift; sourceTree = "<group>"; };
 		4DF370FEC03AACE9B35437E3 /* WishStatus+Presentation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "WishStatus+Presentation.swift"; sourceTree = "<group>"; };
 		4E91F9EBDE5CE07039241C0A /* UnlockEventEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnlockEventEntity.swift; sourceTree = "<group>"; };
@@ -297,6 +304,7 @@
 		E99D2D59D0C0776AE2D07450 /* EmptyStateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmptyStateView.swift; sourceTree = "<group>"; };
 		EC5C52C4C652B1E06A9598C9 /* StatusBadge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBadge.swift; sourceTree = "<group>"; };
 		F1292E7E4AA0DDE0654D74A9 /* ImageStorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageStorageService.swift; sourceTree = "<group>"; };
+		F18337C185AAE75E08CF12B9 /* SegmentedProgress.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentedProgress.swift; sourceTree = "<group>"; };
 		F7381AA199B630DDC30A39A8 /* WishLifecycleService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WishLifecycleService.swift; sourceTree = "<group>"; };
 		FBE308D316F00D216F32A276 /* Wish.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Wish.swift; sourceTree = "<group>"; };
 		FC207CFBF8B3D5E3B989EA27 /* WishProgressServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WishProgressServiceTests.swift; sourceTree = "<group>"; };
@@ -580,7 +588,10 @@
 				90A7CF09A5B4E6238BC428B0 /* CardModifier.swift */,
 				73D0146060FCF2879AB6ED13 /* FilterChip.swift */,
 				3BE0A05885DDE2F635645D07 /* ProgressIndicator.swift */,
+				F18337C185AAE75E08CF12B9 /* SegmentedProgress.swift */,
 				EC5C52C4C652B1E06A9598C9 /* StatusBadge.swift */,
+				4B3E2350E6140340F38CE15B /* StatusChip.swift */,
+				00219A8B33866DC53D27D524 /* WishHeroPhoto.swift */,
 				3A90AF76A4A378EB72394DAB /* WishTheme.swift */,
 			);
 			path = DesignSystem;
@@ -778,6 +789,7 @@
 		FF2C9EFD171D2192B5458934 /* Navigation */ = {
 			isa = PBXGroup;
 			children = (
+				35A5AB6C07E36A7405572BD1 /* AppTabBar.swift */,
 				BBAE6AFD080CF57ACEB6BAD0 /* RootTabView.swift */,
 			);
 			path = Navigation;
@@ -948,6 +960,7 @@
 				6B92DBE3B459E1C6A17196A2 /* AppDependencies.swift in Sources */,
 				B3822DB93ED05419CADFE47C /* AppError.swift in Sources */,
 				50F451283A064FC29A6D0B79 /* AppRouter.swift in Sources */,
+				70FE0603711456521DE8196A /* AppTabBar.swift in Sources */,
 				81FCD600A2E7785C31B3F21D /* AppTheme.swift in Sources */,
 				23D3A1F838F5B7A326E36CF1 /* ButtonStyles.swift in Sources */,
 				7BFAFFC103AA19D81E4DE885 /* CardModifier.swift in Sources */,
@@ -991,8 +1004,10 @@
 				57C581F8B8236C112CA7ED6C /* RecordEditorViewModel.swift in Sources */,
 				611B11586A2EC40BC5B31B58 /* RootTabView.swift in Sources */,
 				7C811F5DCC57312D82315841 /* SchemaMigrationPlan.swift in Sources */,
+				E11874B5EB369D43DD7E9B35 /* SegmentedProgress.swift in Sources */,
 				5902BABE7A8831ADC6DB68DA /* SettingsView.swift in Sources */,
 				07A837AC800E8CB537EB72C3 /* StatusBadge.swift in Sources */,
+				7868BA2B507F46F32F19B700 /* StatusChip.swift in Sources */,
 				97D83BDD58B2E8A4B958FBE9 /* StreakCalculator.swift in Sources */,
 				04E3F2C76D09214BFA756AD1 /* StreakResult.swift in Sources */,
 				3A8F26421D1E84B1F6C5409F /* SwiftDataConditionRepository.swift in Sources */,
@@ -1023,6 +1038,7 @@
 				D70C92A61E6EFF4B464BA3F7 /* WishEditorViewModel.swift in Sources */,
 				F326F0CAE0B177609242BEF6 /* WishEntity.swift in Sources */,
 				1D837A2D31A00825FF11182B /* WishFilter.swift in Sources */,
+				E8B3DBDE27A48ED959E9466B /* WishHeroPhoto.swift in Sources */,
 				2278D52F09F95D49C4B4F987 /* WishLifecycleService.swift in Sources */,
 				EDE29CCF3CBB9EF9FE4BD7F9 /* WishListView.swift in Sources */,
 				CAE18C7D214F8AEE9526AE48 /* WishListViewModel.swift in Sources */,

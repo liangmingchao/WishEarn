@@ -110,11 +110,13 @@ final class TodayViewModel {
     private let wishRepository: WishRepository
     private let progressRepository: ProgressRepository
     private let wishProgressService: WishProgressService
+    private let imageStorage: ImageStorageService
     private let clock: ClockProviding
 
     private(set) var actionableItems: [TodayConditionItem] = []
     private(set) var recordedTodayItems: [TodayConditionItem] = []
     private(set) var completedItems: [TodayConditionItem] = []
+    private(set) var heroImageData: Data?
     private(set) var hasAnyWishes = false
     private(set) var hasLoaded = false
     private(set) var error: AppError?
@@ -123,12 +125,24 @@ final class TodayViewModel {
         wishRepository: WishRepository,
         progressRepository: ProgressRepository,
         wishProgressService: WishProgressService,
+        imageStorage: ImageStorageService,
         clock: ClockProviding
     ) {
         self.wishRepository = wishRepository
         self.progressRepository = progressRepository
         self.wishProgressService = wishProgressService
+        self.imageStorage = imageStorage
         self.clock = clock
+    }
+
+    /// The wish that leads the page: the first actionable condition in the
+    /// existing deterministic listing order. No new ranking is introduced.
+    var heroItem: TodayConditionItem? {
+        actionableItems.first
+    }
+
+    var remainingActionableItems: [TodayConditionItem] {
+        Array(actionableItems.dropFirst())
     }
 
     var hasContent: Bool {
@@ -208,8 +222,23 @@ final class TodayViewModel {
             actionableItems = actionable
             recordedTodayItems = recordedToday
             completedItems = completed
+            loadHeroImage(for: actionable.first?.wish)
         } catch {
             self.error = AppError.wrap(error)
+        }
+    }
+
+    private func loadHeroImage(for wish: Wish?) {
+        guard let imagePath = wish?.imagePath else {
+            heroImageData = nil
+            return
+        }
+
+        do {
+            heroImageData = try imageStorage.loadImageData(at: imagePath)
+        } catch {
+            // 图片读取失败时显示主题色占位，不影响今日页加载。
+            heroImageData = nil
         }
     }
 

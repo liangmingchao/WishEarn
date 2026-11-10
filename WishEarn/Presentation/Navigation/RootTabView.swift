@@ -16,10 +16,9 @@ struct RootTabView: View {
                     makeConditionDetailViewModel: container.makeConditionDetailViewModel(condition:),
                     makeRecordEditorViewModel: container.makeRecordEditorViewModel(condition:record:)
                 )
+                .appTabBar(selection: $router.selectedTab)
             }
-            .tabItem {
-                Label("心愿", systemImage: "heart")
-            }
+            .toolbar(.hidden, for: .tabBar)
             .tag(AppRouter.Tab.wishes)
 
             NavigationStack {
@@ -32,26 +31,23 @@ struct RootTabView: View {
                         container.makeWishEditorViewModel()
                     }
                 )
+                .appTabBar(selection: $router.selectedTab)
             }
-            .tabItem {
-                Label("行动", systemImage: "checkmark.circle")
-            }
+            .toolbar(.hidden, for: .tabBar)
             .tag(AppRouter.Tab.today)
 
             NavigationStack {
                 AchievementsView(viewModel: container.makeAchievementsViewModel())
+                    .appTabBar(selection: $router.selectedTab)
             }
-            .tabItem {
-                Label("成就", systemImage: "trophy")
-            }
+            .toolbar(.hidden, for: .tabBar)
             .tag(AppRouter.Tab.achievements)
 
             NavigationStack {
                 SettingsView(dataExportService: container.dataExportService)
+                    .appTabBar(selection: $router.selectedTab)
             }
-            .tabItem {
-                Label("我的", systemImage: "person")
-            }
+            .toolbar(.hidden, for: .tabBar)
             .tag(AppRouter.Tab.settings)
         }
         .tint(AppColors.primary)

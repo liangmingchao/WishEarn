@@ -31,6 +31,8 @@ final class DesignSystemTests: XCTestCase {
             ("onCoral / coral", AppColors.onCoral, AppColors.coral, 4.5),
             ("coralText / surface", AppColors.coralText, AppColors.surface, 4.5),
             ("coralText / coralSoft", AppColors.coralText, AppColors.coralSoft, 4.5),
+            ("chipText / chipFill", AppColors.chipText, AppColors.chipFill, 4.5),
+            ("chipTextMuted / chipFill", AppColors.chipTextMuted, AppColors.chipFill, 4.5),
             ("success / surface", AppColors.success, AppColors.surface, 4.5),
             ("warning / surface", AppColors.warning, AppColors.surface, 4.5),
             ("danger / surface", AppColors.danger, AppColors.surface, 4.5)
@@ -70,14 +72,14 @@ final class DesignSystemTests: XCTestCase {
     }
 
     func testLayoutTokensMatchDesignContract() {
-        XCTAssertEqual(AppSpacing.screenInset, 20)
+        XCTAssertEqual(AppSpacing.screenInset, 24)
         XCTAssertEqual(AppSpacing.hero, 40)
         XCTAssertEqual(AppRadius.sm, 8)
         XCTAssertEqual(AppRadius.md, 14)
         XCTAssertEqual(AppRadius.lg, 20)
         XCTAssertEqual(AppRadius.xl, 26)
         XCTAssertEqual(AppLayout.touchTarget, 44)
-        XCTAssertEqual(AppLayout.buttonHeight, 52)
+        XCTAssertEqual(AppLayout.buttonHeight, 56)
     }
 
     private func assertContrast(

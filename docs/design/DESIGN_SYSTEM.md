@@ -4,6 +4,68 @@
 > Platform: SwiftUI, iOS 17+
 > Principle: Centralized semantic tokens; no per-screen ad hoc styling.
 
+## 0. 当前方向：Editorial Paper（v2）
+
+> 2026-11-11 起，本节 token 为唯一实现基线，取代下方 Playful Editorial 章节的色值、字号与组件规则；旧值仅作历史参考。当前落地范围：全局 token、今日页、心愿详情页、底部 Tab 栏；其余页面沿用布局、继承新配色。
+
+### 0.1 颜色
+
+| Token | Light | Dark | 用途 |
+|---|---|---|---|
+| canvas | #FAF6EF | #14120F | 纸张底色 |
+| surface | #FFFDF8 | #1D1A16 | 弹层与输入 |
+| elevated | #FFFDF8 | #221E19 | 需要抬升的容器（少用） |
+| surfaceSecondary | #F2EBDF | #26221C | 次要分组 |
+| textPrimary | #16120E | #F7F1E6 | 主文字（墨） |
+| textSecondary | #6B6459 | #C4BCAE | 说明文字 |
+| textTertiary | #767063 | #A79E90 | 元信息 |
+| primary | #191512 | #F2ECDF | 唯一行动色：胶囊按钮、选中态 |
+| primarySoft | #DEEDE3 | #24352C | 薄荷底（状态横幅） |
+| chipText | #2B6A4D | #9BDFC7 | 状态横幅文字 |
+| onPrimary | #FFFCF5 | #16120E | 墨底上的文字 |
+| success | #2B6A4D | #7BD3A6 | 完成态 |
+| warning | #8A5210 | #E5B86E | 仅提示 |
+| danger | #B23B45 | #FF9AA5 | 破坏性操作 |
+| separator | #E9E1D4 | #332F27 | 0.5pt 分隔线 |
+| progressTrack | #ECE4D6 | #36322A | 进度轨道 |
+
+规则：
+- 每屏只有一个填充胶囊主行动（墨底），其余操作用描边胶囊或纯文字。
+- 薄荷只表达状态与进度，不承担主行动。
+- 不再用投影表达层级：层级由字号、留白与 hairline 建立。
+- 所有文字/背景组合必须通过 `DesignSystemTests` 的 WCAG 断言（Light + Dark）。
+
+### 0.2 排版
+
+| Role | 基线 | 用途 |
+|---|---|---|
+| display | `.largeTitle` semibold，tracking −1.2 | 页面大标题、心愿标题 |
+| title | `.title2` semibold | 卡片/段落标题 |
+| headline | `.headline` semibold | 按钮、行标题 |
+| kicker | `.caption` semibold，tracking +1 | 段落小标（“继续这个心愿”） |
+| chipNumber | `.title3` bold，monospacedDigit | 状态横幅数字 |
+| body / callout / caption / footnote | 系统默认 | 正文、元信息 |
+
+- 移除衬线显示字体；中文标题使用系统无衬线 semibold + 负字距。
+- 数字使用等宽数字，避免跳动。
+
+### 0.3 组件
+
+| 组件 | 规则 |
+|---|---|
+| `StatusChip` | 薄荷 56pt 圆角 19，星标 + 数字 + 单位 + 右侧说明 |
+| `PrimaryButtonStyle` | 墨黑胶囊，56pt，全宽，每屏唯一 |
+| `PillButtonStyle` | 行内次级操作，描边胶囊，44pt 命中区 |
+| `HairlineDivider` | 0.5pt `separator`，替代卡片分隔 |
+| `SegmentedProgress` | 必需条件 ≤ 8 项时使用分段条，否则连续进度条 |
+| `WishHeroPhoto` | 4:3 用户图片，圆角 26；无图时主题色 wash + 轻图标，不生成插画 |
+| `AppTabBar` | 自绘平铺 Tab 栏：hairline、线性图标、选中墨色 + 顶部 14×3 横条 |
+
+### 0.4 图像与插画
+
+- 不使用装饰插画；主视觉一律来自用户上传的心愿图片。
+- 心愿主题色（`WishTheme`）仅用于小色点、无图 wash 与标识，不用于状态语义。
+
 ## 1. Foundations
 
 ### 1.1 Color tokens

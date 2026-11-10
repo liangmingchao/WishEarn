@@ -6,8 +6,8 @@
 
 - Current Version: 0.15.0
 - Current Phase: Phase 9 — 发布准备（RC 验收）
-- Current Branch: main
-- Last Updated: 2026-11-10
+- Current Branch: design/editorial-paper-01
+- Last Updated: 2026-11-11
 
 ## Current Milestone
 
@@ -35,6 +35,12 @@
 - Issue #21 Playful Editorial / Sunny Pop Journal 配色与七个核心页面（2026-11-10 已合并）
 
 ## In Progress
+
+- Task ID: TASK-905
+- Task Name: Editorial Paper v1 视觉方向（今天 / 心愿详情 / 全局 token）
+- Current Progress: NEEDS_REVIEW — 代码完成，Build / 274 单元测试 / 1 UI 测试通过；截图见 `docs/design/screenshots/editorial-paper-01/`
+- Modified Files: 见下方「Files Changed（Editorial Paper v1）」
+- Remaining Work: 心愿列表、成就、设置、编辑器、解锁庆祝仍为旧布局（已继承新配色）；深色模式截图；真机确认
 
 - Task ID: TASK-904
 - Task Name: 发布验收
@@ -100,6 +106,10 @@
 
 ## Last Verification
 
+- Editorial Paper v1: Build PASS — Debug（iOS Simulator，2026-11-11 00:29）
+- Editorial Paper v1: Unit Tests PASS — 274 项（含新增 chip 对比度断言）
+- Editorial Paper v1: UI Test PASS — CriticalJourneyUITests（自绘 Tab 栏与详情页重构后回归通过）
+- Editorial Paper v1: Screenshots — 今天 / 心愿详情 Light（iPhone 18 Pro，iOS 27.2）
 - Build: PASS — Debug / Release
 - Unit Tests: PASS — 274 项，iPhone 18 Pro / iOS 27.2，2026-11-10 13:22
 - UI Test: PASS — 1 项关键旅程（创建 → 条件 → 记录 → 解锁 → 领取）
@@ -120,6 +130,19 @@
 - App Store 截图、支持 URL、隐私政策 URL 未准备。
 - App Icon 尚未替换为 Playful 方案。
 
+## Files Changed（Editorial Paper v1）
+
+- `WishEarn/Presentation/Components/DesignSystem/AppTheme.swift`
+- `WishEarn/Presentation/Components/DesignSystem/ButtonStyles.swift`
+- `WishEarn/Presentation/Components/DesignSystem/{StatusChip,SegmentedProgress,WishHeroPhoto}.swift`
+- `WishEarn/Presentation/Navigation/{RootTabView,AppTabBar}.swift`
+- `WishEarn/Presentation/Today/{TodayView,TodayViewModel}.swift`
+- `WishEarn/Presentation/WishDetail/{WishDetailView,ConditionRow}.swift`
+- `WishEarn/App/{AppContainer,WishEarnApp}.swift`
+- `WishEarnTests/DesignSystemTests/DesignSystemTests.swift`
+- `WishEarnTests/ViewModelTests/TodayViewModelTests.swift`
+- `docs/design/DESIGN_SYSTEM.md`、`docs/design/screenshots/editorial-paper-01/`
+
 ## Files Changed（Phase 9）
 
 - `WishEarn/Resources/Assets.xcassets/AppIcon.appiconset/AppIcon.png`
@@ -134,6 +157,12 @@
 - `project.yml`（0.15.0）
 
 ## Next Recommended Action
+
+- Task ID: TASK-905
+- Description: 评审 `design/editorial-paper-01` 的今天页与详情页；确认后把心愿列表、成就、设置、编辑器、解锁庆祝迁移到新布局，并补深色模式截图
+- Dependencies: 设计方向确认（TASK-905 NEEDS_REVIEW）
+- Expected Outcome: 五个剩余页面完成 Editorial Paper 布局迁移
+- Acceptance Criteria: 七页视觉一致；Light / Dark 截图齐全；Build + 274 单元测试 + UI 测试通过
 
 - Task ID: Issue #22 / TASK-904
 - Description: 恢复 GitHub Actions billing，重跑 CI；在 iPhone 17 上完成真机交互清单；确认 App Store 名称 / Bundle ID / 截图 / 支持 URL / 隐私政策 URL

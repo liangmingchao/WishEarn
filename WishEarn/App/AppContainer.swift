@@ -170,6 +170,7 @@ final class AppContainer {
             wishRepository: wishRepository,
             progressRepository: progressRepository,
             wishProgressService: wishProgressService,
+            imageStorage: imageStorageService,
             clock: dependencies.clock
         )
     }

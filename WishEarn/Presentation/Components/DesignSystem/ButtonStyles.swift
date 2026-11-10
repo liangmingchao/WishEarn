@@ -1,5 +1,6 @@
 import SwiftUI
 
+/// The single filled capsule action of a screen.
 struct PrimaryButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
@@ -15,30 +16,25 @@ struct PrimaryButtonStyle: ButtonStyle {
                     ? AppColors.primaryPressed
                     : AppColors.primary
             )
-            .clipShape(
-                RoundedRectangle(cornerRadius: AppRadius.md, style: .continuous)
-            )
+            .clipShape(Capsule())
     }
 }
 
+/// Quiet secondary action: hairline capsule on the canvas.
 struct SecondaryButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(AppTypography.headline)
-            .foregroundStyle(AppColors.primary)
+            .foregroundStyle(AppColors.textPrimary)
             .frame(
                 maxWidth: .infinity,
                 minHeight: AppLayout.buttonHeight
             )
             .padding(.horizontal, AppSpacing.screenInset)
-            .background(
-                AppColors.elevated.opacity(configuration.isPressed ? 0.72 : 1)
-            )
-            .clipShape(
-                RoundedRectangle(cornerRadius: AppRadius.md, style: .continuous)
-            )
+            .background(AppColors.canvas.opacity(configuration.isPressed ? 0.6 : 1))
+            .clipShape(Capsule())
             .overlay(
-                RoundedRectangle(cornerRadius: AppRadius.md, style: .continuous)
+                Capsule()
                     .stroke(AppColors.separator, lineWidth: 1)
             )
     }
@@ -49,11 +45,32 @@ struct TertiaryButtonStyle: ButtonStyle {
         configuration.label
             .font(AppTypography.callout)
             .foregroundStyle(
-                AppColors.primary.opacity(configuration.isPressed ? 0.65 : 1)
+                AppColors.primary.opacity(configuration.isPressed ? 0.55 : 1)
             )
             .frame(minHeight: AppLayout.touchTarget)
             .padding(.horizontal, AppSpacing.sm)
             .contentShape(Rectangle())
+    }
+}
+
+/// Row-level action: compact outlined capsule that keeps a 44pt hit area.
+struct PillButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .font(AppTypography.caption.weight(.semibold))
+            .foregroundStyle(AppColors.textPrimary)
+            .padding(.horizontal, AppSpacing.md)
+            .padding(.vertical, AppSpacing.sm)
+            .background(
+                AppColors.canvas.opacity(configuration.isPressed ? 0.55 : 1)
+            )
+            .clipShape(Capsule())
+            .overlay(
+                Capsule()
+                    .stroke(AppColors.separator, lineWidth: 1)
+            )
+            .frame(minHeight: AppLayout.touchTarget)
+            .contentShape(Capsule())
     }
 }
 
@@ -69,6 +86,10 @@ extension ButtonStyle where Self == TertiaryButtonStyle {
     static var appTertiary: TertiaryButtonStyle { TertiaryButtonStyle() }
 }
 
+extension ButtonStyle where Self == PillButtonStyle {
+    static var appPill: PillButtonStyle { PillButtonStyle() }
+}
+
 #Preview("Buttons — Light") {
     ButtonStylesPreview()
         .preferredColorScheme(.light)
@@ -82,11 +103,14 @@ extension ButtonStyle where Self == TertiaryButtonStyle {
 private struct ButtonStylesPreview: View {
     var body: some View {
         VStack(spacing: AppSpacing.lg) {
-            Button("保存记录") {}
+            Button("记录这次的阅读") {}
                 .buttonStyle(.appPrimary)
 
             Button("稍后再说") {}
                 .buttonStyle(.appSecondary)
+
+            Button("记录") {}
+                .buttonStyle(.appPill)
 
             Button("查看全部") {}
                 .buttonStyle(.appTertiary)

@@ -35,7 +35,9 @@ struct TodayView: View {
             }
         }
         .appScreenBackground()
-        .navigationTitle("今天")
+        // The editorial headline is the page title; a navigation title would
+        // duplicate it.
+        .toolbar(.hidden, for: .navigationBar)
         .sheet(
             item: $recordingCondition,
             onDismiss: {
@@ -60,33 +62,30 @@ struct TodayView: View {
     private var content: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
-                Text(viewModel.todayText)
-                    .font(AppTypography.footnote)
-                    .foregroundStyle(AppColors.textSecondary)
-                    .padding(.horizontal, AppSpacing.screenInset)
-                    .padding(.top, AppSpacing.xs)
+                header
 
                 if viewModel.hasContent {
-                    if !viewModel.actionableItems.isEmpty {
-                        actionableSection
-                    } else {
-                        Text("今天暂时没有需要继续记录的行动。")
-                            .font(AppTypography.callout)
-                            .foregroundStyle(AppColors.textSecondary)
-                            .padding(.horizontal, AppSpacing.screenInset)
-                            .padding(.top, AppSpacing.xl)
+                    if let hero = viewModel.heroItem {
+                        heroSection(hero)
+                    }
+
+                    if !viewModel.remainingActionableItems.isEmpty {
+                        section(
+                            title: "还可以推进",
+                            items: viewModel.remainingActionableItems
+                        )
                     }
 
                     if !viewModel.recordedTodayItems.isEmpty {
-                        readOnlySection(
+                        section(
                             title: "今天已记录",
                             items: viewModel.recordedTodayItems
                         )
                     }
 
                     if !viewModel.completedItems.isEmpty {
-                        readOnlySection(
-                            title: "已完成条件",
+                        section(
+                            title: "已完成",
                             items: viewModel.completedItems
                         )
                     }
@@ -94,60 +93,207 @@ struct TodayView: View {
                     emptyState
                 }
             }
-            .padding(.bottom, AppSpacing.xl)
+            .padding(.horizontal, AppSpacing.screenInset)
+            .padding(.bottom, AppSpacing.xxl)
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 
-    private var actionableSection: some View {
+    // MARK: - Header
+
+    private var header: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text("今天可以推进这些心愿")
-                .font(AppTypography.headline)
+            Text(viewModel.todayText)
+                .font(AppTypography.kicker)
+                .tracking(1.1)
+                .foregroundStyle(AppColors.textTertiary)
+                .padding(.top, AppSpacing.sm)
+
+            Text("小步走，\n也会到。")
+                .font(AppTypography.display)
+                .tracking(-1.4)
                 .foregroundStyle(AppColors.textPrimary)
-                .padding(.bottom, AppSpacing.sm)
-                .padding(.top, AppSpacing.xl)
+                .lineSpacing(1)
+                .padding(.top, AppSpacing.md)
+                .accessibilityLabel("小步走，也会到")
 
-            ForEach(
-                Array(viewModel.actionableItems.enumerated()),
-                id: \.element.id
-            ) { index, item in
-                if index > 0 {
-                    separator
-                }
-
-                TodayActionRow(item: item) {
-                    recordingCondition = item.condition
-                }
-            }
+            StatusChip(
+                value: "\(viewModel.actionableItems.count)",
+                unit: "件小事",
+                caption: chipCaption
+            )
+            .padding(.top, AppSpacing.xl)
         }
-        .padding(.horizontal, AppSpacing.screenInset)
     }
 
-    private func readOnlySection(
+    private var chipCaption: String {
+        if !viewModel.actionableItems.isEmpty {
+            return "今天可以推进"
+        }
+        if !viewModel.recordedTodayItems.isEmpty {
+            return "今天已经完成"
+        }
+        return "今天没有待办"
+    }
+
+    // MARK: - Hero
+
+    private func heroSection(_ item: TodayConditionItem) -> some View {
+        VStack(alignment: .leading, spacing: 0) {
+            if let imageData = viewModel.heroImageData {
+                WishHeroPhoto(
+                    imageData: imageData,
+                    theme: .forWish(item.wish)
+                )
+                .padding(.top, AppSpacing.xl)
+            } else {
+                WishThemeMark(theme: .forWish(item.wish), width: 30)
+                    .padding(.top, AppSpacing.xl)
+            }
+
+            Text("继续这个心愿")
+                .font(AppTypography.kicker)
+                .tracking(1)
+                .foregroundStyle(AppColors.textTertiary)
+                .padding(.top, AppSpacing.md)
+
+            Text(item.wish.title)
+                .font(AppTypography.title)
+                .tracking(-0.6)
+                .foregroundStyle(AppColors.textPrimary)
+                .lineLimit(2)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.top, AppSpacing.xs)
+
+            Text("\(item.condition.title) · \(item.progressText)")
+                .font(AppTypography.callout)
+                .foregroundStyle(AppColors.textSecondary)
+                .lineLimit(2)
+                .fixedSize(horizontal: false, vertical: true)
+                .padding(.top, AppSpacing.sm)
+
+            ProgressIndicator(
+                value: item.snapshot.progressRatio,
+                accessibilityLabel: "条件进度",
+                accessibilityValue: item.progressText,
+                style: .hero,
+                isComplete: item.snapshot.isCompleted
+            )
+            .padding(.top, AppSpacing.lg)
+
+            Button("记录\(item.condition.title)") {
+                recordingCondition = item.condition
+            }
+            .buttonStyle(.appPrimary)
+            .padding(.top, AppSpacing.xl)
+            .accessibilityIdentifier("today-hero-record")
+        }
+    }
+
+    // MARK: - Rows
+
+    private func section(
         title: String,
         items: [TodayConditionItem]
     ) -> some View {
         VStack(alignment: .leading, spacing: 0) {
             Text(title)
-                .font(AppTypography.headline)
-                .foregroundStyle(AppColors.textPrimary)
-                .padding(.bottom, AppSpacing.sm)
-                .padding(.top, AppSpacing.xl)
+                .font(AppTypography.kicker)
+                .tracking(1)
+                .foregroundStyle(AppColors.textTertiary)
+                .padding(.top, AppSpacing.xxl)
+                .padding(.bottom, AppSpacing.xs)
 
-            ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
-                if index > 0 {
-                    separator
+            HairlineDivider()
+
+            ForEach(items) { item in
+                if item.state == .actionable {
+                    actionableRow(item)
+                } else {
+                    readOnlyRow(item)
                 }
 
-                TodayReadOnlyRow(item: item)
+                HairlineDivider()
             }
         }
-        .padding(.horizontal, AppSpacing.screenInset)
     }
 
-    private var separator: some View {
-        Rectangle()
-            .fill(AppColors.separator)
-            .frame(height: 0.5)
+    private func actionableRow(_ item: TodayConditionItem) -> some View {
+        Button {
+            recordingCondition = item.condition
+        } label: {
+            HStack(spacing: AppSpacing.md) {
+                WishThemeDot(theme: .forWish(item.wish), size: 8)
+
+                VStack(alignment: .leading, spacing: Spacing.rowGap) {
+                    Text(item.condition.title)
+                        .font(AppTypography.callout.weight(.semibold))
+                        .foregroundStyle(AppColors.textPrimary)
+                        .lineLimit(2)
+                        .fixedSize(horizontal: false, vertical: true)
+
+                    Text("\(item.wish.title) · \(item.progressText)")
+                        .font(AppTypography.caption)
+                        .foregroundStyle(AppColors.textTertiary)
+                        .lineLimit(1)
+                }
+
+                Spacer(minLength: AppSpacing.sm)
+
+                Text("记录")
+                    .font(AppTypography.caption.weight(.semibold))
+                    .foregroundStyle(AppColors.textPrimary)
+                    .padding(.horizontal, AppSpacing.md)
+                    .padding(.vertical, AppSpacing.sm)
+                    .overlay(
+                        Capsule().stroke(AppColors.separator, lineWidth: 1)
+                    )
+            }
+            .padding(.vertical, AppSpacing.md + 2)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text(item.accessibilityDescription))
+        .accessibilityHint(Text("打开行动记录编辑器"))
+    }
+
+    private func readOnlyRow(_ item: TodayConditionItem) -> some View {
+        HStack(spacing: AppSpacing.md) {
+            Image(systemName: item.state == .completed
+                ? "checkmark.circle.fill"
+                : "clock")
+                .font(.system(size: 16, weight: .regular))
+                .foregroundStyle(
+                    item.state == .completed
+                        ? AppColors.success
+                        : AppColors.textTertiary
+                )
+                .frame(width: 22, height: 22)
+                .accessibilityHidden(true)
+
+            VStack(alignment: .leading, spacing: Spacing.rowGap) {
+                Text(item.condition.title)
+                    .font(AppTypography.callout.weight(.medium))
+                    .foregroundStyle(AppColors.textPrimary)
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Text("\(item.wish.title) · \(item.progressText)")
+                    .font(AppTypography.caption)
+                    .foregroundStyle(AppColors.textTertiary)
+                    .lineLimit(1)
+            }
+
+            Spacer(minLength: AppSpacing.sm)
+
+            Text(item.stateText)
+                .font(AppTypography.caption.weight(.medium))
+                .foregroundStyle(AppColors.textTertiary)
+        }
+        .padding(.vertical, AppSpacing.md + 2)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text(item.accessibilityDescription))
     }
 
     private var emptyState: some View {
@@ -164,149 +310,9 @@ struct TodayView: View {
         )
         .padding(.top, AppSpacing.hero)
     }
-}
 
-private struct TodayActionRow: View {
-    let item: TodayConditionItem
-    let onRecord: () -> Void
-
-    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-
-    var body: some View {
-        Group {
-            if dynamicTypeSize.isAccessibilitySize {
-                VStack(alignment: .leading, spacing: AppSpacing.md) {
-                    content
-                    recordButton
-                }
-            } else {
-                HStack(alignment: .center, spacing: AppSpacing.md) {
-                    content
-                    Spacer(minLength: AppSpacing.sm)
-                    recordButton
-                }
-            }
-        }
-        .padding(.vertical, AppSpacing.md)
-        .frame(minHeight: 84, alignment: .leading)
-    }
-
-    private var content: some View {
-        VStack(alignment: .leading, spacing: AppSpacing.xs) {
-            HStack(spacing: AppSpacing.xs) {
-                WishThemeDot(theme: .forWish(item.wish))
-
-                Text(item.wish.title)
-                    .font(AppTypography.caption)
-                    .foregroundStyle(AppColors.textSecondary)
-                    .lineLimit(1)
-            }
-
-            Text(item.condition.title)
-                .font(AppTypography.headline)
-                .foregroundStyle(AppColors.textPrimary)
-                .lineLimit(2)
-                .fixedSize(horizontal: false, vertical: true)
-
-            Text(item.progressText)
-                .font(AppTypography.footnote)
-                .foregroundStyle(AppColors.textSecondary)
-
-            if let todayRecordText = item.todayRecordText {
-                Text(todayRecordText)
-                    .font(AppTypography.caption2)
-                    .foregroundStyle(AppColors.textTertiary)
-            }
-        }
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text(item.accessibilityDescription))
-    }
-
-    private var recordButton: some View {
-        Button(action: onRecord) {
-            HStack(spacing: AppSpacing.xs) {
-                Image(systemName: "plus")
-                Text("记录")
-            }
-            .font(AppTypography.footnote.weight(.semibold))
-            .foregroundStyle(AppColors.accent)
-            .padding(.horizontal, AppSpacing.md)
-            .frame(minHeight: AppLayout.touchTarget)
-            .background(AppColors.accentSoft, in: Capsule())
-            .contentShape(Capsule())
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel("记录\(item.condition.title)")
-        .accessibilityHint("打开行动记录编辑器")
-    }
-}
-
-private struct TodayReadOnlyRow: View {
-    let item: TodayConditionItem
-
-    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-
-    var body: some View {
-        Group {
-            if dynamicTypeSize.isAccessibilitySize {
-                VStack(alignment: .leading, spacing: AppSpacing.sm) {
-                    HStack(alignment: .top, spacing: AppSpacing.md) {
-                        checkmark
-                        content
-                    }
-                    stateLabel
-                        .padding(.leading, 28)
-                }
-            } else {
-                HStack(alignment: .center, spacing: AppSpacing.md) {
-                    checkmark
-                    content
-                    Spacer(minLength: AppSpacing.sm)
-                    stateLabel
-                }
-            }
-        }
-        .padding(.vertical, AppSpacing.md)
-        .frame(minHeight: 72, alignment: .leading)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text(item.accessibilityDescription))
-    }
-
-    private var checkmark: some View {
-        Image(systemName: "checkmark.circle.fill")
-            .font(.system(size: 18, weight: .regular))
-            .foregroundStyle(AppColors.success)
-            .frame(width: 20, height: 20)
-            .accessibilityHidden(true)
-    }
-
-    private var content: some View {
-        VStack(alignment: .leading, spacing: AppSpacing.xs) {
-            HStack(spacing: AppSpacing.xs) {
-                WishThemeDot(theme: .forWish(item.wish))
-
-                Text(item.wish.title)
-                    .font(AppTypography.caption)
-                    .foregroundStyle(AppColors.textSecondary)
-                    .lineLimit(1)
-            }
-
-            Text(item.condition.title)
-                .font(AppTypography.callout.weight(.semibold))
-                .foregroundStyle(AppColors.textPrimary)
-                .lineLimit(2)
-                .fixedSize(horizontal: false, vertical: true)
-
-            Text(item.progressText)
-                .font(AppTypography.footnote)
-                .foregroundStyle(AppColors.textSecondary)
-        }
-    }
-
-    private var stateLabel: some View {
-        Text(item.stateText)
-            .font(AppTypography.caption.weight(.semibold))
-            .foregroundStyle(AppColors.textSecondary)
+    private enum Spacing {
+        static let rowGap: CGFloat = 3
     }
 }
 

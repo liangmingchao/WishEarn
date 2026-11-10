@@ -36,6 +36,7 @@ final class TodayViewModelTests: XCTestCase {
             wishRepository: wishRepository,
             progressRepository: progressRepository,
             wishProgressService: wishProgressService,
+            imageStorage: MockImageStorageService(),
             clock: clock
         )
         return SUT(
