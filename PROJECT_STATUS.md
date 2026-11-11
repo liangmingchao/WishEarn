@@ -40,7 +40,7 @@
 
 - Task ID: Issue #30
 - Task Name: Visual Identity & UI Composition Refinement（Paper & Sage）
-- Current Progress: Home / Today / Wish Detail 与共享 Design System 已完成 Paper & Sage 复审修订；新增「我的 → 外观」跟随系统 / 浅色 / 深色切换；Light / Dark 截图、辅助功能 XXXL 截图与对比度报告已产出；PR 待审阅，未合并。Release 0.15.0 (1) 已于 2026-11-11 安装在 iPhone 17（iOS 27.0），但该安装早于本次 Paper & Sage 修订，真机交互未逐项验收。
+- Current Progress: Home / Today / Wish Detail 与共享 Design System 已完成 Paper & Sage 复审修订；新增「我的 → 外观」跟随系统 / 浅色 / 深色切换；Light / Dark 截图、辅助功能 XXXL 截图与对比度报告已产出；PR 待审阅，未合并。Paper & Sage Release 0.15.0 (1) 已于 2026-11-11 重新安装并启动于 iPhone 17（iOS 27.0）；真机交互未逐项验收。
 - Modified Files: `AppTheme.swift`、`WishTheme.swift`、`WishCard.swift`、`WishListView.swift`、`TodayView.swift`、`WishDetailView.swift`、`ConditionRow.swift`、`FilterChip.swift`、`StatusBadge.swift`、`ProgressIndicator.swift`、`ButtonStyles.swift`、`CardModifier.swift`、`EmptyStateView.swift`、`RootTabView.swift`、`ConditionDetailView.swift`、`WishStatus+Presentation.swift`、`WishEarnApp.swift`、`SettingsView.swift`、新增 `AppAppearance.swift`、`EditorialComponents.swift`、`DesignSystemTests.swift`、`DesignCaptureUITests.swift`、设计文档与截图。
 - Remaining Work: 用户审阅 PR；确认后再合并。若需要，后续单独评估 App Icon 替换与真机照片验证。
 
@@ -69,7 +69,7 @@
 - UI 自动化仅覆盖一条关键旅程；其它页面与真实设备交互仍未自动化。
 - App Icon 仍为 petrol 版本；Playful Editorial 图标提案待品牌确认后替换。Issue #30 新增 `docs/design/assets/app-icon-colorful-proposal.png` 提案，同样未替换生产图标。
 - Issue #30 的截图取证 UI 测试（`DesignCaptureUITests`）默认在 CI 跳过；Xcode 27 模拟器在长会话中偶发 `signal term`，因此拆分为多个短测试运行。
-- Issue #30 Release 0.15.0 (1) 已在 iPhone 17 / iOS 27.0 安装并启动（2026-11-11），但该构建早于 Paper & Sage 复审修订；新增外观设置与新版配色尚未在真机手动验收。
+- Issue #30 Paper & Sage Release 0.15.0 (1) 已在 iPhone 17 / iOS 27.0 重新安装并启动（2026-11-11）；新增外观设置与新版配色尚未在真机手动验收。
 - Issue #30 复审新增「外观」设置，覆盖 Issue #30 原文「不新增用户可配置主题切换功能」的约束；这是用户明确要求，未改动 Domain / Repository / SwiftData / 解锁状态机。
 - 外观设置已通过真实 UI 测试验证：系统浅色下切到深色立即生效，再切回跟随系统恢复；尚未在真机 + 系统外观切换组合下逐项验收。
 - GitHub Actions billing 已恢复；PR #26 与 main 合并后 CI 均已绿色（274 单元/集成 + 1 UI 测试）。
@@ -121,12 +121,13 @@
 - Playful Editorial: PASS — 七个核心页面 Light / Dark 模拟器截图（历史首轮 #30 设计，已被 Paper & Sage 取代）
 - Archive: PASS — `build/Issue22.xcarchive`（0.15.0 / 1）
 - IPA: PASS — `build/Issue22Export/WishEarn.ipa`
-- Device Install / Launch: PASS — Release 0.15.0 (1) 在 iPhone 17 / iOS 27.0 安装并启动（2026-11-11）；该构建早于 Paper & Sage 复审修订
+- Device Install / Launch: PASS — Paper & Sage Release 0.15.0 (1) 在 iPhone 17 / iOS 27.0 重新安装并启动（2026-11-11，devicectl）
 - Device Interaction: NOT TESTED — PhotosPicker、键盘、滚动、导航、重启、新版外观切换
-- CI: PASS — 首轮 Issue #30 PR #31 run [43022177657](https://github.com/liangmingchao/WishEarn/actions/runs/43022177657)（284 tests: 276 passed, 8 skipped, 0 failed, 12m03s）；Paper & Sage 修订提交待新 CI
+- CI: PASS — Paper & Sage PR #31 run [43032317777](https://github.com/liangmingchao/WishEarn/actions/runs/43032317777)（commit `72c8e57`；276 单元/集成 + 10 UI：1 passed, 9 skipped, 0 failed；14m09s）
+- CI (首轮): PASS — run [43022177657](https://github.com/liangmingchao/WishEarn/actions/runs/43022177657)（284 tests: 276 passed, 8 skipped, 0 failed, 12m03s）
 - Main CI: PASS — run 42840733123（274 单元/集成 + 1 UI 测试）
 - Privacy Manifest: PASS — 已打包
-- Last Verified Commit: Paper & Sage 复审修订提交（见 `git log`；main 基线 `16f390c`）
+- Last Verified Commit: `72c8e57`（Paper & Sage 复审修订；main 基线 `16f390c`）
 - RC 报告：`docs/qa/ISSUE_22_RC_REPORT.md`
 
 ## Current Risks
