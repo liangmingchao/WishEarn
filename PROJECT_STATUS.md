@@ -46,7 +46,7 @@
 
 - Task ID: TASK-907
 - Task Name: 记录默认值与解锁庆祝反馈增强（Paper & Sage）
-- Current Progress: NEEDS_REVIEW — COUNT / CUSTOM 新记录预填 1；解锁庆祝改为「已达成 → 已领取」两阶段纸张证书；Build / 278 单元测试 / Critical Journey UI 测试通过；截图 `unlock-light.png` + `unlock-claimed-light.png`
+- Current Progress: NEEDS_REVIEW — COUNT / CUSTOM 新记录预填 1；解锁庆祝改为「已达成 → 已领取」两阶段纸张证书；Build / 278 单元测试 / Critical Journey UI 测试 / CI 通过；截图 `unlock-light.png` + `unlock-claimed-light.png`
 - Modified Files: `RecordEditorViewModel.swift`、`RecordEditorView.swift`、`UnlockCelebrationView.swift`、`UnlockCoordinator.swift`、`RecordEditorViewModelTests.swift`、`UnlockCoordinatorTests.swift`、`CriticalJourneyUITests.swift`、设计文档与截图
 - Remaining Work: PR 审阅；真机确认星屑动画、触觉与 Reduce Motion
 
@@ -133,11 +133,12 @@
 - IPA: PASS — `build/Issue22Export/WishEarn.ipa`
 - Device Install / Launch: PASS — Paper & Sage Release 0.15.0 (1) 在 iPhone 17 / iOS 27.0 重新安装并启动（2026-11-11，devicectl）
 - Device Interaction: NOT TESTED — PhotosPicker、键盘、滚动、导航、重启、新版外观切换
-- CI: PASS — Paper & Sage PR #31 run [43032317777](https://github.com/liangmingchao/WishEarn/actions/runs/43032317777)（commit `72c8e57`；276 单元/集成 + 10 UI：1 passed, 9 skipped, 0 failed；14m09s）
+- CI (TASK-907): PASS — PR #31 run [43056050288](https://github.com/liangmingchao/WishEarn/actions/runs/43056050288)（commit `c4a023f`；278 单元/集成 + 10 UI：1 passed, 9 skipped, 0 failed；10m0s）
+- CI (Paper & Sage): PASS — run [43032317777](https://github.com/liangmingchao/WishEarn/actions/runs/43032317777)（commit `72c8e57`；276 单元/集成 + 10 UI：1 passed, 9 skipped, 0 failed；14m09s）
 - CI (首轮): PASS — run [43022177657](https://github.com/liangmingchao/WishEarn/actions/runs/43022177657)（284 tests: 276 passed, 8 skipped, 0 failed, 12m03s）
 - Main CI: PASS — run 42840733123（274 单元/集成 + 1 UI 测试）
 - Privacy Manifest: PASS — 已打包
-- Last Verified Commit: `72c8e57`（Paper & Sage 复审修订；main 基线 `16f390c`）
+- Last Verified Commit: `c4a023f`（Paper & Sage + TASK-907 UX 增强；main 基线 `16f390c`）
 - RC 报告：`docs/qa/ISSUE_22_RC_REPORT.md`
 
 ## Current Risks
