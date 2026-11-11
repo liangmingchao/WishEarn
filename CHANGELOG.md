@@ -31,6 +31,13 @@
 - 设计系统新增画布渐变、品牌渐变、`editorialTitle` / `kicker` / `metric` 字体、22 / 30pt 圆角、主题 `container` / `onContainer` 与 Dark 深色容器；对比度测试扩展到 48 组 token 组合并新增 `testContrastAuditReport`。
 - 新增 `docs/design/screenshots/issue-30/` Light / Dark 截图与 `CONTRAST.md`；新增仅在 opt-in 时运行的 `DesignCaptureUITests`（CI 默认跳过）。
 - App Icon 新增 Colorful Lifestyle 提案 `docs/design/assets/app-icon-colorful-proposal.png`，未替换生产图标。
+- Issue #30 复审修订（Paper & Sage）：首页卡片从 6 种高饱和主题整卡填色收敛为统一白纸面 + 3 种低饱和 Wish Theme 短标记；品牌紫色与紫色渐变替换为深鼠尾草绿纯色行动色；取消彩色光晕与珊瑚大面积色块；Today 鼓励卡改为白纸 + 窄 clay 色条；Detail Hero 改为白纸卡。
+- 对比度报告更新为 36 组 pair × Light / Dark（72 个实测值）全部 PASS；测试扩展至 276 项。
+- 截图更新为 Paper & Sage：Home / Today / Detail Light + Dark、设置页 Light / Dark / 固定浅色、成就、长标题、辅助功能 XXXL；空状态在 iPhone 17e 空 Store 截取。
+
+### Added
+
+- 设置新增「外观」：跟随系统 / 浅色 / 深色；选择通过 `@AppStorage("appAppearance")` 持久化，并在 App 根视图用 `.preferredColorScheme` 应用。该项由用户复审明确要求，覆盖 Issue #30 原文「不新增用户可配置主题切换功能」的限制；未改动 Domain / Repository / SwiftData / 解锁状态机。
 
 ### Planned
 

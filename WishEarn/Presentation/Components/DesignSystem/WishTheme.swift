@@ -1,25 +1,24 @@
 import SwiftUI
 
-/// A deterministic decorative theme for a wish.
+/// A deterministic, low-saturation decorative theme for a wish.
 ///
-/// The theme is derived from the wish UUID so a wish keeps the same color
-/// across launches without adding a persisted model field.
+/// The theme is derived from the wish UUID so a wish keeps the same accent
+/// across launches without adding a persisted model field. It is deliberately
+/// restricted to three muted tones: sage, clay and stone. The theme appears as
+/// a small mark or tinted wash, never as a large saturated card.
 ///
-/// Three coordinated roles:
-/// - `tint` / `onTint`: small marks, icon plates and stickers.
-/// - `softTint` / `onSoftTint`: photo placeholder washes and quiet insets.
-/// - `container` / `onContainer`: large themed card surfaces. In light mode
-///   the card is the pastel tint with ink text; in dark mode it becomes a
-///   deep, desaturated version of the same hue with a light tint text.
+/// Roles:
+/// - `tint` / `onTint`: small marks, dots and icon plates.
+/// - `softTint` / `onSoftTint`: photo placeholder washes.
+/// - `container` / `onContainer`: quiet themed surfaces, such as the detail
+///   hero.
+/// - `labelText`: readable theme identity on neutral paper surfaces.
 ///
 /// Every `on…` pair is contrast-tested in `DesignSystemTests`.
 enum WishTheme: String, CaseIterable, Sendable {
-    case butter
-    case mint
-    case sky
-    case blush
-    case lavender
-    case peach
+    case sage
+    case clay
+    case stone
 
     static func forWish(_ wish: Wish) -> WishTheme {
         forID(wish.id)
@@ -31,129 +30,101 @@ enum WishTheme: String, CaseIterable, Sendable {
         return allCases[Int(seed % UInt64(allCases.count))]
     }
 
-    /// Solid decorative accent. Stays pastel in both appearances because it
-    /// is paired with a near-black `onTint`.
+    /// Solid decorative accent. Paired with a near-black `onTint` in both
+    /// appearances so small marks stay readable without becoming loud.
     var tint: Color {
         switch self {
-        case .butter:
-            return Color.dynamic(light: 0xFFD66E, dark: 0xF6D57B)
-        case .mint:
-            return Color.dynamic(light: 0xA8E3CF, dark: 0x9BDFC7)
-        case .sky:
-            return Color.dynamic(light: 0xA9D7F2, dark: 0x9CCBEA)
-        case .blush:
-            return Color.dynamic(light: 0xF6C6D1, dark: 0xF3B9C8)
-        case .lavender:
-            return Color.dynamic(light: 0xDCD4FF, dark: 0xC9BEFF)
-        case .peach:
-            return Color.dynamic(light: 0xFFE0D2, dark: 0xF8CBB7)
+        case .sage:
+            return Color.dynamic(light: 0x9DB9A7, dark: 0x9DB9A7)
+        case .clay:
+            return Color.dynamic(light: 0xC99A80, dark: 0xC99A80)
+        case .stone:
+            return Color.dynamic(light: 0xB9B6A8, dark: 0xB2AFA1)
         }
     }
 
-    /// Foreground for text or icons placed on a solid theme tint.
     var onTint: Color {
-        Color.dynamic(light: 0x2E3040, dark: 0x171725)
+        switch self {
+        case .sage:
+            return Color.dynamic(light: 0x24251F, dark: 0x14150F)
+        case .clay:
+            return Color.dynamic(light: 0x2A1E18, dark: 0x2A1E18)
+        case .stone:
+            return Color.dynamic(light: 0x24251F, dark: 0x23241E)
+        }
     }
 
-    /// Larger placeholder washes use a deliberately mixed surface instead of
-    /// opacity, which would turn muddy over the dark canvas.
+    /// Quiet photo-placeholder wash. Mixed explicitly instead of using
+    /// opacity so it does not become muddy over the dark canvas.
     var softTint: Color {
         switch self {
-        case .butter:
-            return Color.dynamic(light: 0xFFF0C7, dark: 0x3A3427)
-        case .mint:
-            return Color.dynamic(light: 0xDDF3EA, dark: 0x223B33)
-        case .sky:
-            return Color.dynamic(light: 0xDFEEF9, dark: 0x22343F)
-        case .blush:
-            return Color.dynamic(light: 0xFBE3E8, dark: 0x3B2B31)
-        case .lavender:
-            return Color.dynamic(light: 0xEEEAFB, dark: 0x302C45)
-        case .peach:
-            return Color.dynamic(light: 0xFFF0E8, dark: 0x3B2D27)
+        case .sage:
+            return Color.dynamic(light: 0xE7EFE8, dark: 0x232F29)
+        case .clay:
+            return Color.dynamic(light: 0xF3E7DF, dark: 0x332721)
+        case .stone:
+            return Color.dynamic(light: 0xEFEEE7, dark: 0x2B2C27)
         }
     }
 
     var onSoftTint: Color {
         switch self {
-        case .butter:
-            return Color.dynamic(light: 0x2E3040, dark: 0xF6D57B)
-        case .mint:
-            return Color.dynamic(light: 0x2E3040, dark: 0x9BDFC7)
-        case .sky:
-            return Color.dynamic(light: 0x2E3040, dark: 0x9CCBEA)
-        case .blush:
-            return Color.dynamic(light: 0x2E3040, dark: 0xF3B9C8)
-        case .lavender:
-            return Color.dynamic(light: 0x2E3040, dark: 0xC9BEFF)
-        case .peach:
-            return Color.dynamic(light: 0x2E3040, dark: 0xF8CBB7)
+        case .sage:
+            return Color.dynamic(light: 0x24251F, dark: 0xC7DACD)
+        case .clay:
+            return Color.dynamic(light: 0x24251F, dark: 0xE9D5C9)
+        case .stone:
+            return Color.dynamic(light: 0x24251F, dark: 0xDEDDD5)
         }
     }
 
-    /// Large themed card surface.
+    /// Quiet themed surface, used by the wish detail hero.
     var container: Color {
         switch self {
-        case .butter:
-            return Color.dynamic(light: 0xFFD66E, dark: 0x3A3427)
-        case .mint:
-            return Color.dynamic(light: 0xA8E3CF, dark: 0x223B33)
-        case .sky:
-            return Color.dynamic(light: 0xA9D7F2, dark: 0x22343F)
-        case .blush:
-            return Color.dynamic(light: 0xF6C6D1, dark: 0x3B2B31)
-        case .lavender:
-            return Color.dynamic(light: 0xDCD4FF, dark: 0x302C45)
-        case .peach:
-            return Color.dynamic(light: 0xFFE0D2, dark: 0x3B2D27)
+        case .sage:
+            return Color.dynamic(light: 0xEEF2EA, dark: 0x242F29)
+        case .clay:
+            return Color.dynamic(light: 0xF6EEE8, dark: 0x302620)
+        case .stone:
+            return Color.dynamic(light: 0xF2F1EB, dark: 0x2B2C27)
         }
     }
 
     /// Text and icons on `container`.
     var onContainer: Color {
         switch self {
-        case .butter:
-            return Color.dynamic(light: 0x2E3040, dark: 0xF6D57B)
-        case .mint:
-            return Color.dynamic(light: 0x2E3040, dark: 0x9BDFC7)
-        case .sky:
-            return Color.dynamic(light: 0x2E3040, dark: 0x9CCBEA)
-        case .blush:
-            return Color.dynamic(light: 0x2E3040, dark: 0xF3B9C8)
-        case .lavender:
-            return Color.dynamic(light: 0x2E3040, dark: 0xC9BEFF)
-        case .peach:
-            return Color.dynamic(light: 0x2E3040, dark: 0xF8CBB7)
+        case .sage:
+            return Color.dynamic(light: 0x24251F, dark: 0xD6E2D9)
+        case .clay:
+            return Color.dynamic(light: 0x24251F, dark: 0xE9D5C9)
+        case .stone:
+            return Color.dynamic(light: 0x24251F, dark: 0xDEDDD5)
         }
     }
 
     /// Readable theme identity for small text placed on neutral surfaces.
     var labelText: Color {
         switch self {
-        case .butter:
-            return Color.dynamic(light: 0x8A6412, dark: 0xF6D57B)
-        case .mint:
-            return Color.dynamic(light: 0x2B6A4D, dark: 0x9BDFC7)
-        case .sky:
-            return Color.dynamic(light: 0x2A5E82, dark: 0x9CCBEA)
-        case .blush:
-            return Color.dynamic(light: 0x9A3C58, dark: 0xF3B9C8)
-        case .lavender:
-            return Color.dynamic(light: 0x55469C, dark: 0xC9BEFF)
-        case .peach:
-            return Color.dynamic(light: 0x9A4C2F, dark: 0xF8CBB7)
+        case .sage:
+            return Color.dynamic(light: 0x3E6654, dark: 0xA9CBB8)
+        case .clay:
+            return Color.dynamic(light: 0x83452F, dark: 0xDFAC93)
+        case .stone:
+            return Color.dynamic(light: 0x5A5C53, dark: 0xC0C2B7)
         }
     }
 }
 
+/// A short rule that carries the wish's muted theme identity.
 struct WishThemeMark: View {
     let theme: WishTheme
     var width: CGFloat = 28
+    var height: CGFloat = 4
 
     var body: some View {
         Capsule()
             .fill(theme.tint)
-            .frame(width: width, height: 4)
+            .frame(width: width, height: height)
             .accessibilityHidden(true)
     }
 }
@@ -166,36 +137,6 @@ struct WishThemeDot: View {
         Circle()
             .fill(theme.tint)
             .frame(width: size, height: size)
-            .accessibilityHidden(true)
-    }
-}
-
-/// A small sticker used to carry the wish identity over photography without
-/// covering the subject. Decorative only.
-struct WishThemeSticker: View {
-    let theme: WishTheme
-    var symbol: String = "sparkles"
-    var size: CGFloat = 40
-
-    var body: some View {
-        Image(systemName: symbol)
-            .font(.system(size: size * 0.40, weight: .semibold))
-            .foregroundStyle(theme.onTint)
-            .frame(width: size, height: size)
-            .background(
-                theme.tint,
-                in: RoundedRectangle(
-                    cornerRadius: size * 0.34,
-                    style: .continuous
-                )
-            )
-            .overlay {
-                RoundedRectangle(
-                    cornerRadius: size * 0.34,
-                    style: .continuous
-                )
-                .stroke(AppColors.surface, lineWidth: 2)
-            }
             .accessibilityHidden(true)
     }
 }
@@ -229,7 +170,9 @@ private struct WishThemePreview: View {
                                 style: .continuous
                             )
                         )
-                    WishThemeSticker(theme: theme)
+                    Text("主题色")
+                        .font(AppTypography.caption)
+                        .foregroundStyle(theme.labelText)
                 }
             }
         }

@@ -2,13 +2,23 @@ import SwiftUI
 import UIKit
 
 /// The editorial cover card for the featured wish.
+///
+/// All cards use the same paper surface. Hierarchy comes from size and
+/// photography, not from a different fill color; the wish theme appears only
+/// as a short muted rule and in the photo placeholder.
 struct FeaturedWishCard: View {
     let wish: Wish
     let progressSummary: WishProgressSummary?
     var imageData: Data? = nil
 
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
     private var theme: WishTheme {
         .forWish(wish)
+    }
+
+    private var cardShape: RoundedRectangle {
+        RoundedRectangle(cornerRadius: AppRadius.xxl, style: .continuous)
     }
 
     var body: some View {
@@ -16,68 +26,83 @@ struct FeaturedWishCard: View {
             coverPhoto
             info
         }
-        .background(
-            theme.container,
-            in: RoundedRectangle(cornerRadius: AppRadius.xxl, style: .continuous)
-        )
-        .overlay(alignment: .topTrailing) {
-            WishThemeSticker(theme: theme, symbol: "sparkles", size: 38)
-                .padding(AppSpacing.lg + AppSpacing.xs)
+        .background(AppColors.surface, in: cardShape)
+        .clipShape(cardShape)
+        .overlay {
+            cardShape.stroke(AppColors.separator, lineWidth: 0.8)
         }
-        .contentShape(
-            RoundedRectangle(cornerRadius: AppRadius.xxl, style: .continuous)
-        )
+        .contentShape(cardShape)
         .accessibilityElement(children: .combine)
         .accessibilityLabel(Text(accessibilityText))
     }
 
     private var coverPhoto: some View {
         Color.clear
-            .aspectRatio(4.0 / 3.0, contentMode: .fit)
+            .aspectRatio(16.0 / 10.0, contentMode: .fit)
             .overlay {
                 WishPhotoView(
                     imageData: imageData,
                     theme: theme,
-                    cornerRadius: AppRadius.xl,
+                    cornerRadius: 0,
                     iconSize: 44
                 )
             }
-            .clipShape(
-                RoundedRectangle(cornerRadius: AppRadius.xl, style: .continuous)
-            )
+            .clipped()
             .overlay(alignment: .topLeading) {
                 StatusBadge(
                     title: wish.status.displayName,
                     tone: wish.status.badgeTone,
                     style: .pill
                 )
-                .padding(AppSpacing.lg + AppSpacing.xs)
+                .padding(AppSpacing.lg)
             }
-            .padding(10)
+            .accessibilityHidden(true)
     }
 
     private var info: some View {
         VStack(alignment: .leading, spacing: AppSpacing.sm) {
-            HStack(alignment: .center, spacing: AppSpacing.sm) {
-                KickerText(
-                    text: "本期心愿",
-                    color: theme.onContainer,
-                    tracking: 1.0
-                )
+            if dynamicTypeSize.isAccessibilitySize {
+                VStack(alignment: .leading, spacing: AppSpacing.xs) {
+                    HStack(alignment: .center, spacing: AppSpacing.sm) {
+                        WishThemeMark(theme: theme, width: 24)
 
-                Spacer(minLength: AppSpacing.sm)
+                        KickerText(
+                            text: "本期心愿",
+                            color: AppColors.textSecondary,
+                            tracking: 1.0
+                        )
+                    }
 
-                if let progressSummary {
-                    Text(progressSummary.detailText)
-                        .font(AppTypography.footnote.weight(.semibold))
-                        .foregroundStyle(theme.onContainer)
+                    if let progressSummary {
+                        Text(progressSummary.detailText)
+                            .font(AppTypography.footnote.weight(.semibold))
+                            .foregroundStyle(AppColors.textSecondary)
+                    }
+                }
+            } else {
+                HStack(alignment: .center, spacing: AppSpacing.sm) {
+                    WishThemeMark(theme: theme, width: 24)
+
+                    KickerText(
+                        text: "本期心愿",
+                        color: AppColors.textSecondary,
+                        tracking: 1.0
+                    )
+
+                    Spacer(minLength: AppSpacing.sm)
+
+                    if let progressSummary {
+                        Text(progressSummary.detailText)
+                            .font(AppTypography.footnote.weight(.semibold))
+                            .foregroundStyle(AppColors.textSecondary)
+                    }
                 }
             }
 
             Text(wish.title)
                 .font(AppTypography.display)
-                .foregroundStyle(theme.onContainer)
-                .lineLimit(2)
+                .foregroundStyle(AppColors.textPrimary)
+                .lineLimit(dynamicTypeSize.isAccessibilitySize ? 4 : 2)
                 .fixedSize(horizontal: false, vertical: true)
 
             metaLine
@@ -88,14 +113,13 @@ struct FeaturedWishCard: View {
                     accessibilityLabel: "条件进度",
                     accessibilityValue: progressSummary.accessibilityValue,
                     style: .hero,
-                    isComplete: progressSummary.isComplete,
-                    trackColor: theme.onContainer.opacity(0.18)
+                    isComplete: progressSummary.isComplete
                 )
                 .padding(.top, AppSpacing.xxs)
             } else {
                 Text("还没有解锁条件")
                     .font(AppTypography.footnote)
-                    .foregroundStyle(theme.onContainer)
+                    .foregroundStyle(AppColors.textSecondary)
             }
         }
         .padding(.horizontal, AppSpacing.lg + AppSpacing.xs)
@@ -119,19 +143,44 @@ struct FeaturedWishCard: View {
         }
 
         if priceText != nil || dateText != nil {
-            HStack(spacing: AppSpacing.sm) {
-                if let priceText {
-                    Text(priceText)
-                }
-                if priceText != nil, dateText != nil {
-                    Text("·")
-                }
-                if let dateText {
-                    Text("目标 \(dateText)")
+            Group {
+                if dynamicTypeSize.isAccessibilitySize {
+                    VStack(alignment: .leading, spacing: AppSpacing.xxs) {
+                        metaItems(
+                            priceText: priceText,
+                            dateText: dateText,
+                            showsSeparator: false
+                        )
+                    }
+                } else {
+                    HStack(spacing: AppSpacing.sm) {
+                        metaItems(
+                            priceText: priceText,
+                            dateText: dateText,
+                            showsSeparator: true
+                        )
+                    }
                 }
             }
             .font(AppTypography.footnote)
-            .foregroundStyle(theme.onContainer)
+            .foregroundStyle(AppColors.textSecondary)
+        }
+    }
+
+    @ViewBuilder
+    private func metaItems(
+        priceText: String?,
+        dateText: String?,
+        showsSeparator: Bool
+    ) -> some View {
+        if let priceText {
+            Text(priceText)
+        }
+        if showsSeparator, priceText != nil, dateText != nil {
+            Text("·")
+        }
+        if let dateText {
+            Text("目标 \(dateText)")
         }
     }
 
@@ -146,7 +195,7 @@ struct FeaturedWishCard: View {
     }
 }
 
-/// A full-width themed banner used for the next wish below the cover.
+/// A full-width paper card used for the next wish below the cover.
 struct WishSpotlightCard: View {
     let wish: Wish
     let progressSummary: WishProgressSummary?
@@ -156,6 +205,10 @@ struct WishSpotlightCard: View {
 
     private var theme: WishTheme {
         .forWish(wish)
+    }
+
+    private var cardShape: RoundedRectangle {
+        RoundedRectangle(cornerRadius: AppRadius.xl, style: .continuous)
     }
 
     var body: some View {
@@ -177,39 +230,38 @@ struct WishSpotlightCard: View {
             }
         }
         .padding(AppSpacing.lg)
-        .background(
-            theme.container,
-            in: RoundedRectangle(cornerRadius: AppRadius.xl, style: .continuous)
-        )
-        .contentShape(
-            RoundedRectangle(cornerRadius: AppRadius.xl, style: .continuous)
-        )
+        .background(AppColors.surface, in: cardShape)
+        .overlay {
+            cardShape.stroke(AppColors.separator, lineWidth: 0.8)
+        }
+        .contentShape(cardShape)
         .accessibilityElement(children: .combine)
         .accessibilityLabel(Text(accessibilityText))
     }
 
     private var textContent: some View {
         VStack(alignment: .leading, spacing: AppSpacing.xs + 2) {
-            ThemeStatusLabel(
+            WishThemeMark(theme: theme, width: 24)
+
+            StatusBadge(
                 title: wish.status.displayName,
-                theme: theme,
-                tint: wish.status.indicatorColor
+                tone: wish.status.badgeTone
             )
 
             Text(wish.title)
                 .font(AppTypography.editorialHeadline)
-                .foregroundStyle(theme.onContainer)
+                .foregroundStyle(AppColors.textPrimary)
                 .lineLimit(2)
                 .fixedSize(horizontal: false, vertical: true)
 
             if let progressSummary {
                 Text(progressSummary.text)
                     .font(AppTypography.footnote)
-                    .foregroundStyle(theme.onContainer)
+                    .foregroundStyle(AppColors.textSecondary)
             } else {
                 Text("还没有解锁条件")
                     .font(AppTypography.footnote)
-                    .foregroundStyle(theme.onContainer)
+                    .foregroundStyle(AppColors.textSecondary)
             }
         }
     }
@@ -227,10 +279,6 @@ struct WishSpotlightCard: View {
             .clipShape(
                 RoundedRectangle(cornerRadius: AppRadius.lg, style: .continuous)
             )
-            .overlay {
-                RoundedRectangle(cornerRadius: AppRadius.lg, style: .continuous)
-                    .stroke(AppColors.surface.opacity(0.75), lineWidth: 2)
-            }
     }
 
     private var accessibilityText: String {
@@ -242,7 +290,7 @@ struct WishSpotlightCard: View {
     }
 }
 
-/// A compact themed card used in the two-column wish grid.
+/// A compact paper card used in the two-column wish grid.
 struct WishGridCard: View {
     let wish: Wish
     let progressSummary: WishProgressSummary?
@@ -252,6 +300,10 @@ struct WishGridCard: View {
 
     private var theme: WishTheme {
         .forWish(wish)
+    }
+
+    private var cardShape: RoundedRectangle {
+        RoundedRectangle(cornerRadius: AppRadius.xl, style: .continuous)
     }
 
     var body: some View {
@@ -273,13 +325,11 @@ struct WishGridCard: View {
         }
         .padding(AppSpacing.sm + 2)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(
-            theme.container,
-            in: RoundedRectangle(cornerRadius: AppRadius.xl, style: .continuous)
-        )
-        .contentShape(
-            RoundedRectangle(cornerRadius: AppRadius.xl, style: .continuous)
-        )
+        .background(AppColors.surface, in: cardShape)
+        .overlay {
+            cardShape.stroke(AppColors.separator, lineWidth: 0.8)
+        }
+        .contentShape(cardShape)
         .accessibilityElement(children: .combine)
         .accessibilityLabel(Text(accessibilityText))
     }
@@ -301,9 +351,11 @@ struct WishGridCard: View {
 
     private var textContent: some View {
         VStack(alignment: .leading, spacing: AppSpacing.xs + 1) {
+            WishThemeMark(theme: theme, width: 18, height: 3)
+
             Text(wish.title)
                 .font(AppTypography.headline)
-                .foregroundStyle(theme.onContainer)
+                .foregroundStyle(AppColors.textPrimary)
                 .lineLimit(dynamicTypeSize.isAccessibilitySize ? 3 : 2)
                 .fixedSize(horizontal: false, vertical: true)
 
@@ -311,26 +363,24 @@ struct WishGridCard: View {
                 if let progressSummary {
                     Text(progressSummary.text)
                         .font(AppTypography.caption.weight(.semibold))
-                        .foregroundStyle(theme.onContainer)
+                        .foregroundStyle(AppColors.textSecondary)
                     ProgressIndicator(
                         value: progressSummary.ratio,
                         accessibilityLabel: "条件进度",
                         accessibilityValue: progressSummary.accessibilityValue,
                         style: .inline,
-                        isComplete: progressSummary.isComplete,
-                        trackColor: theme.onContainer.opacity(0.18)
+                        isComplete: progressSummary.isComplete
                     )
                     .accessibilityHidden(true)
                 } else {
                     Text("还没有解锁条件")
                         .font(AppTypography.caption)
-                        .foregroundStyle(theme.onContainer)
+                        .foregroundStyle(AppColors.textSecondary)
                 }
             } else {
-                ThemeStatusLabel(
+                StatusBadge(
                     title: wish.status.displayName,
-                    theme: theme,
-                    tint: wish.status.indicatorColor
+                    tone: wish.status.badgeTone
                 )
             }
         }

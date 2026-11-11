@@ -17,7 +17,7 @@ struct KickerText: View {
     }
 }
 
-/// Serif section title with an optional quiet detail and coral sparkle.
+/// Serif section title with an optional quiet detail and sage sparkle.
 struct EditorialSectionHeader: View {
     let title: String
     var detail: String?
@@ -48,37 +48,11 @@ struct EditorialSectionHeader: View {
             if showsSparkle {
                 Image(systemName: "sparkle")
                     .font(.system(size: 13, weight: .semibold))
-                    .foregroundStyle(AppColors.coral)
+                    .foregroundStyle(AppColors.primary)
                     .accessibilityHidden(true)
             }
         }
         .accessibilityElement(children: .combine)
-    }
-}
-
-/// A themed status label used on themed containers. The text uses
-/// `theme.onContainer` (contrast-tested) and the dot carries the semantic hue
-/// without relying on color alone.
-struct ThemeStatusLabel: View {
-    let title: String
-    let theme: WishTheme
-    let tint: Color
-
-    var body: some View {
-        HStack(spacing: AppSpacing.xs + 1) {
-            Circle()
-                .fill(tint)
-                .frame(width: 6, height: 6)
-                .accessibilityHidden(true)
-
-            Text(title)
-                .font(AppTypography.caption.weight(.semibold))
-                .lineLimit(1)
-                .fixedSize(horizontal: true, vertical: false)
-        }
-        .foregroundStyle(theme.onContainer)
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel(Text(title))
     }
 }
 
@@ -168,12 +142,7 @@ private struct EditorialComponentsPreview: View {
         VStack(alignment: .leading, spacing: AppSpacing.lg) {
             KickerText(text: "心愿手账")
             EditorialSectionHeader(title: "其他心愿", detail: "4")
-            ThemeStatusLabel(
-                title: "2 / 3 项条件",
-                theme: .mint,
-                tint: AppColors.success
-            )
-            WishPhotoView(imageData: nil, theme: .lavender)
+            WishPhotoView(imageData: nil, theme: .sage)
                 .frame(height: 140)
         }
         .padding(AppSpacing.screenInset)

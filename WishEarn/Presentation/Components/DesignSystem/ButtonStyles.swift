@@ -12,31 +12,20 @@ struct PrimaryButtonStyle: ButtonStyle {
                 minHeight: AppLayout.primaryButtonHeight
             )
             .padding(.horizontal, AppSpacing.screenInset)
-            .background {
-                if configuration.isPressed {
-                    Capsule()
-                        .fill(AppColors.primaryPressed)
-                } else {
-                    Capsule()
-                        .fill(
-                            LinearGradient(
-                                colors: [
-                                    AppColors.primaryGradientStart,
-                                    AppColors.primaryGradientEnd
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            )
-                        )
-                }
-            }
+            .background(
+                Capsule().fill(
+                    configuration.isPressed
+                        ? AppColors.primaryPressed
+                        : AppColors.primary
+                )
+            )
             .shadow(
                 color: AppColors.primary.opacity(
-                    configuration.isPressed ? 0.10 : 0.22
+                    configuration.isPressed ? 0.08 : 0.16
                 ),
-                radius: configuration.isPressed ? 4 : 10,
+                radius: configuration.isPressed ? 4 : 8,
                 x: 0,
-                y: configuration.isPressed ? 2 : 6
+                y: configuration.isPressed ? 2 : 5
             )
             .scaleEffect(
                 configuration.isPressed && !reduceMotion ? 0.99 : 1

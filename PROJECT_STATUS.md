@@ -39,9 +39,9 @@
 ## In Progress
 
 - Task ID: Issue #30
-- Task Name: Visual Identity & UI Composition Refinement（Colorful Lifestyle Editorial）
-- Current Progress: Home / Today / Wish Detail 与共享 Design System 已完成真实代码改版；Light / Dark 截图与对比度报告已产出；PR 待审阅，未合并。
-- Modified Files: `AppTheme.swift`、`WishTheme.swift`、`WishCard.swift`、`WishListView.swift`、`TodayView.swift`、`WishDetailView.swift`、`ConditionRow.swift`、`FilterChip.swift`、`StatusBadge.swift`、`ProgressIndicator.swift`、`ButtonStyles.swift`、`CardModifier.swift`、`EmptyStateView.swift`、`RootTabView.swift`、`ConditionDetailView.swift`、`WishStatus+Presentation.swift`、新增 `EditorialComponents.swift`、`DesignSystemTests.swift`、`DesignCaptureUITests.swift`、设计文档与截图。
+- Task Name: Visual Identity & UI Composition Refinement（Paper & Sage）
+- Current Progress: Home / Today / Wish Detail 与共享 Design System 已完成 Paper & Sage 复审修订；新增「我的 → 外观」跟随系统 / 浅色 / 深色切换；Light / Dark 截图、辅助功能 XXXL 截图与对比度报告已产出；PR 待审阅，未合并。Release 0.15.0 (1) 已于 2026-11-11 安装在 iPhone 17（iOS 27.0），但该安装早于本次 Paper & Sage 修订，真机交互未逐项验收。
+- Modified Files: `AppTheme.swift`、`WishTheme.swift`、`WishCard.swift`、`WishListView.swift`、`TodayView.swift`、`WishDetailView.swift`、`ConditionRow.swift`、`FilterChip.swift`、`StatusBadge.swift`、`ProgressIndicator.swift`、`ButtonStyles.swift`、`CardModifier.swift`、`EmptyStateView.swift`、`RootTabView.swift`、`ConditionDetailView.swift`、`WishStatus+Presentation.swift`、`WishEarnApp.swift`、`SettingsView.swift`、新增 `AppAppearance.swift`、`EditorialComponents.swift`、`DesignSystemTests.swift`、`DesignCaptureUITests.swift`、设计文档与截图。
 - Remaining Work: 用户审阅 PR；确认后再合并。若需要，后续单独评估 App Icon 替换与真机照片验证。
 
 - Task ID: TASK-904
@@ -69,6 +69,9 @@
 - UI 自动化仅覆盖一条关键旅程；其它页面与真实设备交互仍未自动化。
 - App Icon 仍为 petrol 版本；Playful Editorial 图标提案待品牌确认后替换。Issue #30 新增 `docs/design/assets/app-icon-colorful-proposal.png` 提案，同样未替换生产图标。
 - Issue #30 的截图取证 UI 测试（`DesignCaptureUITests`）默认在 CI 跳过；Xcode 27 模拟器在长会话中偶发 `signal term`，因此拆分为多个短测试运行。
+- Issue #30 Release 0.15.0 (1) 已在 iPhone 17 / iOS 27.0 安装并启动（2026-11-11），但该构建早于 Paper & Sage 复审修订；新增外观设置与新版配色尚未在真机手动验收。
+- Issue #30 复审新增「外观」设置，覆盖 Issue #30 原文「不新增用户可配置主题切换功能」的约束；这是用户明确要求，未改动 Domain / Repository / SwiftData / 解锁状态机。
+- 外观设置已通过真实 UI 测试验证：系统浅色下切到深色立即生效，再切回跟随系统恢复；尚未在真机 + 系统外观切换组合下逐项验收。
 - GitHub Actions billing 已恢复；PR #26 与 main 合并后 CI 均已绿色（274 单元/集成 + 1 UI 测试）。
 - 构建存在非致命方向声明警告：All interface orientations must be supported unless the app requires full screen。
 
@@ -102,35 +105,38 @@
 - 发布材料：`docs/APP_STORE.md`、`docs/RELEASE_CHECKLIST.md`。
 - Release Archive 与 Development IPA 构建成功。
 - Phase 2 设计系统、心愿首页、心愿详情、Today 行动页、Editors、Unlock / Achievements / Settings 改版。
-- Playful Editorial / Sunny Pop Journal 配色：Violet 主色、Coral 辅助色、六种 Wish 主题色与 WCAG 对比度测试。
-- 首页、详情、Today、Editor、Unlock、Achievements、Settings 已完成 Light / Dark 配色落地。
-- 测试体系：274 项单元 / 集成 + 1 项关键旅程 UI 测试，业务层主要文件覆盖率 88%–100%。
+- Paper & Sage 配色：暖纸画布、墨色文字、深鼠尾草绿行动色、低饱和 clay 点缀、三种 Wish Theme 与 WCAG 对比度测试。
+- 首页、详情、Today、Editor、Unlock、Achievements、Settings 已完成 Light / Dark 配色落地；首页三种卡片统一白纸面。
+- 「我的 → 外观」支持跟随系统 / 浅色 / 深色，选择持久化并在 App 根视图应用。
+- 测试体系：276 项单元 / 集成 + 1 项关键旅程 UI 测试，业务层主要文件覆盖率 88%–100%。
 
 ## Last Verification
 
 - Build: PASS — Debug / Release
-- Unit Tests: PASS — 275 项，iPhone 18 Pro / iOS 27.2，2026-11-11 20:27（Issue #30 分支）
-- UI Test: PASS — 1 项关键旅程（创建 → 条件 → 记录 → 解锁 → 领取），2026-11-11 20:29
-- Design Evidence UI Tests: 8 项在未设置 opt-in 环境变量时 skipped；截图流程已在本地 Light / Dark 运行通过
-- Contrast Audit: PASS — 48 组 pair × Light / Dark，见 `docs/design/screenshots/issue-30/CONTRAST.md`
-- Issue #30 Screenshots: PASS — Home / Today / Detail Light / Dark + 长文案状态，iPhone 18 Pro Simulator / iOS 27.2
-- Playful Editorial: PASS — 七个核心页面 Light / Dark 模拟器截图
+- Unit Tests: PASS — 276 项，iPhone 18 Pro / iOS 27.2，2026-11-11 21:35（Paper & Sage 复审修订）
+- UI Test: PASS — 1 项关键旅程（创建 → 条件 → 记录 → 解锁 → 领取），29.083s，2026-11-11 21:35
+- Design Evidence UI Tests: 10 项在未设置 opt-in 环境变量时 skipped；本地 Light / Dark / 设置 / 辅助功能截图流程 PASS
+- Contrast Audit: PASS — 36 组 pair × Light / Dark（72 个实测值），见 `docs/design/screenshots/issue-30/CONTRAST.md`
+- Issue #30 Screenshots: PASS — Home / Today / Detail / Settings / Achievements Light / Dark、长文案、App 内外观覆盖、辅助功能 XXXL；iPhone 18 Pro Simulator / iOS 27.2；空状态 iPhone 17e 空 Store
+- Playful Editorial: PASS — 七个核心页面 Light / Dark 模拟器截图（历史首轮 #30 设计，已被 Paper & Sage 取代）
 - Archive: PASS — `build/Issue22.xcarchive`（0.15.0 / 1）
 - IPA: PASS — `build/Issue22Export/WishEarn.ipa`
-- Device Install / Launch: PASS — Release 0.15.0 在 iPhone 17 / iOS 27.0 安装并启动（2026-11-10）
-- Device Interaction: NOT TESTED — PhotosPicker、键盘、滚动、导航、重启
-- CI: PASS — main run 42840733123（274 单元/集成 + 1 UI 测试）；Issue #30 分支 CI 待 PR 创建后触发
+- Device Install / Launch: PASS — Release 0.15.0 (1) 在 iPhone 17 / iOS 27.0 安装并启动（2026-11-11）；该构建早于 Paper & Sage 复审修订
+- Device Interaction: NOT TESTED — PhotosPicker、键盘、滚动、导航、重启、新版外观切换
+- CI: PASS — 首轮 Issue #30 PR #31 run [43022177657](https://github.com/liangmingchao/WishEarn/actions/runs/43022177657)（284 tests: 276 passed, 8 skipped, 0 failed, 12m03s）；Paper & Sage 修订提交待新 CI
+- Main CI: PASS — run 42840733123（274 单元/集成 + 1 UI 测试）
 - Privacy Manifest: PASS — 已打包
-- Last Verified Commit: `35a7271`（design/issue-30-visual-identity-refinement；main 基线 `16f390c`）
+- Last Verified Commit: Paper & Sage 复审修订提交（见 `git log`；main 基线 `16f390c`）
 - RC 报告：`docs/qa/ISSUE_22_RC_REPORT.md`
 
 ## Current Risks
 
 - 真机图片选择 / 键盘 / 滚动 / 导航 / 重启仍需手动确认。
+- Paper & Sage 新配色、主按钮纯色化与「外观」设置在真机上尚未逐项验收。
 - main CI 已确认绿色；后续提交仍需维持门禁。
 - TestFlight / App Store 账号与凭据缺失。
 - App Store 截图、支持 URL、隐私政策 URL 未准备。
-- App Icon 尚未替换为 Playful 方案。
+- App Icon 仍为 petrol 版本；Paper & Sage 图标提案未替换生产资产。
 
 ## Files Changed（Phase 9）
 
@@ -148,7 +154,7 @@
 ## Next Recommended Action
 
 - Task ID: Issue #22 / TASK-904
-- Description: 在 iPhone 17 上完成真机交互清单（PhotosPicker、键盘、滚动、导航、重启）；确认 App Store 名称 / Bundle ID / 截图 / 支持 URL / 隐私政策 URL
+- Description: 审阅 Issue #30 Paper & Sage PR；在 iPhone 17 上重装最新构建并完成真机交互清单（PhotosPicker、键盘、滚动、导航、重启、外观切换）；确认 App Store 名称 / Bundle ID / 截图 / 支持 URL / 隐私政策 URL
 - Dependencies: `build/Issue22.xcarchive`、`build/Issue22Export/WishEarn.ipa`、可用真机、App Store Connect
 - Expected Outcome: 真机清单完成、上架材料与凭据就绪、RC 从 NO-GO 转为 GO
 - Acceptance Criteria: 无 P0/P1；CI Build/Test 通过；真机图片选择 / 键盘 / 滚动 / 导航 / 重启通过；App Store 材料完整

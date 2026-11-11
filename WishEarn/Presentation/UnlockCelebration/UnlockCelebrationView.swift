@@ -21,7 +21,7 @@ struct UnlockCelebrationView: View {
                 colors: [
                     theme.tint.opacity(0.34),
                     AppColors.canvas,
-                    AppColors.coralSoft
+                    AppColors.claySoft
                 ],
                 startPoint: .topLeading,
                 endPoint: .bottomTrailing

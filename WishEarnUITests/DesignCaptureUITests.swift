@@ -7,9 +7,13 @@ import XCTest
 /// the Xcode 27 simulator:
 ///
 ///     xcrun simctl uninstall booted com.wishearn.app
-///     TEST_RUNNER_WISH_SEED=1 xcodebuild test ... -only-testing:WishEarnUITests/DesignCaptureUITests/testSeedFeaturedWish
-///     TEST_RUNNER_WISH_SEED=1 xcodebuild test ... -only-testing:WishEarnUITests/DesignCaptureUITests/testSeedOtherWishes
-///     TEST_RUNNER_WISH_SCREENSHOTS=1 xcodebuild test ... -only-testing:WishEarnUITests/DesignCaptureUITests/testCaptureIssue30Screenshots
+///     TEST_RUNNER_WISH_SEED=1 xcodebuild test ... -only-testing:WishEarnUITests/DesignCaptureUITests/testSeedCameraWish
+///     # then testSeedReadingCornerWish, testSeedTiramisuWish, testSeedFeaturedWish
+///     # optional: testSeedPhotoForFeaturedWish (requires simctl addmedia)
+///     TEST_RUNNER_WISH_SCREENSHOTS=1 xcodebuild test ... -only-testing:WishEarnUITests/DesignCaptureUITests/testCaptureLightScreenshots
+///     TEST_RUNNER_WISH_SCREENSHOTS=1 xcodebuild test ... -only-testing:WishEarnUITests/DesignCaptureUITests/testCaptureDarkScreenshots
+///     TEST_RUNNER_WISH_SCREENSHOTS=1 xcodebuild test ... -only-testing:WishEarnUITests/DesignCaptureUITests/testCaptureSettingsScreenshots
+///     TEST_RUNNER_WISH_SCREENSHOTS=1 xcodebuild test ... -only-testing:WishEarnUITests/DesignCaptureUITests/testCaptureAccessibilityScreenshots
 ///
 /// Data is created through the shipping UI and persisted in the simulator's
 /// real local store; no seeding hook ships in the app.
@@ -137,24 +141,6 @@ final class DesignCaptureUITests: XCTestCase {
         openWish("一个可以让周末慢下来的阅读角")
         capture("detail-long-title-light")
         app.navigationBars.buttons.firstMatch.tap()
-
-        app.tabBars.buttons["行动"].tap()
-        capture("today-long-condition-light")
-    }
-
-    func testCaptureLongStateScreenshots() throws {
-        try skipUnless("WISH_SCREENSHOTS")
-        XCTAssertTrue(
-            app.descendants(matching: .any)["wishCard-京都的秋天"]
-                .waitForExistence(timeout: 10)
-        )
-
-        openWish("一个可以让周末慢下来的阅读角")
-        capture("detail-long-title-light")
-        app.navigationBars.buttons.firstMatch.tap()
-
-        app.tabBars.buttons["行动"].tap()
-        capture("today-long-condition-light")
     }
 
     func testCaptureDarkScreenshots() throws {
@@ -175,6 +161,61 @@ final class DesignCaptureUITests: XCTestCase {
             app.staticTexts["今天，慢慢来"].waitForExistence(timeout: 5)
         )
         capture("today-dark")
+    }
+
+    /// Verifies the redesigned cards still reflow at an accessibility text
+    /// size. Uses the same real store and shipping UI as the other captures.
+    func testCaptureAccessibilityScreenshots() throws {
+        try skipUnless("WISH_SCREENSHOTS")
+
+        app.terminate()
+        app.launchArguments += [
+            "-UIPreferredContentSizeCategoryName",
+            "UICTContentSizeCategoryAccessibilityXXXL"
+        ]
+        app.launch()
+
+        XCTAssertTrue(app.staticTexts["我的心愿"].waitForExistence(timeout: 15))
+        capture("home-accessibility-light")
+
+        app.tabBars.buttons["行动"].tap()
+        XCTAssertTrue(
+            app.staticTexts["今天，慢慢来"].waitForExistence(timeout: 8)
+        )
+        capture("today-accessibility-light")
+    }
+
+    /// Exercises the in-app appearance override through the shipping Settings
+    /// UI: system → fixed dark → fixed light → system.
+    func testCaptureSettingsScreenshots() throws {
+        try skipUnless("WISH_SCREENSHOTS")
+
+        app.tabBars.buttons["我的"].tap()
+        XCTAssertTrue(
+            app.staticTexts["外观"].firstMatch.waitForExistence(timeout: 8)
+        )
+        capture("settings-light")
+
+        let dark = app.buttons["深色"]
+        XCTAssertTrue(dark.waitForExistence(timeout: 5))
+        dark.tap()
+        sleep(2)
+        capture("settings-dark")
+
+        let light = app.buttons["浅色"]
+        XCTAssertTrue(light.waitForExistence(timeout: 5))
+        light.tap()
+        sleep(2)
+        capture("settings-light-fixed")
+
+        let system = app.buttons["跟随系统"]
+        XCTAssertTrue(system.waitForExistence(timeout: 5))
+        system.tap()
+        sleep(2)
+
+        app.tabBars.buttons["成就"].tap()
+        XCTAssertTrue(app.navigationBars["成就"].waitForExistence(timeout: 8))
+        capture("achievements-light")
     }
 
     // MARK: - Environment gates

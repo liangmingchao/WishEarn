@@ -140,7 +140,7 @@ struct WishListView: View {
 
                 Image(systemName: "sparkle")
                     .font(.system(size: 18, weight: .semibold))
-                    .foregroundStyle(AppColors.coral)
+                    .foregroundStyle(AppColors.primary)
                     .accessibilityHidden(true)
             }
 

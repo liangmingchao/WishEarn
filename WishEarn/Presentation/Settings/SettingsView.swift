@@ -4,6 +4,8 @@ import UniformTypeIdentifiers
 struct SettingsView: View {
     let dataExportService: DataExportService
 
+    @AppStorage(AppAppearance.storageKey) private var appearance: AppAppearance = .system
+
     @State private var exportDocument = WishEarnExportDocument()
     @State private var isExporting = false
     @State private var exportError: AppError?
@@ -22,7 +24,7 @@ struct SettingsView: View {
 
                         Image(systemName: "sparkles")
                             .font(.system(size: 13, weight: .semibold))
-                            .foregroundStyle(AppColors.coral)
+                            .foregroundStyle(AppColors.clay)
                             .offset(x: 19, y: -19)
                     }
                     .frame(width: 56, height: 56)
@@ -38,6 +40,23 @@ struct SettingsView: View {
                 }
                 .padding(.vertical, AppSpacing.xs)
                 .listRowBackground(Color.clear)
+            }
+
+            Section {
+                Picker("外观", selection: $appearance) {
+                    ForEach(AppAppearance.allCases) { mode in
+                        Text(mode.title).tag(mode)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .frame(minHeight: 44)
+                .accessibilityIdentifier("appearancePicker")
+            } header: {
+                Text("外观")
+            } footer: {
+                Text("「跟随系统」会随 iOS 的浅色 / 深色设置自动切换；也可以手动固定为浅色或深色。")
+                    .font(AppTypography.footnote)
+                    .foregroundStyle(AppColors.textSecondary)
             }
 
             Section {

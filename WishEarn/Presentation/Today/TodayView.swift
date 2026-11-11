@@ -121,47 +121,50 @@ struct TodayView: View {
             ? "今天有 \(count) 个小行动，可以推进你的心愿。"
             : "给自己一点掌声，明天再继续。"
 
-        return ZStack(alignment: .topTrailing) {
-            RoundedRectangle(cornerRadius: AppRadius.xl, style: .continuous)
-                .fill(AppColors.coralSoft)
+        let cardShape = RoundedRectangle(
+            cornerRadius: AppRadius.xl,
+            style: .continuous
+        )
 
-            Circle()
-                .fill(AppColors.coral.opacity(0.22))
-                .frame(width: 140, height: 140)
-                .offset(x: 42, y: -52)
+        return HStack(alignment: .top, spacing: 0) {
+            RoundedRectangle(cornerRadius: 2, style: .continuous)
+                .fill(AppColors.clay)
+                .frame(width: 4)
+                .padding(.vertical, AppSpacing.lg)
                 .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: AppSpacing.xs + 2) {
                 HStack(spacing: AppSpacing.xs) {
                     Image(systemName: "sun.max.fill")
                         .font(.system(size: 14, weight: .semibold))
-                        .foregroundStyle(AppColors.coralText)
+                        .foregroundStyle(AppColors.clayText)
                         .accessibilityHidden(true)
 
                     KickerText(
                         text: "今日心情",
-                        color: AppColors.coralText,
+                        color: AppColors.clayText,
                         tracking: 0.8
                     )
                 }
 
                 Text(title)
                     .font(AppTypography.editorialTitle)
-                    .foregroundStyle(AppColors.coralText)
+                    .foregroundStyle(AppColors.textPrimary)
                     .fixedSize(horizontal: false, vertical: true)
 
                 Text(message)
                     .font(AppTypography.callout)
-                    .foregroundStyle(AppColors.coralText)
+                    .foregroundStyle(AppColors.textSecondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(AppSpacing.lg)
             .accessibilityElement(children: .combine)
         }
-        .clipShape(
-            RoundedRectangle(cornerRadius: AppRadius.xl, style: .continuous)
-        )
+        .background(AppColors.surface, in: cardShape)
+        .overlay {
+            cardShape.stroke(AppColors.separator, lineWidth: 0.8)
+        }
         .padding(.horizontal, AppSpacing.screenInset)
         .padding(.top, AppSpacing.xl)
     }

@@ -30,14 +30,9 @@ struct EmptyStateView: View {
                     .rotationEffect(.degrees(-7))
 
                 Circle()
-                    .fill(AppColors.coralSoft)
+                    .fill(AppColors.claySoft)
                     .frame(width: 52, height: 52)
                     .offset(x: 44, y: -34)
-
-                Circle()
-                    .fill(AppColors.glowButter)
-                    .frame(width: 26, height: 26)
-                    .offset(x: -46, y: 38)
 
                 Image(systemName: systemImage)
                     .font(.system(size: 40, weight: .light))

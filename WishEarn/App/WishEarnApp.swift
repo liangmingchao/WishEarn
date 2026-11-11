@@ -3,6 +3,8 @@ import SwiftUI
 @main
 @MainActor
 struct WishEarnApp: App {
+    @AppStorage(AppAppearance.storageKey) private var appearance: AppAppearance = .system
+
     private let container: AppContainer?
     private let startupError: AppError?
 
@@ -30,19 +32,22 @@ struct WishEarnApp: App {
 
     var body: some Scene {
         WindowGroup {
-            if let container {
-                RootTabView(
-                    router: container.router,
-                    unlockCoordinator: container.unlockCoordinator,
-                    container: container
-                )
-            } else {
-                ErrorStateView(
-                    title: "启动失败",
-                    message: startupError?.message ?? "无法初始化本地数据库。"
-                )
-                .appScreenBackground()
+            Group {
+                if let container {
+                    RootTabView(
+                        router: container.router,
+                        unlockCoordinator: container.unlockCoordinator,
+                        container: container
+                    )
+                } else {
+                    ErrorStateView(
+                        title: "启动失败",
+                        message: startupError?.message ?? "无法初始化本地数据库。"
+                    )
+                    .appScreenBackground()
+                }
             }
+            .preferredColorScheme(appearance.colorScheme)
         }
     }
 }

@@ -455,12 +455,16 @@ private struct WishDetailHero: View {
             info
         }
         .background(
-            theme.container,
+            AppColors.surface,
             in: RoundedRectangle(cornerRadius: AppRadius.xxl, style: .continuous)
         )
         .clipShape(
             RoundedRectangle(cornerRadius: AppRadius.xxl, style: .continuous)
         )
+        .overlay {
+            RoundedRectangle(cornerRadius: AppRadius.xxl, style: .continuous)
+                .stroke(AppColors.separator, lineWidth: 0.8)
+        }
     }
 
     private var heroImage: some View {
@@ -494,18 +498,18 @@ private struct WishDetailHero: View {
             HStack(alignment: .center, spacing: AppSpacing.sm) {
                 KickerText(
                     text: "我的心愿",
-                    color: theme.onContainer,
+                    color: theme.labelText,
                     tracking: 1.0
                 )
 
                 Spacer(minLength: AppSpacing.sm)
 
-                WishThemeSticker(theme: theme, symbol: "sparkles", size: 32)
+                WishThemeMark(theme: theme, width: 24)
             }
 
             Text(wish.title)
                 .font(AppTypography.display)
-                .foregroundStyle(theme.onContainer)
+                .foregroundStyle(AppColors.textPrimary)
                 .lineLimit(3)
                 .fixedSize(horizontal: false, vertical: true)
 
@@ -563,7 +567,7 @@ private struct WishDetailHero: View {
                 }
             }
             .font(AppTypography.footnote)
-            .foregroundStyle(theme.onContainer)
+            .foregroundStyle(AppColors.textSecondary)
         }
     }
 
@@ -609,7 +613,7 @@ private struct WishDetailHero: View {
         }
         .padding(AppSpacing.md + 2)
         .background(
-            AppColors.surface,
+            AppColors.surfaceSecondary,
             in: RoundedRectangle(cornerRadius: AppRadius.lg, style: .continuous)
         )
         .overlay {
@@ -622,11 +626,11 @@ private struct WishDetailHero: View {
         VStack(alignment: .leading, spacing: AppSpacing.sm) {
             Text(hasOptionalConditionsOnly ? "还没有必需条件" : "还没有解锁条件")
                 .font(AppTypography.headline)
-                .foregroundStyle(theme.onContainer)
+                .foregroundStyle(AppColors.textPrimary)
 
             Text("为这个心愿添加一个可以努力的方向。")
                 .font(AppTypography.callout)
-                .foregroundStyle(theme.onContainer)
+                .foregroundStyle(AppColors.textSecondary)
                 .fixedSize(horizontal: false, vertical: true)
 
             if wish.status == .active {
@@ -636,7 +640,7 @@ private struct WishDetailHero: View {
                         .foregroundStyle(AppColors.primary)
                         .padding(.horizontal, AppSpacing.lg)
                         .frame(minHeight: AppLayout.touchTarget)
-                        .background(AppColors.surface, in: Capsule())
+                        .background(AppColors.primarySoft, in: Capsule())
                         .contentShape(Capsule())
                 }
                 .buttonStyle(.pressableChip)

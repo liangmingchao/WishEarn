@@ -3,7 +3,7 @@ import SwiftUI
 struct ConditionRow: View {
     let condition: Condition
     var snapshot: ProgressSnapshot?
-    var theme: WishTheme = .butter
+    var theme: WishTheme = .sage
 
     var body: some View {
         HStack(alignment: .top, spacing: AppSpacing.md) {

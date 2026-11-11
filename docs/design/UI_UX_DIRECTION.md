@@ -91,7 +91,7 @@ Avoid:
 - Cartoon mascots, XP, coins, rankings, or punishment language.
 - Making a missing wish image look like a broken image placeholder.
 
-Use the **Playful Editorial / Sunny Pop Journal** palette: warm cream canvas, violet primary actions, coral secondary emphasis, and a small wish palette (butter, mint, sky, blush, lavender, peach) for personal wish identity. The editorial composition stays; the result should feel youthful, sunny, and optimistic without becoming rainbow UI. Color must communicate role, not decorate every element.
+Use the **Paper & Sage** palette: warm paper canvas, ink text, a single deep sage primary action, a muted clay accent for small editorial marks, and a three-tone wish palette (sage, clay, stone) for quiet personal identity. The editorial composition stays; color communicates role rather than filling every card. Avoid rainbow UI, large saturated card fills, and more than one accent hue per page.
 
 ## 6. Content and microcopy
 

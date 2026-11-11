@@ -37,12 +37,10 @@ final class DesignSystemTests: XCTestCase {
             ("primary / primarySoft", AppColors.primary, AppColors.primarySoft, 4.5),
             ("onPrimary / primary", AppColors.onPrimary, AppColors.primary, 4.5),
             ("onPrimary / primaryPressed", AppColors.onPrimary, AppColors.primaryPressed, 4.5),
-            ("onPrimary / primaryGradientStart", AppColors.onPrimary, AppColors.primaryGradientStart, 4.5),
-            ("onPrimary / primaryGradientEnd", AppColors.onPrimary, AppColors.primaryGradientEnd, 4.5),
-            ("onCoral / coral", AppColors.onCoral, AppColors.coral, 4.5),
-            ("coralText / canvas", AppColors.coralText, AppColors.canvas, 4.5),
-            ("coralText / surface", AppColors.coralText, AppColors.surface, 4.5),
-            ("coralText / coralSoft", AppColors.coralText, AppColors.coralSoft, 4.5),
+            ("onClay / clay", AppColors.onClay, AppColors.clay, 4.5),
+            ("clayText / canvas", AppColors.clayText, AppColors.canvas, 4.5),
+            ("clayText / surface", AppColors.clayText, AppColors.surface, 4.5),
+            ("clayText / claySoft", AppColors.clayText, AppColors.claySoft, 4.5),
             ("success / canvas", AppColors.success, AppColors.canvas, 4.5),
             ("success / surface", AppColors.success, AppColors.surface, 4.5),
             ("warning / canvas", AppColors.warning, AppColors.canvas, 4.5),
@@ -101,6 +99,12 @@ final class DesignSystemTests: XCTestCase {
                     theme.labelText,
                     AppColors.canvas,
                     4.5
+                ),
+                (
+                    "labelText \(theme.rawValue) / canvasBottom",
+                    theme.labelText,
+                    AppColors.canvasBottom,
+                    4.5
                 )
             ]
         }
@@ -126,11 +130,11 @@ final class DesignSystemTests: XCTestCase {
             ("primary / surface", AppColors.primary, AppColors.surface, 4.5),
             ("primary / primarySoft", AppColors.primary, AppColors.primarySoft, 4.5),
             ("onPrimary / primary", AppColors.onPrimary, AppColors.primary, 4.5),
-            ("onPrimary / primaryGradientStart", AppColors.onPrimary, AppColors.primaryGradientStart, 4.5),
-            ("onPrimary / primaryGradientEnd", AppColors.onPrimary, AppColors.primaryGradientEnd, 4.5),
-            ("onCoral / coral", AppColors.onCoral, AppColors.coral, 4.5),
-            ("coralText / canvas", AppColors.coralText, AppColors.canvas, 4.5),
-            ("coralText / coralSoft", AppColors.coralText, AppColors.coralSoft, 4.5),
+            ("onPrimary / primaryPressed", AppColors.onPrimary, AppColors.primaryPressed, 4.5),
+            ("onClay / clay", AppColors.onClay, AppColors.clay, 4.5),
+            ("clayText / canvas", AppColors.clayText, AppColors.canvas, 4.5),
+            ("clayText / surface", AppColors.clayText, AppColors.surface, 4.5),
+            ("clayText / claySoft", AppColors.clayText, AppColors.claySoft, 4.5),
             ("success / canvas", AppColors.success, AppColors.canvas, 4.5),
             ("success / surface", AppColors.success, AppColors.surface, 4.5),
             ("warning / canvas", AppColors.warning, AppColors.canvas, 4.5),
@@ -190,6 +194,17 @@ final class DesignSystemTests: XCTestCase {
         let id = UUID(uuidString: "00000000-0000-0000-0000-000000000021")!
 
         XCTAssertEqual(WishTheme.forID(id), WishTheme.forID(id))
+    }
+
+    func testAppearanceSelectionMapsToColorScheme() {
+        XCTAssertNil(AppAppearance.system.colorScheme)
+        XCTAssertEqual(AppAppearance.light.colorScheme, .light)
+        XCTAssertEqual(AppAppearance.dark.colorScheme, .dark)
+        XCTAssertEqual(AppAppearance.storageKey, "appAppearance")
+        XCTAssertEqual(
+            AppAppearance.allCases.map(\.title),
+            ["跟随系统", "浅色", "深色"]
+        )
     }
 
     func testLayoutTokensMatchDesignContract() {

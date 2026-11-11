@@ -170,3 +170,45 @@ Detail
 - 首页 / Today / Detail 的 Light / Dark 与长文案截图见 `docs/design/screenshots/issue-30/`；对比度实测见同目录 `CONTRAST.md`（48 组 pair × 2 外观，全部 PASS）。
 - 验证：Build PASS；Unit / Integration 275 项 PASS；Critical Journey UI Test PASS；DesignCapture UI Tests 在 CI 默认 skipped，本地 Light / Dark 截图流程 PASS。
 - App Icon 仅新增提案 `docs/design/assets/app-icon-colorful-proposal.png`，未替换生产图标；未修改 Domain / Repository / SwiftData / 解锁状态机 / 产品功能。
+
+## 7. 用户复审后的收敛（2026-11-11）
+
+用户在 Issue #30 首轮交付后提出三点复审意见：
+
+1. 首页卡片的颜色体系太多、太杂。
+2. 需要增加主动切换浅色 / 深色主题的设置选项。
+3. 将当前紫色品牌主题替换为更简约的色系。
+
+### 7.1 设计决策
+
+首轮的 **Sunny Wish Journal** 使用 6 种高饱和 Wish Theme 铺满整张卡片，并叠加珊瑚色、butter / mint 光晕和紫色渐变按钮。虽然主题存在感强，但首页同时出现多种整卡底色，确实会造成视觉噪音。复审后收敛为 **Paper & Sage**：
+
+- **画布**：暖纸色 `#FAF8F3 → #F3F0E8`，取消 butter / mint 彩色光晕。
+- **品牌色**：深鼠尾草绿 `#3C6252`（Dark `#9CC6B1`），取消紫色与紫色渐变。
+- **辅助色**：低饱和黏土色 `#A25C42`，只用于窄色条、太阳图标等少量点缀。
+- **Wish Theme**：从 6 种降为 3 种低饱和色调 `Sage / Clay / Stone`；首页卡片统一白纸面，主题仅保留 3–4 pt 短标记与占位图洗色。
+- **卡片层级**：Featured 用 16:10 全出血大图，Banner 用横向纸卡，Grid 用双列纸卡；层级由尺寸和照片建立，不再由整卡填色建立。
+- **按钮**：主按钮改为纯色胶囊，去掉渐变与重阴影。
+- **今日鼓励卡**：从整块珊瑚底改为白纸卡 + 窄黏土色条。
+- **外观设置**：`我的 → 外观` 提供「跟随系统 / 浅色 / 深色」，使用 `@AppStorage("appAppearance")` 持久化，并在 App 根视图通过 `.preferredColorScheme` 应用。该设置属于用户明确要求的新增项，覆盖 Issue #30 原文中「不新增用户可配置主题切换功能」的限制；未改动 Domain、Repository、SwiftData 模型或解锁状态机。
+
+### 7.2 实施映射
+
+| 层 | 改动 |
+|---|---|
+| Token | `AppTheme.swift`：Paper & Sage 全套 Light / Dark token；移除紫色渐变、coral、glow；`EditorialBackground` 改为单一纸感渐变 |
+| Wish Theme | `WishTheme.swift`：3 种低饱和主题；移除 `WishThemeSticker`；保留 mark / dot / softTint / container / labelText |
+| Home | `WishCard.swift`：三种卡片统一白纸面；Featured 全出血 16:10 照片；主题短标记；进度统一 primary；`WishListView` 页头 sparkle 改 sage |
+| Today | `TodayView.swift`：鼓励卡改为白纸 + clay 色条；行动卡保持主题图标底板但使用低饱和色调 |
+| Detail | `WishDetailView.swift`：Hero 改白纸面；主题只保留 kicker 颜色、短标记与占位图；移除贴纸 |
+| Settings | 新增 `AppAppearance.swift` 与「外观」分段选择器；`WishEarnApp` 应用 `preferredColorScheme` |
+| 其它 | EmptyState 去掉 butter 圆点；Unlock / Settings 的暖色点缀改用 clay；ButtonStyles 改纯色 |
+| Tests | `DesignSystemTests` 更新为 36 组 pair × 2 外观（72 个实测值），新增外观模式映射测试 |
+
+### 7.3 验证结果
+
+- Build PASS；Unit / Integration 276 项 PASS（含新增外观映射测试）。
+- 对比度：36 组 pair × Light / Dark，共 72 个实测值全部 PASS；见 `docs/design/screenshots/issue-30/CONTRAST.md`。
+- 截图：Home / Today / Detail Light + Dark、设置页 Light / Dark / 固定浅色、成就页、长标题、无障碍字号；见 `docs/design/screenshots/issue-30/`。
+- Settings 外观切换通过真实 UI 测试验证：系统浅色下切到「深色」后，设置页立即变暗；再切回「跟随系统」恢复。
+- 未修改 Domain / Repository / SwiftData / 解锁状态机；未引入第三方依赖；生产 App Icon 未替换。
