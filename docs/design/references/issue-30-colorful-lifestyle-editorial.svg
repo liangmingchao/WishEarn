@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1100" viewBox="0 0 1600 1100">
+<defs>
+ <linearGradient id="bg" x2="1" y2="1"><stop stop-color="#FFF9F1"/><stop offset="1" stop-color="#F5F0FF"/></linearGradient>
+ <linearGradient id="hero" x2="1" y2="1"><stop stop-color="#A9D7F2"/><stop offset=".55" stop-color="#DCD4FF"/><stop offset="1" stop-color="#FFE0D2"/></linearGradient>
+ <linearGradient id="violet" x2="1" y2="1"><stop stop-color="#7766D7"/><stop offset="1" stop-color="#6554C0"/></linearGradient>
+ <filter id="shadow" x="-30%" y="-30%" width="160%" height="170%"><feDropShadow dx="0" dy="10" stdDeviation="14" flood-color="#39344C" flood-opacity=".13"/></filter>
+ <clipPath id="photo"><rect x="0" y="0" width="300" height="178" rx="22"/></clipPath>
+</defs>
+<rect width="1600" height="1100" fill="url(#bg)"/>
+<circle cx="1460" cy="100" r="190" fill="#FFD66E" opacity=".28"/><circle cx="100" cy="950" r="230" fill="#A8E3CF" opacity=".25"/>
+<text x="74" y="95" font-family="Georgia,serif" font-size="52" font-weight="bold" fill="#2E3040">WishEarn</text>
+<text x="76" y="140" font-family="Arial,sans-serif" font-size="21" fill="#6554C0" letter-spacing="4">COLORFUL LIFESTYLE EDITORIAL</text>
+<text x="76" y="188" font-family="Arial,sans-serif" font-size="17" fill="#686579">Dream it. Earn it. — A personal wish journal with a bright, optimistic spirit.</text>
+<!-- palette -->
+<rect x="70" y="235" width="360" height="790" rx="28" fill="#FFFFFF" opacity=".9" filter="url(#shadow)"/>
+<text x="104" y="290" font-family="Arial" font-size="25" font-weight="bold" fill="#2E3040">Visual language</text>
+<text x="104" y="330" font-family="Arial" font-size="14" fill="#777487">BRAND COLORS</text>
+<g font-family="Arial" font-size="13" fill="#4A4858">
+<rect x="104" y="350" width="76" height="62" rx="18" fill="#6554C0"/><text x="104" y="435">Violet</text>
+<rect x="195" y="350" width="76" height="62" rx="18" fill="#FF806B"/><text x="195" y="435">Coral</text>
+<rect x="286" y="350" width="76" height="62" rx="18" fill="#FFD66E"/><text x="286" y="435">Butter</text>
+<text x="104" y="485" font-weight="bold" font-size="14">WISH THEMES</text>
+<rect x="104" y="505" width="44" height="44" rx="14" fill="#A8E3CF"/><text x="158" y="533">Mint</text>
+<rect x="230" y="505" width="44" height="44" rx="14" fill="#A9D7F2"/><text x="284" y="533">Sky</text>
+<rect x="104" y="565" width="44" height="44" rx="14" fill="#F6C6D1"/><text x="158" y="593">Blush</text>
+<rect x="230" y="565" width="44" height="44" rx="14" fill="#DCD4FF"/><text x="284" y="593">Lavender</text>
+<rect x="104" y="625" width="44" height="44" rx="14" fill="#FFE0D2"/><text x="158" y="653">Peach</text>
+<text x="104" y="715" font-weight="bold" font-size="14">SURFACES & TYPE</text>
+<rect x="104" y="735" width="44" height="44" rx="12" fill="#FFF9F1" stroke="#E8E2DC"/><text x="158" y="763">Warm cream</text>
+<rect x="104" y="795" width="44" height="44" rx="12" fill="#FFFFFF" stroke="#E8E2DC"/><text x="158" y="823">Paper white</text>
+<text x="104" y="890" font-family="Georgia" font-size="35" fill="#2E3040">Aa</text><text x="164" y="887" font-size="14">Expressive display +</text><text x="164" y="909" font-size="14">clean SF-style body text</text>
+<text x="104" y="975" font-size="13" fill="#777487">70% calm / 20% content / 10% accents*</text>
+</g>
+<!-- phone 1 -->
+<g filter="url(#shadow)">
+<rect x="475" y="235" width="310" height="790" rx="42" fill="#242333"/>
+<rect x="487" y="247" width="286" height="766" rx="32" fill="#FFF9F1"/>
+</g>
+<text x="510" y="293" font-family="Arial" font-size="22" font-weight="bold" fill="#2E3040">My wishes ✦</text><text x="510" y="323" font-family="Arial" font-size="13" fill="#777487">A little closer to what you love</text>
+<rect x="505" y="348" width="250" height="250" rx="26" fill="url(#hero)"/>
+<circle cx="700" cy="390" r="26" fill="#FFD66E"/><path d="M700 370 L706 384 L722 386 L710 397 L713 413 L700 405 L687 413 L690 397 L678 386 L694 384Z" fill="#FFFFFF" opacity=".9"/>
+<path d="M525 515 Q570 440 615 500 T750 470 L750 570 L525 570Z" fill="#A8E3CF" opacity=".8"/>
+<text x="528" y="540" font-family="Arial" font-size="23" font-weight="bold" fill="#2E3040">A slow summer in Italy</text><text x="528" y="568" font-family="Arial" font-size="13" fill="#414052">Travel · 3 of 5 milestones</text>
+<rect x="505" y="615" width="250" height="100" rx="22" fill="#DCD4FF"/><text x="525" y="652" font-family="Arial" font-size="17" font-weight="bold" fill="#39334E">My next little dream</text><text x="525" y="680" font-family="Arial" font-size="13" fill="#514B69">A camera for everyday stories</text>
+<rect x="505" y="733" width="118" height="150" rx="22" fill="#F6C6D1"/><rect x="637" y="733" width="118" height="150" rx="22" fill="#A8E3CF"/><circle cx="564" cy="790" r="25" fill="#FF806B"/><rect x="670" y="770" width="52" height="48" rx="12" fill="#FFFFFF" opacity=".8"/><text x="522" y="850" font-family="Arial" font-size="15" font-weight="bold" fill="#39334E">New headphones</text><text x="654" y="850" font-family="Arial" font-size="15" font-weight="bold" fill="#285247">Cozy home</text>
+<text x="510" y="955" font-family="Arial" font-size="14" fill="#6554C0">⌂   Today     +      Wins      Me</text>
+<!-- phone 2 -->
+<g filter="url(#shadow)"><rect x="825" y="235" width="310" height="790" rx="42" fill="#242333"/><rect x="837" y="247" width="286" height="766" rx="32" fill="#FFF9F1"/></g>
+<text x="860" y="293" font-family="Arial" font-size="22" font-weight="bold" fill="#2E3040">Today, gently ☀</text><text x="860" y="323" font-family="Arial" font-size="13" fill="#777487">Small steps count, too.</text>
+<rect x="855" y="350" width="250" height="130" rx="24" fill="#FFE0D2"/><text x="878" y="391" font-family="Arial" font-size="17" font-weight="bold" fill="#543C42">Your day, your pace</text><text x="878" y="421" font-family="Arial" font-size="13" fill="#6B555A">2 tiny actions move a wish forward</text><circle cx="1062" cy="400" r="25" fill="#FF806B" opacity=".85"/>
+<text x="860" y="530" font-family="Arial" font-size="18" font-weight="bold" fill="#2E3040">A little progress</text>
+<rect x="855" y="552" width="250" height="105" rx="22" fill="#FFFFFF" stroke="#EEE8E2"/><circle cx="886" cy="589" r="13" fill="#A8E3CF"/><path d="M880 589 l5 5 9 -11" stroke="#286B59" stroke-width="3" fill="none"/><text x="912" y="588" font-family="Arial" font-size="15" font-weight="bold" fill="#2E3040">Read 20 pages</text><text x="912" y="613" font-family="Arial" font-size="12" fill="#777487">For your slow morning</text>
+<rect x="855" y="672" width="250" height="105" rx="22" fill="#FFFFFF" stroke="#EEE8E2"/><circle cx="886" cy="709" r="13" fill="#FFD66E"/><text x="912" y="708" font-family="Arial" font-size="15" font-weight="bold" fill="#2E3040">Save a little for the trip</text><text x="912" y="733" font-family="Arial" font-size="12" fill="#777487">A small action, a bigger dream</text>
+<rect x="855" y="810" width="250" height="58" rx="29" fill="url(#violet)"/><text x="980" y="846" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#FFFFFF">Record an action</text>
+<text x="860" y="955" font-family="Arial" font-size="14" fill="#6554C0">⌂   Today     +      Wins      Me</text>
+<!-- phone 3 -->
+<g filter="url(#shadow)"><rect x="1175" y="235" width="310" height="790" rx="42" fill="#242333"/><rect x="1187" y="247" width="286" height="766" rx="32" fill="#FFF9F1"/></g>
+<rect x="1205" y="270" width="250" height="210" rx="25" fill="url(#hero)"/><circle cx="1325" cy="355" r="56" fill="#FFFFFF" opacity=".45"/><path d="M1260 425 Q1320 350 1380 420 T1450 410" stroke="#FFFFFF" stroke-width="8" fill="none" opacity=".8"/>
+<text x="1210" y="520" font-family="Arial" font-size="23" font-weight="bold" fill="#2E3040">Italy, here we come!</text><text x="1210" y="550" font-family="Arial" font-size="13" fill="#777487">Your wish is ready to come true.</text>
+<rect x="1205" y="580" width="250" height="10" rx="5" fill="#E8E1DA"/><rect x="1205" y="580" width="250" height="10" rx="5" fill="#6554C0"/>
+<text x="1210" y="625" font-family="Arial" font-size="14" fill="#2E3040">All 5 milestones completed</text>
+<rect x="1205" y="665" width="250" height="62" rx="31" fill="url(#violet)"/><text x="1330" y="703" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#FFFFFF">Celebrate this wish</text>
+<rect x="1205" y="745" width="250" height="62" rx="31" fill="#FFFFFF" stroke="#6554C0" stroke-width="1.5"/><text x="1330" y="783" font-family="Arial" font-size="16" font-weight="bold" text-anchor="middle" fill="#6554C0">View your journey</text>
+<text x="1210" y="900" font-family="Arial" font-size="13" fill="#777487">Joyful, but never noisy.</text>
+<text x="76" y="1070" font-family="Arial" font-size="12" fill="#888394">* A qualitative composition guideline, not a strict pixel ratio. Reference direction only; final UI must follow iOS accessibility and dynamic type requirements.</text>
+</svg>
