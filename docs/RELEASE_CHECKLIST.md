@@ -17,7 +17,7 @@
 - [ ] 无编译警告（仍有非致命方向声明警告）
 - [x] 版本号与构建号正确（0.15.0 / 1）
 - [x] 隐私清单 `PrivacyInfo.xcprivacy` 已打包
-- [ ] 最新 main 的 CI 为绿色（PR #26 CI 已通过；main 合并后的 run 待确认）
+- [x] 最新 main 的 CI 为绿色（run 42840733123；274 单元/集成 + 1 UI 测试）
 
 ## 2. 核心功能
 
@@ -45,7 +45,7 @@
 
 - [x] 七个核心页面 Light / Dark Simulator 截图（Issue #21）
 - [x] 深色模式截图验证（Simulator）
-- [ ] 当前 Playful 构建在 iPhone 17 安装、启动 — **NOT TESTED（设备不可用）**
+- [x] 当前 Playful 构建在 iPhone 17 安装、启动（2026-11-10，Release / `devicectl`）
 - [ ] PhotosPicker 选择 / 取消 / 替换 / 移除 — **NOT TESTED**
 - [ ] 键盘弹出、滚动、焦点和保存按钮可见性 — **NOT TESTED**
 - [ ] 长标题 / 长备注 / Dynamic Type — **NOT TESTED**
@@ -66,8 +66,7 @@
 
 ## 阻塞项
 
-- PR #26 CI 已恢复绿色；main 合并后的 CI run 仍需确认。
-- 真机当前不可用，图片选择、键盘、滚动、导航、重启均未验收。
+- 真机交互验收（图片选择、键盘、滚动、导航、重启）仍未完成。
 - App Store Connect / TestFlight 账号与凭据缺失。
 - 正式名称、Bundle ID、截图、支持 URL、隐私政策 URL 未确认。
 - App Icon 仍为上一个 Petrol 版本，Playful 提案待品牌批准。
@@ -78,3 +77,4 @@
 - [RC QA Report](qa/ISSUE_22_RC_REPORT.md)
 - [Issue #21 screenshots](design/screenshots/issue-21/)
 - [App Store materials](APP_STORE.md)
+- [main CI run 42840733123](https://github.com/liangmingchao/WishEarn/actions/runs/42840733123)
