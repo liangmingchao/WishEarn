@@ -142,6 +142,21 @@ final class DesignCaptureUITests: XCTestCase {
         capture("today-long-condition-light")
     }
 
+    func testCaptureLongStateScreenshots() throws {
+        try skipUnless("WISH_SCREENSHOTS")
+        XCTAssertTrue(
+            app.descendants(matching: .any)["wishCard-京都的秋天"]
+                .waitForExistence(timeout: 10)
+        )
+
+        openWish("一个可以让周末慢下来的阅读角")
+        capture("detail-long-title-light")
+        app.navigationBars.buttons.firstMatch.tap()
+
+        app.tabBars.buttons["行动"].tap()
+        capture("today-long-condition-light")
+    }
+
     func testCaptureDarkScreenshots() throws {
         try skipUnless("WISH_SCREENSHOTS")
         XCTAssertTrue(
