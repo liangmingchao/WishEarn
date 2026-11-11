@@ -119,9 +119,9 @@
 - IPA: PASS — `build/Issue22Export/WishEarn.ipa`
 - Device Install / Launch: PASS — Release 0.15.0 在 iPhone 17 / iOS 27.0 安装并启动（2026-11-10）
 - Device Interaction: NOT TESTED — PhotosPicker、键盘、滚动、导航、重启
-- CI: PASS — main run 42840733123（274 单元/集成 + 1 UI 测试）
+- CI: PASS — main run 42840733123（274 单元/集成 + 1 UI 测试）；Issue #30 分支 CI 待 PR 创建后触发
 - Privacy Manifest: PASS — 已打包
-- Last Verified Commit: `2592574`（main，PR #26）
+- Last Verified Commit: `35a7271`（design/issue-30-visual-identity-refinement；main 基线 `16f390c`）
 - RC 报告：`docs/qa/ISSUE_22_RC_REPORT.md`
 
 ## Current Risks
