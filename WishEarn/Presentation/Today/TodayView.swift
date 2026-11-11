@@ -355,45 +355,70 @@ private struct TodayActionCard: View {
 private struct TodayDoneRow: View {
     let item: TodayConditionItem
 
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
     var body: some View {
-        HStack(alignment: .center, spacing: AppSpacing.md) {
-            ZStack {
-                Circle()
-                    .fill(AppColors.successSoft)
+        Group {
+            if dynamicTypeSize.isAccessibilitySize {
+                VStack(alignment: .leading, spacing: AppSpacing.sm) {
+                    HStack(alignment: .top, spacing: AppSpacing.md) {
+                        checkmark
+                        content
+                    }
 
-                Image(systemName: "checkmark")
-                    .font(.system(size: 12, weight: .bold))
-                    .foregroundStyle(AppColors.success)
+                    stateLabel
+                        .padding(.leading, 46)
+                }
+            } else {
+                HStack(alignment: .center, spacing: AppSpacing.md) {
+                    checkmark
+                    content
+                    Spacer(minLength: AppSpacing.sm)
+                    stateLabel
+                }
             }
-            .frame(width: 34, height: 34)
-            .accessibilityHidden(true)
-
-            VStack(alignment: .leading, spacing: AppSpacing.xxs) {
-                Text(item.wish.title)
-                    .font(AppTypography.caption)
-                    .foregroundStyle(AppColors.textSecondary)
-                    .lineLimit(1)
-
-                Text(item.condition.title)
-                    .font(AppTypography.callout.weight(.semibold))
-                    .foregroundStyle(AppColors.textPrimary)
-                    .lineLimit(2)
-                    .fixedSize(horizontal: false, vertical: true)
-
-                Text(item.progressText)
-                    .font(AppTypography.footnote)
-                    .foregroundStyle(AppColors.textSecondary)
-            }
-
-            Spacer(minLength: AppSpacing.sm)
-
-            Text(item.stateText)
-                .font(AppTypography.caption.weight(.semibold))
-                .foregroundStyle(AppColors.textSecondary)
         }
         .padding(.vertical, AppSpacing.sm)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(item.accessibilityDescription))
+    }
+
+    private var checkmark: some View {
+        ZStack {
+            Circle()
+                .fill(AppColors.successSoft)
+
+            Image(systemName: "checkmark")
+                .font(.system(size: 12, weight: .bold))
+                .foregroundStyle(AppColors.success)
+        }
+        .frame(width: 34, height: 34)
+        .accessibilityHidden(true)
+    }
+
+    private var content: some View {
+        VStack(alignment: .leading, spacing: AppSpacing.xxs) {
+            Text(item.wish.title)
+                .font(AppTypography.caption)
+                .foregroundStyle(AppColors.textSecondary)
+                .lineLimit(1)
+
+            Text(item.condition.title)
+                .font(AppTypography.callout.weight(.semibold))
+                .foregroundStyle(AppColors.textPrimary)
+                .lineLimit(2)
+                .fixedSize(horizontal: false, vertical: true)
+
+            Text(item.progressText)
+                .font(AppTypography.footnote)
+                .foregroundStyle(AppColors.textSecondary)
+        }
+    }
+
+    private var stateLabel: some View {
+        Text(item.stateText)
+            .font(AppTypography.caption.weight(.semibold))
+            .foregroundStyle(AppColors.textSecondary)
     }
 }
 
