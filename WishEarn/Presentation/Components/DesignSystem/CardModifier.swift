@@ -15,12 +15,9 @@ struct CardModifier: ViewModifier {
                 RoundedRectangle(cornerRadius: radius, style: .continuous)
                     .stroke(AppColors.separator, lineWidth: 1)
             )
-            .shadow(
-                color: AppElevation.cardColor,
-                radius: AppElevation.cardRadius,
-                x: 0,
-                y: AppElevation.cardY
-            )
+            // Editorial Paper builds depth with hairlines and spacing, not
+            // shadows; the card keeps a single 1pt rule.
+
     }
 }
 

@@ -26,7 +26,9 @@ struct AchievementsView: View {
             }
         }
         .appScreenBackground()
-        .navigationTitle("成就")
+        .navigationTitle("")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
         .onAppear {
             viewModel.load()
         }
@@ -74,19 +76,19 @@ struct AchievementsView: View {
     }
 
     private var summary: some View {
-        VStack(alignment: .leading, spacing: AppSpacing.sm) {
-            Text("你为自己完成了这些事")
-                .font(AppTypography.callout)
-                .foregroundStyle(AppColors.textSecondary)
+        VStack(alignment: .leading, spacing: AppSpacing.lg) {
+            Text("你为自己\n完成了这些事")
+                .font(AppTypography.display)
+                .tracking(-1.2)
+                .foregroundStyle(AppColors.textPrimary)
 
             summaryMetrics
-                .appCard()
 
             Text(
                 "累计完成 \(viewModel.completedConditionCount) 项条件 · \(viewModel.totalRecordCount) 条行动记录"
             )
             .font(AppTypography.footnote)
-            .foregroundStyle(AppColors.textSecondary)
+            .foregroundStyle(AppColors.textTertiary)
         }
     }
 
@@ -124,9 +126,10 @@ struct AchievementsView: View {
     private func wishSection(title: String, wishes: [Wish]) -> some View {
         VStack(alignment: .leading, spacing: 0) {
             Text(title)
-                .font(AppTypography.headline)
-                .foregroundStyle(AppColors.textPrimary)
-                .padding(.bottom, AppSpacing.sm)
+                .font(AppTypography.kicker)
+                .tracking(1)
+                .foregroundStyle(AppColors.textTertiary)
+                .padding(.bottom, AppSpacing.xs)
 
             ForEach(Array(wishes.enumerated()), id: \.element.id) { index, wish in
                 if index > 0 {
@@ -157,6 +160,8 @@ private struct AchievementSummaryMetric: View {
         VStack(alignment: .leading, spacing: AppSpacing.xs) {
             Text("\(value)")
                 .font(AppTypography.display)
+                .tracking(-1)
+                .monospacedDigit()
                 .foregroundStyle(AppColors.textPrimary)
 
             Text(title)
@@ -195,8 +200,8 @@ private struct AchievementWishRow: View {
 
                 if let dateText {
                     Text(dateText)
-                        .font(AppTypography.footnote)
-                        .foregroundStyle(AppColors.textSecondary)
+                        .font(AppTypography.caption)
+                        .foregroundStyle(AppColors.textTertiary)
                 }
             }
 

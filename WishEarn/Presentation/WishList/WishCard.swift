@@ -18,6 +18,7 @@ struct WishCard: View {
             VStack(alignment: .leading, spacing: AppSpacing.sm) {
                 Text(wish.title)
                     .font(AppTypography.display)
+                    .tracking(-1)
                     .foregroundStyle(AppColors.textPrimary)
                     .lineLimit(2)
                     .fixedSize(horizontal: false, vertical: true)
@@ -34,18 +35,35 @@ struct WishCard: View {
                 }
 
                 if let progressSummary {
-                    Text(progressSummary.text)
-                        .font(AppTypography.callout.weight(.semibold))
-                        .foregroundStyle(AppColors.textPrimary)
-                        .accessibilityHidden(true)
+                    HStack(alignment: .firstTextBaseline, spacing: AppSpacing.sm) {
+                        Text(progressSummary.text)
+                            .font(AppTypography.callout.weight(.semibold))
+                            .foregroundStyle(AppColors.textPrimary)
+                            .accessibilityHidden(true)
 
-                    ProgressIndicator(
-                        value: progressSummary.ratio,
-                        accessibilityLabel: "条件进度",
-                        accessibilityValue: progressSummary.accessibilityValue,
-                        style: .hero,
-                        isComplete: progressSummary.isComplete
-                    )
+                        Spacer(minLength: AppSpacing.sm)
+
+                        if !progressSummary.isComplete {
+                            Text("还差 \(progressSummary.totalConditionCount - progressSummary.completedConditionCount) 项")
+                                .font(AppTypography.caption)
+                                .foregroundStyle(AppColors.textTertiary)
+                        }
+                    }
+
+                    if progressSummary.totalConditionCount <= 8 {
+                        SegmentedProgress(
+                            completed: progressSummary.completedConditionCount,
+                            total: progressSummary.totalConditionCount
+                        )
+                    } else {
+                        ProgressIndicator(
+                            value: progressSummary.ratio,
+                            accessibilityLabel: "条件进度",
+                            accessibilityValue: progressSummary.accessibilityValue,
+                            style: .hero,
+                            isComplete: progressSummary.isComplete
+                        )
+                    }
                 } else {
                     Text("还没有解锁条件")
                         .font(AppTypography.callout)

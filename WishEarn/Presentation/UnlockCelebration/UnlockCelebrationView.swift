@@ -17,16 +17,8 @@ struct UnlockCelebrationView: View {
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
-            LinearGradient(
-                colors: [
-                    theme.tint.opacity(0.34),
-                    AppColors.canvas,
-                    AppColors.coralSoft
-                ],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
+            AppColors.canvas
+                .ignoresSafeArea()
 
             GeometryReader { proxy in
                 ScrollView {
@@ -37,16 +29,15 @@ struct UnlockCelebrationView: View {
                             .scaleEffect(reduceMotion ? 1 : (appeared ? 1 : 0.94))
                             .opacity(appeared ? 1 : 0)
 
-                        WishThemeMark(theme: theme, width: 42)
-
                         Text("你做到了")
                             .font(AppTypography.display)
+                            .tracking(-1.2)
                             .foregroundStyle(AppColors.textPrimary)
                             .multilineTextAlignment(.center)
 
                         Text("「\(wish.title)」已解锁")
-                            .font(AppTypography.title)
-                            .foregroundStyle(AppColors.textPrimary)
+                            .font(AppTypography.callout.weight(.semibold))
+                            .foregroundStyle(AppColors.textSecondary)
                             .multilineTextAlignment(.center)
                             .fixedSize(horizontal: false, vertical: true)
 
@@ -70,11 +61,10 @@ struct UnlockCelebrationView: View {
             }
 
             Button("关闭", action: onDismiss)
-                .font(AppTypography.callout)
+                .font(AppTypography.caption.weight(.medium))
                 .foregroundStyle(AppColors.textSecondary)
                 .padding(.horizontal, AppSpacing.md)
                 .frame(minHeight: AppLayout.touchTarget)
-                .background(AppColors.surface.opacity(0.9), in: Capsule())
                 .buttonStyle(.plain)
                 .accessibilityLabel("关闭")
                 .padding(.top, AppSpacing.sm)
@@ -136,12 +126,6 @@ struct UnlockCelebrationView: View {
         .clipped()
         .clipShape(
             RoundedRectangle(cornerRadius: AppRadius.xl, style: .continuous)
-        )
-        .shadow(
-            color: AppColors.accent.opacity(0.18),
-            radius: 24,
-            x: 0,
-            y: 12
         )
     }
 }

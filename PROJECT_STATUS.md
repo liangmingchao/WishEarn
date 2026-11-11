@@ -38,9 +38,9 @@
 
 - Task ID: TASK-905
 - Task Name: Editorial Paper v1 视觉方向（今天 / 心愿详情 / 全局 token）
-- Current Progress: NEEDS_REVIEW — 代码完成，Build / 274 单元测试 / 1 UI 测试通过；截图见 `docs/design/screenshots/editorial-paper-01/`
+- Current Progress: NEEDS_REVIEW — 七个核心页面已迁移，Build / 274 单元测试 / 1 UI 测试通过，Light 7 张 + Dark 3 张截图见 `docs/design/screenshots/editorial-paper-01/`
 - Modified Files: 见下方「Files Changed（Editorial Paper v1）」
-- Remaining Work: 心愿列表、成就、设置、编辑器、解锁庆祝仍为旧布局（已继承新配色）；深色模式截图；真机确认
+- Remaining Work: 条件详情 / 记录编辑器单独截图；真机确认；App Icon 与品牌素材同步
 
 - Task ID: TASK-904
 - Task Name: 发布验收
@@ -106,10 +106,10 @@
 
 ## Last Verification
 
-- Editorial Paper v1: Build PASS — Debug（iOS Simulator，2026-11-11 00:29）
-- Editorial Paper v1: Unit Tests PASS — 274 项（含新增 chip 对比度断言）
-- Editorial Paper v1: UI Test PASS — CriticalJourneyUITests（自绘 Tab 栏与详情页重构后回归通过）
-- Editorial Paper v1: Screenshots — 今天 / 心愿详情 Light（iPhone 18 Pro，iOS 27.2）
+- Editorial Paper v1: Build PASS — Debug（iOS Simulator，2026-11-11 08:32）
+- Editorial Paper v1: Unit Tests PASS — 274 项（含 chip 对比度断言）
+- Editorial Paper v1: UI Test PASS — CriticalJourneyUITests（七页迁移后回归）
+- Editorial Paper v1: Screenshots — Light 7 页 + Dark 3 页（iPhone 18 Pro，iOS 27.2）
 - Build: PASS — Debug / Release
 - Unit Tests: PASS — 274 项，iPhone 18 Pro / iOS 27.2，2026-11-10 13:22
 - UI Test: PASS — 1 项关键旅程（创建 → 条件 → 记录 → 解锁 → 领取）
@@ -138,6 +138,11 @@
 - `WishEarn/Presentation/Navigation/{RootTabView,AppTabBar}.swift`
 - `WishEarn/Presentation/Today/{TodayView,TodayViewModel}.swift`
 - `WishEarn/Presentation/WishDetail/{WishDetailView,ConditionRow}.swift`
+- `WishEarn/Presentation/WishList/{WishListView,WishCard,WishListViewModel}.swift`
+- `WishEarn/Presentation/Achievements/AchievementsView.swift`
+- `WishEarn/Presentation/Settings/SettingsView.swift`
+- `WishEarn/Presentation/UnlockCelebration/UnlockCelebrationView.swift`
+- `WishEarn/Presentation/WishEditor/{WishEditorView,EditorField}.swift`
 - `WishEarn/App/{AppContainer,WishEarnApp}.swift`
 - `WishEarnTests/DesignSystemTests/DesignSystemTests.swift`
 - `WishEarnTests/ViewModelTests/TodayViewModelTests.swift`
@@ -159,7 +164,7 @@
 ## Next Recommended Action
 
 - Task ID: TASK-905
-- Description: 评审 `design/editorial-paper-01` 的今天页与详情页；确认后把心愿列表、成就、设置、编辑器、解锁庆祝迁移到新布局，并补深色模式截图
+- Description: 评审 `design/editorial-paper-01` 的七个核心页面；确认后合并并在真机确认图片、键盘与滚动
 - Dependencies: 设计方向确认（TASK-905 NEEDS_REVIEW）
 - Expected Outcome: 五个剩余页面完成 Editorial Paper 布局迁移
 - Acceptance Criteria: 七页视觉一致；Light / Dark 截图齐全；Build + 274 单元测试 + UI 测试通过

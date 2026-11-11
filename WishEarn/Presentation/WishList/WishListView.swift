@@ -30,10 +30,6 @@ struct WishListView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            if showsActiveSummary {
-                activeSummary
-            }
-
             content
 
             if showsFilterBar {
@@ -41,7 +37,9 @@ struct WishListView: View {
             }
         }
         .appScreenBackground()
-        .navigationTitle("我的心愿")
+        .navigationTitle("")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
@@ -96,20 +94,21 @@ struct WishListView: View {
         }
     }
 
-    private var showsActiveSummary: Bool {
-        viewModel.hasLoaded
-            && viewModel.error == nil
-            && viewModel.activeWishCount > 0
-    }
+    private var pageHeader: some View {
+        VStack(alignment: .leading, spacing: AppSpacing.sm) {
+            Text("我的心愿")
+                .font(AppTypography.display)
+                .tracking(-1.2)
+                .foregroundStyle(AppColors.textPrimary)
 
-    private var activeSummary: some View {
-        Text("正在为 \(viewModel.activeWishCount) 个想要的东西努力")
-            .font(AppTypography.callout)
-            .foregroundStyle(AppColors.textSecondary)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, AppSpacing.screenInset)
-            .padding(.top, AppSpacing.xs)
-            .padding(.bottom, AppSpacing.md)
+            Text("正在为 \(viewModel.activeWishCount) 个想要的东西努力")
+                .font(AppTypography.callout)
+                .foregroundStyle(AppColors.textSecondary)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal, AppSpacing.screenInset)
+        .padding(.top, AppSpacing.sm)
+        .padding(.bottom, AppSpacing.lg)
     }
 
     private var showsFilterBar: Bool {
@@ -131,13 +130,11 @@ struct WishListView: View {
                 }
             }
             .padding(.horizontal, AppSpacing.screenInset)
-            .padding(.vertical, AppSpacing.sm)
+            .padding(.vertical, AppSpacing.md)
         }
         .background(AppColors.canvas)
         .overlay(alignment: .top) {
-            Rectangle()
-                .fill(AppColors.separator)
-                .frame(height: 0.5)
+            HairlineDivider()
         }
     }
 
@@ -193,6 +190,8 @@ struct WishListView: View {
     private var wishListContent: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: AppSpacing.xxl) {
+                pageHeader
+
                 if let featuredWish = viewModel.featuredWish {
                     wishLink(for: featuredWish) {
                         WishCard(
@@ -208,8 +207,9 @@ struct WishListView: View {
                     VStack(alignment: .leading, spacing: AppSpacing.md) {
                         if viewModel.featuredWish != nil {
                             Text("其他心愿")
-                                .font(AppTypography.headline)
-                                .foregroundStyle(AppColors.textPrimary)
+                                .font(AppTypography.kicker)
+                                .tracking(1)
+                                .foregroundStyle(AppColors.textTertiary)
                         }
 
                         VStack(spacing: 0) {

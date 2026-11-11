@@ -21,21 +21,17 @@ struct EditorField<Content: View>: View {
     var body: some View {
         VStack(alignment: .leading, spacing: AppSpacing.sm) {
             Text(title)
-                .font(AppTypography.footnote)
-                .foregroundStyle(AppColors.textSecondary)
+                .font(AppTypography.kicker)
+                .tracking(1)
+                .foregroundStyle(AppColors.textTertiary)
 
             content
                 .font(AppTypography.body)
                 .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(AppSpacing.md)
-                .background(AppColors.surfaceSecondary)
-                .clipShape(
-                    RoundedRectangle(cornerRadius: AppRadius.md, style: .continuous)
-                )
-                .overlay(
-                    RoundedRectangle(cornerRadius: AppRadius.md, style: .continuous)
-                        .stroke(AppColors.separator, lineWidth: 1)
-                )
+                .padding(.vertical, AppSpacing.md)
+                .overlay(alignment: .bottom) {
+                    HairlineDivider()
+                }
 
             if let errorText {
                 Text(errorText)

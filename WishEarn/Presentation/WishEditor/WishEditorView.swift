@@ -140,34 +140,28 @@ struct WishEditorView: View {
                             .font(AppTypography.callout)
                             .foregroundStyle(AppColors.accent)
                     }
-                    .frame(maxWidth: .infinity, minHeight: 140)
-                    .background(
-                        AppColors.surfaceSecondary,
-                        in: RoundedRectangle(
-                            cornerRadius: AppRadius.md,
+                    .frame(maxWidth: .infinity, minHeight: 200)
+                    .background(AppColors.surfaceSecondary)
+                    .clipShape(
+                        RoundedRectangle(
+                            cornerRadius: AppRadius.xl,
                             style: .continuous
                         )
                     )
-                    .overlay {
-                        RoundedRectangle(
-                            cornerRadius: AppRadius.md,
-                            style: .continuous
-                        )
-                        .stroke(AppColors.separator, lineWidth: 1)
-                    }
                 }
                 .buttonStyle(.plain)
                 .accessibilityLabel("添加心愿照片")
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .appCard()
     }
 
     private var targetDateSection: some View {
         VStack(alignment: .leading, spacing: AppSpacing.md) {
             Toggle("设置目标日期（选填）", isOn: $viewModel.hasTargetDate)
+                .font(AppTypography.callout)
                 .tint(AppColors.primary)
+                .padding(.vertical, AppSpacing.sm)
 
             if viewModel.hasTargetDate {
                 EditorField(
@@ -189,7 +183,8 @@ struct WishEditorView: View {
                     .fixedSize(horizontal: false, vertical: true)
             }
         }
-        .appCard()
+        .padding(.vertical, AppSpacing.xs)
+        .overlay(alignment: .bottom) { HairlineDivider() }
     }
 }
 

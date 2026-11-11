@@ -9,89 +9,76 @@ struct SettingsView: View {
     @State private var exportError: AppError?
 
     var body: some View {
-        List {
-            Section {
-                HStack(spacing: AppSpacing.md) {
-                    ZStack {
-                        RoundedRectangle(cornerRadius: AppRadius.md, style: .continuous)
-                            .fill(AppColors.primarySoft)
+        ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+                header
 
-                        Image(systemName: "heart.fill")
-                            .font(.system(size: 25, weight: .regular))
-                            .foregroundStyle(AppColors.primary)
+                sectionLabel("数据")
+                    .padding(.top, AppSpacing.xxl)
 
-                        Image(systemName: "sparkles")
-                            .font(.system(size: 13, weight: .semibold))
-                            .foregroundStyle(AppColors.coral)
-                            .offset(x: 19, y: -19)
-                    }
-                    .frame(width: 56, height: 56)
+                HairlineDivider()
 
-                    VStack(alignment: .leading, spacing: AppSpacing.xxs) {
-                        Text("WishEarn")
-                            .font(AppTypography.title)
-                            .foregroundStyle(AppColors.textPrimary)
-                        Text("通过行动解锁心愿奖励")
-                            .font(AppTypography.caption)
-                            .foregroundStyle(AppColors.textSecondary)
-                    }
-                }
-                .padding(.vertical, AppSpacing.xs)
-                .listRowBackground(Color.clear)
-            }
+                infoRow(title: "数据存储", value: "仅保存在本机")
 
-            Section {
-                LabeledContent("数据存储", value: "仅保存在本机")
-                    .frame(minHeight: 52)
+                HairlineDivider()
 
-                Button {
-                    exportData()
-                } label: {
-                    HStack(spacing: AppSpacing.sm) {
-                        Label("导出数据", systemImage: "square.and.arrow.up")
-                            .foregroundStyle(AppColors.primary)
+                exportRow
 
-                        Spacer()
+                HairlineDivider()
 
-                        Text("JSON")
-                            .font(AppTypography.caption)
-                            .foregroundStyle(AppColors.textSecondary)
-
-                        Image(systemName: "chevron.right")
-                            .font(AppTypography.caption.weight(.semibold))
-                            .foregroundStyle(AppColors.textTertiary)
-                            .accessibilityHidden(true)
-                    }
-                    .frame(minHeight: 52)
-                }
-                .accessibilityLabel("导出数据")
-                .accessibilityHint("导出为 JSON 文件")
-            } header: {
-                Text("数据")
-            } footer: {
                 Text("导出为 JSON 文件，包含心愿、条件、行动记录、解锁事件和暂停区间；不包含图片二进制，仅保留图片路径。")
                     .font(AppTypography.footnote)
-                    .foregroundStyle(AppColors.textSecondary)
-            }
+                    .foregroundStyle(AppColors.textTertiary)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.top, AppSpacing.md)
 
-            Section("隐私") {
-                Label("不收集个人数据", systemImage: "lock.shield")
-                Text("心愿、条件与行动记录只保存在当前设备，不会上传到服务器。")
-                    .font(AppTypography.caption)
-                    .foregroundStyle(AppColors.textSecondary)
-            }
+                sectionLabel("隐私")
+                    .padding(.top, AppSpacing.xxl)
 
-            Section("关于") {
-                LabeledContent("版本", value: appVersion)
-                    .frame(minHeight: 52)
+                HairlineDivider()
+
+                VStack(alignment: .leading, spacing: AppSpacing.xs) {
+                    HStack(spacing: AppSpacing.sm) {
+                        Image(systemName: "lock.shield")
+                            .font(.system(size: 15, weight: .regular))
+                            .foregroundStyle(AppColors.chipText)
+                            .accessibilityHidden(true)
+
+                        Text("不收集个人数据")
+                            .font(AppTypography.callout.weight(.semibold))
+                            .foregroundStyle(AppColors.textPrimary)
+                    }
+
+                    Text("心愿、条件与行动记录只保存在当前设备，不会上传到服务器。")
+                        .font(AppTypography.caption)
+                        .foregroundStyle(AppColors.textTertiary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .padding(.vertical, AppSpacing.md)
+
+                HairlineDivider()
+
+                sectionLabel("关于")
+                    .padding(.top, AppSpacing.xxl)
+
+                HairlineDivider()
+
+                infoRow(title: "版本", value: appVersion)
+
+                HairlineDivider()
+
                 Text("WishEarn · 让每一份想要，都有值得付出的努力。")
                     .font(AppTypography.caption)
-                    .foregroundStyle(AppColors.textSecondary)
+                    .foregroundStyle(AppColors.textTertiary)
+                    .padding(.top, AppSpacing.lg)
             }
+            .padding(.horizontal, AppSpacing.screenInset)
+            .padding(.bottom, AppSpacing.xxl)
         }
-        .scrollContentBackground(.hidden)
         .appScreenBackground()
-        .navigationTitle("我的")
+        .navigationTitle("")
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbarBackground(.hidden, for: .navigationBar)
         .fileExporter(
             isPresented: $isExporting,
             document: exportDocument,
@@ -103,6 +90,90 @@ struct SettingsView: View {
             }
         }
         .appErrorAlert(error: $exportError)
+    }
+
+    private var header: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            Text("我的")
+                .font(AppTypography.display)
+                .tracking(-1.2)
+                .foregroundStyle(AppColors.textPrimary)
+                .padding(.top, AppSpacing.sm)
+
+            HStack(spacing: AppSpacing.md) {
+                ZStack {
+                    Circle()
+                        .fill(AppColors.primarySoft)
+
+                    Image(systemName: "heart.fill")
+                        .font(.system(size: 15, weight: .regular))
+                        .foregroundStyle(AppColors.chipText)
+                }
+                .frame(width: 40, height: 40)
+
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("WishEarn")
+                        .font(AppTypography.callout.weight(.semibold))
+                        .foregroundStyle(AppColors.textPrimary)
+
+                    Text("通过行动解锁心愿奖励")
+                        .font(AppTypography.caption)
+                        .foregroundStyle(AppColors.textTertiary)
+                }
+            }
+            .padding(.top, AppSpacing.lg)
+        }
+    }
+
+    private func sectionLabel(_ title: String) -> some View {
+        Text(title)
+            .font(AppTypography.kicker)
+            .tracking(1)
+            .foregroundStyle(AppColors.textTertiary)
+            .padding(.bottom, AppSpacing.sm)
+    }
+
+    private func infoRow(title: String, value: String) -> some View {
+        HStack(alignment: .firstTextBaseline) {
+            Text(title)
+                .font(AppTypography.callout)
+                .foregroundStyle(AppColors.textPrimary)
+
+            Spacer(minLength: AppSpacing.sm)
+
+            Text(value)
+                .font(AppTypography.caption)
+                .foregroundStyle(AppColors.textTertiary)
+        }
+        .frame(minHeight: 52)
+    }
+
+    private var exportRow: some View {
+        Button {
+            exportData()
+        } label: {
+            HStack(spacing: AppSpacing.sm) {
+                Text("导出数据")
+                    .font(AppTypography.callout)
+                    .foregroundStyle(AppColors.textPrimary)
+
+                Spacer()
+
+                Text("JSON")
+                    .font(AppTypography.caption)
+                    .foregroundStyle(AppColors.textTertiary)
+
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(AppColors.textTertiary)
+                    .accessibilityHidden(true)
+            }
+            .frame(minHeight: 52)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel("导出数据")
+        .accessibilityHint("导出为 JSON 文件")
     }
 
     private func exportData() {

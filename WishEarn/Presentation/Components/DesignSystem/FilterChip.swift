@@ -8,16 +8,16 @@ struct FilterChip: View {
     var body: some View {
         Button(action: action) {
             Text(title)
-                .font(AppTypography.callout.weight(.semibold))
+                .font(AppTypography.caption.weight(.semibold))
                 .foregroundStyle(
-                    isSelected ? AppColors.primary : AppColors.textSecondary
+                    isSelected ? AppColors.onPrimary : AppColors.textSecondary
                 )
                 .lineLimit(1)
                 .fixedSize(horizontal: true, vertical: false)
                 .padding(.horizontal, AppSpacing.md)
-                .frame(minHeight: 36)
+                .frame(minHeight: 34)
                 .background(
-                    isSelected ? AppColors.primarySoft : AppColors.elevated,
+                    isSelected ? AppColors.primary : Color.clear,
                     in: Capsule()
                 )
                 .overlay {

@@ -40,13 +40,17 @@ final class WishListViewModel {
         wishes.filter { filter.matches($0) }
     }
 
-    /// The first active wish in the existing repository/ViewModel order.
+    /// The lead card for the home list.
     ///
-    /// A featured wish is only meaningful when the selected filter can contain
-    /// active wishes. No price/progress/date ranking happens here.
+    /// Prefers the first active wish that has a photo, so the lead card always
+    /// carries real imagery, then falls back to the first active wish. Both
+    /// candidates come from the existing list order; no price, progress, or
+    /// date ranking is introduced. A featured wish is only meaningful when the
+    /// selected filter can contain active wishes.
     var featuredWish: Wish? {
         guard filter == .all || filter == .active else { return nil }
-        return filteredWishes.first { $0.status == .active }
+        let activeWishes = filteredWishes.filter { $0.status == .active }
+        return activeWishes.first { $0.imagePath != nil } ?? activeWishes.first
     }
 
     /// The filtered list without the featured wish, preserving source order.
