@@ -1,6 +1,6 @@
 # Issue #30 — Visual Identity & UI Composition Refinement
 
-> Status: design decision + implementation plan
+> Status: implemented on branch, PR pending review (not merged)
 > Branch: `design/issue-30-visual-identity-refinement`
 > Base: `main` @ `16f390c`
 > Reference: `docs/design/references/issue-30-colorful-lifestyle-editorial.svg`
@@ -162,3 +162,11 @@ Detail
 - Light / Dark 截图覆盖 Home / Today / Detail，并补长文案状态；截图来自真实模拟器与真实 UI 创建的数据。
 - `DesignSystemTests` 扩展：主题容器前景/背景、品牌渐变、画布渐变端点、按钮与筛选组合；正文 ≥ 4.5:1，大字 ≥ 3:1。
 - 更新 `DESIGN_SYSTEM.md`、`PROJECT_STATUS.md`、`CHANGELOG.md`；PR 不合并。
+
+## 6. 实施结果（2026-11-11）
+
+- 方向 A 已落地：Featured Wish 使用大图 + 主题色相框；第二个心愿为整宽主题色 Banner；其余心愿进入双列主题色卡；Today 使用暖珊瑚鼓励卡 + 白色行动卡；Detail 使用主题色故事 Hero + 纸面进度面板 + 独立条件卡。
+- 主题色现在以 `container` / `onContainer` 参与大面积卡片；Light 使用主题实底 + Ink，Dark 使用深色容器 + 主题浅色文字。
+- 首页 / Today / Detail 的 Light / Dark 与长文案截图见 `docs/design/screenshots/issue-30/`；对比度实测见同目录 `CONTRAST.md`（48 组 pair × 2 外观，全部 PASS）。
+- 验证：Build PASS；Unit / Integration 275 项 PASS；Critical Journey UI Test PASS；DesignCapture UI Tests 在 CI 默认 skipped，本地 Light / Dark 截图流程 PASS。
+- App Icon 仅新增提案 `docs/design/assets/app-icon-colorful-proposal.png`，未替换生产图标；未修改 Domain / Repository / SwiftData / 解锁状态机 / 产品功能。

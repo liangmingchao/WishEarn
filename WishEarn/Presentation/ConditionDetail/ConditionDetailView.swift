@@ -31,6 +31,7 @@ struct ConditionDetailView: View {
         .appScreenBackground()
         .navigationTitle(viewModel.condition.title)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.hidden, for: .tabBar)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {

@@ -9,10 +9,38 @@ struct StatusBadge: View {
         case danger
     }
 
+    enum Style {
+        /// Text + dot on the surrounding surface.
+        case plain
+        /// Solid surface capsule, safe on top of photography or themed cards.
+        case pill
+    }
+
     let title: String
     var tone: Tone = .neutral
+    var style: Style = .plain
 
     var body: some View {
+        Group {
+            switch style {
+            case .plain:
+                content
+            case .pill:
+                content
+                    .padding(.horizontal, AppSpacing.sm + 2)
+                    .frame(minHeight: 28)
+                    .background(AppColors.surface, in: Capsule())
+                    .overlay {
+                        Capsule()
+                            .stroke(AppColors.separator, lineWidth: 0.5)
+                    }
+            }
+        }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(Text(title))
+    }
+
+    private var content: some View {
         HStack(spacing: AppSpacing.xs) {
             Circle()
                 .fill(foregroundColor)
@@ -20,13 +48,11 @@ struct StatusBadge: View {
                 .accessibilityHidden(true)
 
             Text(title)
-                .font(AppTypography.caption)
+                .font(AppTypography.caption.weight(.semibold))
                 .foregroundStyle(foregroundColor)
                 .lineLimit(1)
                 .fixedSize(horizontal: true, vertical: false)
         }
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel(Text(title))
     }
 
     private var foregroundColor: Color {
@@ -58,6 +84,7 @@ private struct StatusBadgePreview: View {
             StatusBadge(title: "已暂停", tone: .warning)
             StatusBadge(title: "需要处理", tone: .danger)
             StatusBadge(title: "已兑现", tone: .neutral)
+            StatusBadge(title: "进行中", tone: .primary, style: .pill)
         }
         .padding(AppSpacing.screenInset)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)

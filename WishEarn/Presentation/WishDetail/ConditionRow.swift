@@ -53,7 +53,6 @@ struct ConditionRow: View {
 
             Spacer(minLength: 0)
         }
-        .padding(.vertical, AppSpacing.lg)
         .accessibilityElement(children: .combine)
     }
 
@@ -68,19 +67,22 @@ struct ConditionRow: View {
 
     private var icon: some View {
         Image(systemName: condition.type.symbolName)
-            .font(.system(size: 16, weight: .regular))
+            .font(.system(size: 17, weight: .medium))
             .foregroundStyle(
                 snapshot?.isCompleted == true
                     ? AppColors.success
                     : theme.onTint
             )
-            .frame(width: 34, height: 34)
+            .frame(width: 42, height: 42)
             .background(
                 snapshot?.isCompleted == true
                     ? AppColors.successSoft
-                    : theme.tint
+                    : theme.tint,
+                in: RoundedRectangle(
+                    cornerRadius: AppRadius.md,
+                    style: .continuous
+                )
             )
-            .clipShape(Circle())
             .accessibilityHidden(true)
     }
 

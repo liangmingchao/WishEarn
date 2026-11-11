@@ -26,6 +26,11 @@
 - 新增 `WishTheme` 确定性 Wish 主题色系统；App Icon 仅提供提案预览，未替换生产资产。
 - 新增 `WishEarnUITests` 关键旅程测试（创建 → 条件 → 记录 → 解锁 → 领取）；修复庆祝页领取后详情状态不刷新的问题。测试基线为 274 项单元/集成 + 1 项 UI 测试。
 - Issue #25 的 PR #26 已合并，main CI 绿色；Playful Release 0.15.0 在 iPhone 17 安装并启动（真机交互项未验收）。
+- Issue #30 Colorful Lifestyle Editorial：Wish Theme 从 4pt 色条 / 小圆点升级为大面积主题容器、图片相框、Banner 与双列卡；首页拆分为 Featured / Spotlight / Grid 三种卡片节奏。
+- 首页新增自绘编辑页头、上移筛选条、空状态插画；Today 新增日期 kicker、暖珊瑚鼓励卡、白色行动卡与安静的已完成分组；Wish Detail 改为主题色故事 Hero + 纸面进度面板 + 独立条件卡，并在 push 页面隐藏 Tab Bar。
+- 设计系统新增画布渐变、品牌渐变、`editorialTitle` / `kicker` / `metric` 字体、22 / 30pt 圆角、主题 `container` / `onContainer` 与 Dark 深色容器；对比度测试扩展到 48 组 token 组合并新增 `testContrastAuditReport`。
+- 新增 `docs/design/screenshots/issue-30/` Light / Dark 截图与 `CONTRAST.md`；新增仅在 opt-in 时运行的 `DesignCaptureUITests`（CI 默认跳过）。
+- App Icon 新增 Colorful Lifestyle 提案 `docs/design/assets/app-icon-colorful-proposal.png`，未替换生产图标。
 
 ### Planned
 

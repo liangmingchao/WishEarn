@@ -10,12 +10,20 @@ final class DesignSystemTests: XCTestCase {
             ("textPrimary / canvas", AppColors.textPrimary, AppColors.canvas, 7),
             ("textSecondary / canvas", AppColors.textSecondary, AppColors.canvas, 4.5),
             ("textTertiary / canvas", AppColors.textTertiary, AppColors.canvas, 4.5),
+            ("textPrimary / canvasTop", AppColors.textPrimary, AppColors.canvasTop, 7),
+            ("textSecondary / canvasTop", AppColors.textSecondary, AppColors.canvasTop, 4.5),
+            ("textTertiary / canvasTop", AppColors.textTertiary, AppColors.canvasTop, 4.5),
+            ("textPrimary / canvasBottom", AppColors.textPrimary, AppColors.canvasBottom, 7),
+            ("textSecondary / canvasBottom", AppColors.textSecondary, AppColors.canvasBottom, 4.5),
+            ("textTertiary / canvasBottom", AppColors.textTertiary, AppColors.canvasBottom, 4.5),
             ("textPrimary / surface", AppColors.textPrimary, AppColors.surface, 7),
             ("textSecondary / surface", AppColors.textSecondary, AppColors.surface, 4.5),
             ("textTertiary / surface", AppColors.textTertiary, AppColors.surface, 4.5),
             ("textPrimary / elevated", AppColors.textPrimary, AppColors.elevated, 7),
             ("textSecondary / elevated", AppColors.textSecondary, AppColors.elevated, 4.5),
-            ("textTertiary / elevated", AppColors.textTertiary, AppColors.elevated, 4.5)
+            ("textTertiary / elevated", AppColors.textTertiary, AppColors.elevated, 4.5),
+            ("textPrimary / surfaceSecondary", AppColors.textPrimary, AppColors.surfaceSecondary, 7),
+            ("textSecondary / surfaceSecondary", AppColors.textSecondary, AppColors.surfaceSecondary, 4.5)
         ]
 
         assertContrast(pairs, styles: [.light, .dark])
@@ -23,16 +31,23 @@ final class DesignSystemTests: XCTestCase {
 
     func testActionAndStateContrastInLightAndDark() {
         let pairs: [(String, Color, Color, Double)] = [
+            ("primary / canvas", AppColors.primary, AppColors.canvas, 4.5),
             ("primary / surface", AppColors.primary, AppColors.surface, 4.5),
             ("primary / elevated", AppColors.primary, AppColors.elevated, 4.5),
             ("primary / primarySoft", AppColors.primary, AppColors.primarySoft, 4.5),
             ("onPrimary / primary", AppColors.onPrimary, AppColors.primary, 4.5),
             ("onPrimary / primaryPressed", AppColors.onPrimary, AppColors.primaryPressed, 4.5),
+            ("onPrimary / primaryGradientStart", AppColors.onPrimary, AppColors.primaryGradientStart, 4.5),
+            ("onPrimary / primaryGradientEnd", AppColors.onPrimary, AppColors.primaryGradientEnd, 4.5),
             ("onCoral / coral", AppColors.onCoral, AppColors.coral, 4.5),
+            ("coralText / canvas", AppColors.coralText, AppColors.canvas, 4.5),
             ("coralText / surface", AppColors.coralText, AppColors.surface, 4.5),
             ("coralText / coralSoft", AppColors.coralText, AppColors.coralSoft, 4.5),
+            ("success / canvas", AppColors.success, AppColors.canvas, 4.5),
             ("success / surface", AppColors.success, AppColors.surface, 4.5),
+            ("warning / canvas", AppColors.warning, AppColors.canvas, 4.5),
             ("warning / surface", AppColors.warning, AppColors.surface, 4.5),
+            ("danger / canvas", AppColors.danger, AppColors.canvas, 4.5),
             ("danger / surface", AppColors.danger, AppColors.surface, 4.5)
         ]
 
@@ -61,6 +76,114 @@ final class DesignSystemTests: XCTestCase {
         }
 
         assertContrast(softPairs, styles: [.light, .dark])
+
+        let containerPairs = WishTheme.allCases.map { theme in
+            (
+                "onContainer / container \(theme.rawValue)",
+                theme.onContainer,
+                theme.container,
+                4.5
+            )
+        }
+
+        assertContrast(containerPairs, styles: [.light, .dark])
+
+        let labelPairs = WishTheme.allCases.flatMap { theme in
+            [
+                (
+                    "labelText \(theme.rawValue) / surface",
+                    theme.labelText,
+                    AppColors.surface,
+                    4.5
+                ),
+                (
+                    "labelText \(theme.rawValue) / canvas",
+                    theme.labelText,
+                    AppColors.canvas,
+                    4.5
+                )
+            ]
+        }
+
+        assertContrast(labelPairs, styles: [.light, .dark])
+    }
+
+    /// Prints the measured ratios used for the Issue #30 verification report.
+    /// The assertions mirror the design thresholds; the printed lines are the
+    /// source of truth for `docs/design/screenshots/issue-30/CONTRAST.md`.
+    func testContrastAuditReport() {
+        let pairs: [(String, Color, Color, Double)] = [
+            ("textPrimary / canvasTop", AppColors.textPrimary, AppColors.canvasTop, 7),
+            ("textPrimary / canvasBottom", AppColors.textPrimary, AppColors.canvasBottom, 7),
+            ("textSecondary / canvasTop", AppColors.textSecondary, AppColors.canvasTop, 4.5),
+            ("textSecondary / canvasBottom", AppColors.textSecondary, AppColors.canvasBottom, 4.5),
+            ("textTertiary / canvasTop", AppColors.textTertiary, AppColors.canvasTop, 4.5),
+            ("textTertiary / canvasBottom", AppColors.textTertiary, AppColors.canvasBottom, 4.5),
+            ("textPrimary / surface", AppColors.textPrimary, AppColors.surface, 7),
+            ("textSecondary / surface", AppColors.textSecondary, AppColors.surface, 4.5),
+            ("textTertiary / surface", AppColors.textTertiary, AppColors.surface, 4.5),
+            ("primary / canvas", AppColors.primary, AppColors.canvas, 4.5),
+            ("primary / surface", AppColors.primary, AppColors.surface, 4.5),
+            ("primary / primarySoft", AppColors.primary, AppColors.primarySoft, 4.5),
+            ("onPrimary / primary", AppColors.onPrimary, AppColors.primary, 4.5),
+            ("onPrimary / primaryGradientStart", AppColors.onPrimary, AppColors.primaryGradientStart, 4.5),
+            ("onPrimary / primaryGradientEnd", AppColors.onPrimary, AppColors.primaryGradientEnd, 4.5),
+            ("onCoral / coral", AppColors.onCoral, AppColors.coral, 4.5),
+            ("coralText / canvas", AppColors.coralText, AppColors.canvas, 4.5),
+            ("coralText / coralSoft", AppColors.coralText, AppColors.coralSoft, 4.5),
+            ("success / canvas", AppColors.success, AppColors.canvas, 4.5),
+            ("success / surface", AppColors.success, AppColors.surface, 4.5),
+            ("warning / canvas", AppColors.warning, AppColors.canvas, 4.5),
+            ("warning / surface", AppColors.warning, AppColors.surface, 4.5),
+            ("danger / canvas", AppColors.danger, AppColors.canvas, 4.5),
+            ("danger / surface", AppColors.danger, AppColors.surface, 4.5)
+        ] + WishTheme.allCases.flatMap { theme in
+            [
+                (
+                    "onContainer / container \(theme.rawValue)",
+                    theme.onContainer,
+                    theme.container,
+                    4.5
+                ),
+                (
+                    "labelText / surface \(theme.rawValue)",
+                    theme.labelText,
+                    AppColors.surface,
+                    4.5
+                ),
+                (
+                    "onTint / tint \(theme.rawValue)",
+                    theme.onTint,
+                    theme.tint,
+                    4.5
+                ),
+                (
+                    "onSoftTint / softTint \(theme.rawValue)",
+                    theme.onSoftTint,
+                    theme.softTint,
+                    3.0
+                )
+            ]
+        }
+
+        for (name, foreground, background, minimum) in pairs {
+            for style in [UIUserInterfaceStyle.light, .dark] {
+                let ratio = contrastRatio(
+                    foreground: foreground,
+                    background: background,
+                    style: style
+                )
+                let appearance = style == .dark ? "dark" : "light"
+                print(
+                    "CONTRAST|\(appearance)|\(name)|\(String(format: "%.2f", ratio))|\(minimum)"
+                )
+                XCTAssertGreaterThanOrEqual(
+                    ratio,
+                    minimum,
+                    "\(name) in \(appearance) has contrast \(String(format: "%.2f", ratio)); expected >= \(minimum)"
+                )
+            }
+        }
     }
 
     func testWishThemeAssignmentIsStable() {
@@ -75,9 +198,12 @@ final class DesignSystemTests: XCTestCase {
         XCTAssertEqual(AppRadius.sm, 8)
         XCTAssertEqual(AppRadius.md, 14)
         XCTAssertEqual(AppRadius.lg, 20)
+        XCTAssertEqual(AppRadius.card, 22)
         XCTAssertEqual(AppRadius.xl, 26)
+        XCTAssertEqual(AppRadius.xxl, 30)
         XCTAssertEqual(AppLayout.touchTarget, 44)
         XCTAssertEqual(AppLayout.buttonHeight, 52)
+        XCTAssertEqual(AppLayout.primaryButtonHeight, 54)
     }
 
     private func assertContrast(

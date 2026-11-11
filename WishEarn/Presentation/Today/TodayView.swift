@@ -35,7 +35,8 @@ struct TodayView: View {
             }
         }
         .appScreenBackground()
-        .navigationTitle("今天")
+        .navigationTitle("")
+        .navigationBarTitleDisplayMode(.inline)
         .sheet(
             item: $recordingCondition,
             onDismiss: {
@@ -60,32 +61,24 @@ struct TodayView: View {
     private var content: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
-                Text(viewModel.todayText)
-                    .font(AppTypography.footnote)
-                    .foregroundStyle(AppColors.textSecondary)
-                    .padding(.horizontal, AppSpacing.screenInset)
-                    .padding(.top, AppSpacing.xs)
+                header
 
                 if viewModel.hasContent {
+                    encouragementCard
+
                     if !viewModel.actionableItems.isEmpty {
                         actionableSection
-                    } else {
-                        Text("今天暂时没有需要继续记录的行动。")
-                            .font(AppTypography.callout)
-                            .foregroundStyle(AppColors.textSecondary)
-                            .padding(.horizontal, AppSpacing.screenInset)
-                            .padding(.top, AppSpacing.xl)
                     }
 
                     if !viewModel.recordedTodayItems.isEmpty {
-                        readOnlySection(
+                        doneSection(
                             title: "今天已记录",
                             items: viewModel.recordedTodayItems
                         )
                     }
 
                     if !viewModel.completedItems.isEmpty {
-                        readOnlySection(
+                        doneSection(
                             title: "已完成条件",
                             items: viewModel.completedItems
                         )
@@ -94,60 +87,144 @@ struct TodayView: View {
                     emptyState
                 }
             }
-            .padding(.bottom, AppSpacing.xl)
+            .padding(.bottom, AppSpacing.xxl)
         }
     }
 
-    private var actionableSection: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Text("今天可以推进这些心愿")
-                .font(AppTypography.headline)
-                .foregroundStyle(AppColors.textPrimary)
-                .padding(.bottom, AppSpacing.sm)
-                .padding(.top, AppSpacing.xl)
+    private var header: some View {
+        VStack(alignment: .leading, spacing: AppSpacing.xs) {
+            KickerText(
+                text: viewModel.todayText,
+                color: AppColors.primary,
+                tracking: 0.6
+            )
 
-            ForEach(
-                Array(viewModel.actionableItems.enumerated()),
-                id: \.element.id
-            ) { index, item in
-                if index > 0 {
-                    separator
+            Text("今天，慢慢来")
+                .font(AppTypography.display)
+                .foregroundStyle(AppColors.textPrimary)
+
+            Text("每一个小行动，都在把心愿拉近一点。")
+                .font(AppTypography.callout)
+                .foregroundStyle(AppColors.textSecondary)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .padding(.horizontal, AppSpacing.screenInset)
+        .padding(.top, AppSpacing.xs)
+    }
+
+    private var encouragementCard: some View {
+        let count = viewModel.actionableItems.count
+        let title = count > 0
+            ? "按自己的节奏，走一小步"
+            : "今天的行动，已经完成了"
+        let message = count > 0
+            ? "今天有 \(count) 个小行动，可以推进你的心愿。"
+            : "给自己一点掌声，明天再继续。"
+
+        return ZStack(alignment: .topTrailing) {
+            RoundedRectangle(cornerRadius: AppRadius.xl, style: .continuous)
+                .fill(AppColors.coralSoft)
+
+            Circle()
+                .fill(AppColors.coral.opacity(0.22))
+                .frame(width: 140, height: 140)
+                .offset(x: 42, y: -52)
+                .accessibilityHidden(true)
+
+            VStack(alignment: .leading, spacing: AppSpacing.xs + 2) {
+                HStack(spacing: AppSpacing.xs) {
+                    Image(systemName: "sun.max.fill")
+                        .font(.system(size: 14, weight: .semibold))
+                        .foregroundStyle(AppColors.coralText)
+                        .accessibilityHidden(true)
+
+                    KickerText(
+                        text: "今日心情",
+                        color: AppColors.coralText,
+                        tracking: 0.8
+                    )
                 }
 
-                TodayActionRow(item: item) {
+                Text(title)
+                    .font(AppTypography.editorialTitle)
+                    .foregroundStyle(AppColors.coralText)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Text(message)
+                    .font(AppTypography.callout)
+                    .foregroundStyle(AppColors.coralText)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(AppSpacing.lg)
+            .accessibilityElement(children: .combine)
+        }
+        .clipShape(
+            RoundedRectangle(cornerRadius: AppRadius.xl, style: .continuous)
+        )
+        .padding(.horizontal, AppSpacing.screenInset)
+        .padding(.top, AppSpacing.xl)
+    }
+
+    private var actionableSection: some View {
+        VStack(alignment: .leading, spacing: AppSpacing.md) {
+            EditorialSectionHeader(
+                title: "今天可以推进",
+                detail: "\(viewModel.actionableItems.count)"
+            )
+
+            ForEach(viewModel.actionableItems) { item in
+                TodayActionCard(item: item) {
                     recordingCondition = item.condition
                 }
             }
         }
         .padding(.horizontal, AppSpacing.screenInset)
+        .padding(.top, AppSpacing.xl)
     }
 
-    private func readOnlySection(
+    private func doneSection(
         title: String,
         items: [TodayConditionItem]
     ) -> some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Text(title)
-                .font(AppTypography.headline)
-                .foregroundStyle(AppColors.textPrimary)
-                .padding(.bottom, AppSpacing.sm)
-                .padding(.top, AppSpacing.xl)
+        VStack(alignment: .leading, spacing: AppSpacing.md) {
+            EditorialSectionHeader(
+                title: title,
+                detail: "\(items.count)",
+                showsSparkle: false
+            )
 
-            ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
-                if index > 0 {
-                    separator
+            VStack(spacing: 0) {
+                ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
+                    if index > 0 {
+                        Rectangle()
+                            .fill(AppColors.separator)
+                            .frame(height: 0.5)
+                            .padding(.leading, 46)
+                    }
+
+                    TodayDoneRow(item: item)
                 }
-
-                TodayReadOnlyRow(item: item)
+            }
+            .padding(.horizontal, AppSpacing.lg)
+            .padding(.vertical, AppSpacing.xs)
+            .background(
+                AppColors.surface,
+                in: RoundedRectangle(
+                    cornerRadius: AppRadius.card,
+                    style: .continuous
+                )
+            )
+            .overlay {
+                RoundedRectangle(
+                    cornerRadius: AppRadius.card,
+                    style: .continuous
+                )
+                .stroke(AppColors.separator, lineWidth: 0.8)
             }
         }
         .padding(.horizontal, AppSpacing.screenInset)
-    }
-
-    private var separator: some View {
-        Rectangle()
-            .fill(AppColors.separator)
-            .frame(height: 0.5)
+        .padding(.top, AppSpacing.xl)
     }
 
     private var emptyState: some View {
@@ -156,21 +233,26 @@ struct TodayView: View {
             : { isPresentingWishEditor = true }
 
         return EmptyStateView(
-            systemImage: "checkmark.circle",
-            title: "今天暂时没有需要记录的行动",
-            message: "继续按自己的节奏前进。新的行动会在这里出现。",
+            systemImage: "sun.max",
+            title: "今天没有需要赶的路",
+            message: "新的行动会在合适的时候出现。也可以先为自己许下一个心愿。",
             actionTitle: viewModel.hasAnyWishes ? nil : "创建第一个心愿",
             action: createWishAction
         )
-        .padding(.top, AppSpacing.hero)
+        .padding(.horizontal, AppSpacing.screenInset)
+        .padding(.top, AppSpacing.xl)
     }
 }
 
-private struct TodayActionRow: View {
+private struct TodayActionCard: View {
     let item: TodayConditionItem
     let onRecord: () -> Void
 
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
+    private var theme: WishTheme {
+        .forWish(item.wish)
+    }
 
     var body: some View {
         Group {
@@ -178,6 +260,7 @@ private struct TodayActionRow: View {
                 VStack(alignment: .leading, spacing: AppSpacing.md) {
                     content
                     recordButton
+                        .frame(maxWidth: .infinity, alignment: .trailing)
                 }
             } else {
                 HStack(alignment: .center, spacing: AppSpacing.md) {
@@ -187,126 +270,130 @@ private struct TodayActionRow: View {
                 }
             }
         }
-        .padding(.vertical, AppSpacing.md)
-        .frame(minHeight: 84, alignment: .leading)
+        .padding(AppSpacing.lg)
+        .background(
+            AppColors.surface,
+            in: RoundedRectangle(cornerRadius: AppRadius.card, style: .continuous)
+        )
+        .overlay {
+            RoundedRectangle(cornerRadius: AppRadius.card, style: .continuous)
+                .stroke(AppColors.separator, lineWidth: 0.8)
+        }
     }
 
     private var content: some View {
-        VStack(alignment: .leading, spacing: AppSpacing.xs) {
-            HStack(spacing: AppSpacing.xs) {
-                WishThemeDot(theme: .forWish(item.wish))
+        HStack(alignment: .top, spacing: AppSpacing.md) {
+            iconPlate
 
-                Text(item.wish.title)
-                    .font(AppTypography.caption)
+            VStack(alignment: .leading, spacing: AppSpacing.xs) {
+                HStack(spacing: AppSpacing.xs) {
+                    WishThemeDot(theme: theme)
+
+                    Text(item.wish.title)
+                        .font(AppTypography.caption)
+                        .foregroundStyle(AppColors.textSecondary)
+                        .lineLimit(1)
+                }
+
+                Text(item.condition.title)
+                    .font(AppTypography.headline)
+                    .foregroundStyle(AppColors.textPrimary)
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Text(item.progressText)
+                    .font(AppTypography.footnote)
                     .foregroundStyle(AppColors.textSecondary)
-                    .lineLimit(1)
+
+                if let todayRecordText = item.todayRecordText {
+                    Text(todayRecordText)
+                        .font(AppTypography.caption2)
+                        .foregroundStyle(AppColors.textTertiary)
+                }
             }
-
-            Text(item.condition.title)
-                .font(AppTypography.headline)
-                .foregroundStyle(AppColors.textPrimary)
-                .lineLimit(2)
-                .fixedSize(horizontal: false, vertical: true)
-
-            Text(item.progressText)
-                .font(AppTypography.footnote)
-                .foregroundStyle(AppColors.textSecondary)
-
-            if let todayRecordText = item.todayRecordText {
-                Text(todayRecordText)
-                    .font(AppTypography.caption2)
-                    .foregroundStyle(AppColors.textTertiary)
-            }
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(Text(item.accessibilityDescription))
         }
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text(item.accessibilityDescription))
+    }
+
+    private var iconPlate: some View {
+        Image(systemName: item.condition.type.symbolName)
+            .font(.system(size: 17, weight: .medium))
+            .foregroundStyle(theme.onTint)
+            .frame(width: 42, height: 42)
+            .background(
+                theme.tint,
+                in: RoundedRectangle(
+                    cornerRadius: AppRadius.md,
+                    style: .continuous
+                )
+            )
+            .accessibilityHidden(true)
     }
 
     private var recordButton: some View {
         Button(action: onRecord) {
             HStack(spacing: AppSpacing.xs) {
                 Image(systemName: "plus")
+                    .font(.system(size: 12, weight: .bold))
+
                 Text("记录")
+                    .font(AppTypography.footnote.weight(.semibold))
             }
-            .font(AppTypography.footnote.weight(.semibold))
-            .foregroundStyle(AppColors.accent)
+            .foregroundStyle(AppColors.primary)
             .padding(.horizontal, AppSpacing.md)
             .frame(minHeight: AppLayout.touchTarget)
-            .background(AppColors.accentSoft, in: Capsule())
+            .background(AppColors.primarySoft, in: Capsule())
             .contentShape(Capsule())
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.pressableChip)
         .accessibilityLabel("记录\(item.condition.title)")
         .accessibilityHint("打开行动记录编辑器")
     }
 }
 
-private struct TodayReadOnlyRow: View {
+private struct TodayDoneRow: View {
     let item: TodayConditionItem
 
-    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-
     var body: some View {
-        Group {
-            if dynamicTypeSize.isAccessibilitySize {
-                VStack(alignment: .leading, spacing: AppSpacing.sm) {
-                    HStack(alignment: .top, spacing: AppSpacing.md) {
-                        checkmark
-                        content
-                    }
-                    stateLabel
-                        .padding(.leading, 28)
-                }
-            } else {
-                HStack(alignment: .center, spacing: AppSpacing.md) {
-                    checkmark
-                    content
-                    Spacer(minLength: AppSpacing.sm)
-                    stateLabel
-                }
+        HStack(alignment: .center, spacing: AppSpacing.md) {
+            ZStack {
+                Circle()
+                    .fill(AppColors.successSoft)
+
+                Image(systemName: "checkmark")
+                    .font(.system(size: 12, weight: .bold))
+                    .foregroundStyle(AppColors.success)
             }
-        }
-        .padding(.vertical, AppSpacing.md)
-        .frame(minHeight: 72, alignment: .leading)
-        .accessibilityElement(children: .ignore)
-        .accessibilityLabel(Text(item.accessibilityDescription))
-    }
-
-    private var checkmark: some View {
-        Image(systemName: "checkmark.circle.fill")
-            .font(.system(size: 18, weight: .regular))
-            .foregroundStyle(AppColors.success)
-            .frame(width: 20, height: 20)
+            .frame(width: 34, height: 34)
             .accessibilityHidden(true)
-    }
 
-    private var content: some View {
-        VStack(alignment: .leading, spacing: AppSpacing.xs) {
-            HStack(spacing: AppSpacing.xs) {
-                WishThemeDot(theme: .forWish(item.wish))
-
+            VStack(alignment: .leading, spacing: AppSpacing.xxs) {
                 Text(item.wish.title)
                     .font(AppTypography.caption)
                     .foregroundStyle(AppColors.textSecondary)
                     .lineLimit(1)
+
+                Text(item.condition.title)
+                    .font(AppTypography.callout.weight(.semibold))
+                    .foregroundStyle(AppColors.textPrimary)
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                Text(item.progressText)
+                    .font(AppTypography.footnote)
+                    .foregroundStyle(AppColors.textSecondary)
             }
 
-            Text(item.condition.title)
-                .font(AppTypography.callout.weight(.semibold))
-                .foregroundStyle(AppColors.textPrimary)
-                .lineLimit(2)
-                .fixedSize(horizontal: false, vertical: true)
+            Spacer(minLength: AppSpacing.sm)
 
-            Text(item.progressText)
-                .font(AppTypography.footnote)
+            Text(item.stateText)
+                .font(AppTypography.caption.weight(.semibold))
                 .foregroundStyle(AppColors.textSecondary)
         }
-    }
-
-    private var stateLabel: some View {
-        Text(item.stateText)
-            .font(AppTypography.caption.weight(.semibold))
-            .foregroundStyle(AppColors.textSecondary)
+        .padding(.vertical, AppSpacing.sm)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text(item.accessibilityDescription))
     }
 }
 

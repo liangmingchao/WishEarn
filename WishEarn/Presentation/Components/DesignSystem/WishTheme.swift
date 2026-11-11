@@ -3,9 +3,16 @@ import SwiftUI
 /// A deterministic decorative theme for a wish.
 ///
 /// The theme is derived from the wish UUID so a wish keeps the same color
-/// across launches without adding a persisted model field. Decorative colors
-/// are only used for small marks, placeholder washes, and icon plates; the
-/// paired `onTint` color is contrast-tested for any medium that carries text.
+/// across launches without adding a persisted model field.
+///
+/// Three coordinated roles:
+/// - `tint` / `onTint`: small marks, icon plates and stickers.
+/// - `softTint` / `onSoftTint`: photo placeholder washes and quiet insets.
+/// - `container` / `onContainer`: large themed card surfaces. In light mode
+///   the card is the pastel tint with ink text; in dark mode it becomes a
+///   deep, desaturated version of the same hue with a light tint text.
+///
+/// Every `on…` pair is contrast-tested in `DesignSystemTests`.
 enum WishTheme: String, CaseIterable, Sendable {
     case butter
     case mint
@@ -24,6 +31,8 @@ enum WishTheme: String, CaseIterable, Sendable {
         return allCases[Int(seed % UInt64(allCases.count))]
     }
 
+    /// Solid decorative accent. Stays pastel in both appearances because it
+    /// is paired with a near-black `onTint`.
     var tint: Color {
         switch self {
         case .butter:
@@ -81,6 +90,60 @@ enum WishTheme: String, CaseIterable, Sendable {
             return Color.dynamic(light: 0x2E3040, dark: 0xF8CBB7)
         }
     }
+
+    /// Large themed card surface.
+    var container: Color {
+        switch self {
+        case .butter:
+            return Color.dynamic(light: 0xFFD66E, dark: 0x3A3427)
+        case .mint:
+            return Color.dynamic(light: 0xA8E3CF, dark: 0x223B33)
+        case .sky:
+            return Color.dynamic(light: 0xA9D7F2, dark: 0x22343F)
+        case .blush:
+            return Color.dynamic(light: 0xF6C6D1, dark: 0x3B2B31)
+        case .lavender:
+            return Color.dynamic(light: 0xDCD4FF, dark: 0x302C45)
+        case .peach:
+            return Color.dynamic(light: 0xFFE0D2, dark: 0x3B2D27)
+        }
+    }
+
+    /// Text and icons on `container`.
+    var onContainer: Color {
+        switch self {
+        case .butter:
+            return Color.dynamic(light: 0x2E3040, dark: 0xF6D57B)
+        case .mint:
+            return Color.dynamic(light: 0x2E3040, dark: 0x9BDFC7)
+        case .sky:
+            return Color.dynamic(light: 0x2E3040, dark: 0x9CCBEA)
+        case .blush:
+            return Color.dynamic(light: 0x2E3040, dark: 0xF3B9C8)
+        case .lavender:
+            return Color.dynamic(light: 0x2E3040, dark: 0xC9BEFF)
+        case .peach:
+            return Color.dynamic(light: 0x2E3040, dark: 0xF8CBB7)
+        }
+    }
+
+    /// Readable theme identity for small text placed on neutral surfaces.
+    var labelText: Color {
+        switch self {
+        case .butter:
+            return Color.dynamic(light: 0x8A6412, dark: 0xF6D57B)
+        case .mint:
+            return Color.dynamic(light: 0x2B6A4D, dark: 0x9BDFC7)
+        case .sky:
+            return Color.dynamic(light: 0x2A5E82, dark: 0x9CCBEA)
+        case .blush:
+            return Color.dynamic(light: 0x9A3C58, dark: 0xF3B9C8)
+        case .lavender:
+            return Color.dynamic(light: 0x55469C, dark: 0xC9BEFF)
+        case .peach:
+            return Color.dynamic(light: 0x9A4C2F, dark: 0xF8CBB7)
+        }
+    }
 }
 
 struct WishThemeMark: View {
@@ -107,6 +170,36 @@ struct WishThemeDot: View {
     }
 }
 
+/// A small sticker used to carry the wish identity over photography without
+/// covering the subject. Decorative only.
+struct WishThemeSticker: View {
+    let theme: WishTheme
+    var symbol: String = "sparkles"
+    var size: CGFloat = 40
+
+    var body: some View {
+        Image(systemName: symbol)
+            .font(.system(size: size * 0.40, weight: .semibold))
+            .foregroundStyle(theme.onTint)
+            .frame(width: size, height: size)
+            .background(
+                theme.tint,
+                in: RoundedRectangle(
+                    cornerRadius: size * 0.34,
+                    style: .continuous
+                )
+            )
+            .overlay {
+                RoundedRectangle(
+                    cornerRadius: size * 0.34,
+                    style: .continuous
+                )
+                .stroke(AppColors.surface, lineWidth: 2)
+            }
+            .accessibilityHidden(true)
+    }
+}
+
 #Preview("Wish themes — Light") {
     WishThemePreview()
         .preferredColorScheme(.light)
@@ -126,16 +219,17 @@ private struct WishThemePreview: View {
                     WishThemeDot(theme: theme, size: 14)
                     Text(theme.rawValue.capitalized)
                         .font(AppTypography.callout)
-                        .foregroundStyle(theme.onTint)
+                        .foregroundStyle(theme.onContainer)
                         .padding(.horizontal, AppSpacing.md)
                         .padding(.vertical, AppSpacing.sm)
                         .background(
-                            theme.tint,
+                            theme.container,
                             in: RoundedRectangle(
                                 cornerRadius: AppRadius.sm,
                                 style: .continuous
                             )
                         )
+                    WishThemeSticker(theme: theme)
                 }
             }
         }

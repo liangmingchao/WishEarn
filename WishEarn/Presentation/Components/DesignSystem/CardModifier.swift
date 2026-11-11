@@ -3,12 +3,13 @@ import SwiftUI
 struct CardModifier: ViewModifier {
     var padding: CGFloat = AppSpacing.lg
     var radius: CGFloat = AppRadius.lg
+    var fill: Color = AppColors.elevated
 
     func body(content: Content) -> some View {
         content
             .padding(padding)
             .background(
-                AppColors.elevated,
+                fill,
                 in: RoundedRectangle(cornerRadius: radius, style: .continuous)
             )
             .overlay(
@@ -27,9 +28,10 @@ struct CardModifier: ViewModifier {
 extension View {
     func appCard(
         padding: CGFloat = AppSpacing.lg,
-        radius: CGFloat = AppRadius.lg
+        radius: CGFloat = AppRadius.lg,
+        fill: Color = AppColors.elevated
     ) -> some View {
-        modifier(CardModifier(padding: padding, radius: radius))
+        modifier(CardModifier(padding: padding, radius: radius, fill: fill))
     }
 }
 

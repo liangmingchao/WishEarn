@@ -18,6 +18,9 @@ struct ProgressIndicator: View {
     let accessibilityValue: String
     var style: Style = .inline
     var isComplete = false
+    /// Optional fill override for themed contexts. Never used for status.
+    var fillColor: Color?
+    var trackColor: Color?
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -25,10 +28,10 @@ struct ProgressIndicator: View {
         GeometryReader { proxy in
             ZStack(alignment: .leading) {
                 Capsule()
-                    .fill(AppColors.progressTrack)
+                    .fill(trackColor ?? AppColors.progressTrack)
 
                 Capsule()
-                    .fill(isComplete ? AppColors.success : AppColors.accent)
+                    .fill(resolvedFillColor)
                     .frame(width: proxy.size.width * clampedValue)
             }
         }
@@ -44,6 +47,13 @@ struct ProgressIndicator: View {
 
     private var clampedValue: Double {
         min(max(value, 0), 1)
+    }
+
+    private var resolvedFillColor: Color {
+        if let fillColor {
+            return fillColor
+        }
+        return isComplete ? AppColors.success : AppColors.accent
     }
 }
 

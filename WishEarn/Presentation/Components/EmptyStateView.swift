@@ -24,17 +24,23 @@ struct EmptyStateView: View {
     var body: some View {
         VStack(spacing: AppSpacing.md) {
             ZStack {
-                Circle()
+                RoundedRectangle(cornerRadius: 34, style: .continuous)
                     .fill(AppColors.primarySoft)
-                    .frame(width: 92, height: 92)
+                    .frame(width: 112, height: 112)
+                    .rotationEffect(.degrees(-7))
 
                 Circle()
                     .fill(AppColors.coralSoft)
-                    .frame(width: 44, height: 44)
-                    .offset(x: 34, y: -30)
+                    .frame(width: 52, height: 52)
+                    .offset(x: 44, y: -34)
+
+                Circle()
+                    .fill(AppColors.glowButter)
+                    .frame(width: 26, height: 26)
+                    .offset(x: -46, y: 38)
 
                 Image(systemName: systemImage)
-                    .font(.system(size: 38, weight: .light))
+                    .font(.system(size: 40, weight: .light))
                     .foregroundStyle(AppColors.primary)
                     .frame(
                         width: AppLayout.touchTarget,
@@ -44,7 +50,7 @@ struct EmptyStateView: View {
             .accessibilityHidden(true)
 
             Text(title)
-                .font(AppTypography.title)
+                .font(AppTypography.editorialTitle)
                 .foregroundStyle(AppColors.textPrimary)
 
             Text(message)

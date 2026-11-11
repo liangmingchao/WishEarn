@@ -1,23 +1,47 @@
 import SwiftUI
 
 struct PrimaryButtonStyle: ButtonStyle {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .font(AppTypography.headline)
             .foregroundStyle(AppColors.onPrimary)
             .frame(
                 maxWidth: .infinity,
-                minHeight: AppLayout.buttonHeight
+                minHeight: AppLayout.primaryButtonHeight
             )
             .padding(.horizontal, AppSpacing.screenInset)
-            .background(
-                configuration.isPressed
-                    ? AppColors.primaryPressed
-                    : AppColors.primary
+            .background {
+                if configuration.isPressed {
+                    Capsule()
+                        .fill(AppColors.primaryPressed)
+                } else {
+                    Capsule()
+                        .fill(
+                            LinearGradient(
+                                colors: [
+                                    AppColors.primaryGradientStart,
+                                    AppColors.primaryGradientEnd
+                                ],
+                                startPoint: .topLeading,
+                                endPoint: .bottomTrailing
+                            )
+                        )
+                }
+            }
+            .shadow(
+                color: AppColors.primary.opacity(
+                    configuration.isPressed ? 0.10 : 0.22
+                ),
+                radius: configuration.isPressed ? 4 : 10,
+                x: 0,
+                y: configuration.isPressed ? 2 : 6
             )
-            .clipShape(
-                RoundedRectangle(cornerRadius: AppRadius.md, style: .continuous)
+            .scaleEffect(
+                configuration.isPressed && !reduceMotion ? 0.99 : 1
             )
+            .animation(AppMotion.quick, value: configuration.isPressed)
     }
 }
 
@@ -32,14 +56,12 @@ struct SecondaryButtonStyle: ButtonStyle {
             )
             .padding(.horizontal, AppSpacing.screenInset)
             .background(
-                AppColors.elevated.opacity(configuration.isPressed ? 0.72 : 1)
-            )
-            .clipShape(
-                RoundedRectangle(cornerRadius: AppRadius.md, style: .continuous)
+                AppColors.surface.opacity(configuration.isPressed ? 0.72 : 1),
+                in: Capsule()
             )
             .overlay(
-                RoundedRectangle(cornerRadius: AppRadius.md, style: .continuous)
-                    .stroke(AppColors.separator, lineWidth: 1)
+                Capsule()
+                    .stroke(AppColors.primary, lineWidth: 1.2)
             )
     }
 }

@@ -6,8 +6,8 @@
 
 - Current Version: 0.15.0
 - Current Phase: Phase 9 — 发布准备（RC 验收）
-- Current Branch: main
-- Last Updated: 2026-11-10
+- Current Branch: design/issue-30-visual-identity-refinement
+- Last Updated: 2026-11-11
 
 ## Current Milestone
 
@@ -38,6 +38,12 @@
 
 ## In Progress
 
+- Task ID: Issue #30
+- Task Name: Visual Identity & UI Composition Refinement（Colorful Lifestyle Editorial）
+- Current Progress: Home / Today / Wish Detail 与共享 Design System 已完成真实代码改版；Light / Dark 截图与对比度报告已产出；PR 待审阅，未合并。
+- Modified Files: `AppTheme.swift`、`WishTheme.swift`、`WishCard.swift`、`WishListView.swift`、`TodayView.swift`、`WishDetailView.swift`、`ConditionRow.swift`、`FilterChip.swift`、`StatusBadge.swift`、`ProgressIndicator.swift`、`ButtonStyles.swift`、`CardModifier.swift`、`EmptyStateView.swift`、`RootTabView.swift`、`ConditionDetailView.swift`、`WishStatus+Presentation.swift`、新增 `EditorialComponents.swift`、`DesignSystemTests.swift`、`DesignCaptureUITests.swift`、设计文档与截图。
+- Remaining Work: 用户审阅 PR；确认后再合并。若需要，后续单独评估 App Icon 替换与真机照片验证。
+
 - Task ID: TASK-904
 - Task Name: 发布验收
 - Current Progress: Release 0.15.0 已归档；TestFlight / App Store 提交待账号
@@ -61,7 +67,8 @@
 - App Store 截图、支持 URL、隐私政策 URL 尚未准备。
 - Playful Release 0.15.0 已在 iPhone 17 安装并启动；图片选择、键盘、滚动、导航与重启仍未验收。
 - UI 自动化仅覆盖一条关键旅程；其它页面与真实设备交互仍未自动化。
-- App Icon 仍为 petrol 版本；Playful Editorial 图标提案待品牌确认后替换。
+- App Icon 仍为 petrol 版本；Playful Editorial 图标提案待品牌确认后替换。Issue #30 新增 `docs/design/assets/app-icon-colorful-proposal.png` 提案，同样未替换生产图标。
+- Issue #30 的截图取证 UI 测试（`DesignCaptureUITests`）默认在 CI 跳过；Xcode 27 模拟器在长会话中偶发 `signal term`，因此拆分为多个短测试运行。
 - GitHub Actions billing 已恢复；PR #26 与 main 合并后 CI 均已绿色（274 单元/集成 + 1 UI 测试）。
 - 构建存在非致命方向声明警告：All interface orientations must be supported unless the app requires full screen。
 
@@ -102,8 +109,11 @@
 ## Last Verification
 
 - Build: PASS — Debug / Release
-- Unit Tests: PASS — 274 项，iPhone 18 Pro / iOS 27.2，2026-11-10 13:22
-- UI Test: PASS — 1 项关键旅程（创建 → 条件 → 记录 → 解锁 → 领取）
+- Unit Tests: PASS — 275 项，iPhone 18 Pro / iOS 27.2，2026-11-11 20:27（Issue #30 分支）
+- UI Test: PASS — 1 项关键旅程（创建 → 条件 → 记录 → 解锁 → 领取），2026-11-11 20:29
+- Design Evidence UI Tests: 8 项在未设置 opt-in 环境变量时 skipped；截图流程已在本地 Light / Dark 运行通过
+- Contrast Audit: PASS — 48 组 pair × Light / Dark，见 `docs/design/screenshots/issue-30/CONTRAST.md`
+- Issue #30 Screenshots: PASS — Home / Today / Detail Light / Dark + 长文案状态，iPhone 18 Pro Simulator / iOS 27.2
 - Playful Editorial: PASS — 七个核心页面 Light / Dark 模拟器截图
 - Archive: PASS — `build/Issue22.xcarchive`（0.15.0 / 1）
 - IPA: PASS — `build/Issue22Export/WishEarn.ipa`

@@ -1,4 +1,4 @@
-import Foundation
+import SwiftUI
 
 extension WishStatus {
     var displayName: String {
@@ -18,6 +18,18 @@ extension WishStatus {
         case .completed: return .neutral
         case .paused: return .warning
         case .archived: return .neutral
+        }
+    }
+
+    /// Small semantic dot for themed cards where the label itself must use
+    /// the theme's contrast-tested foreground.
+    var indicatorColor: Color {
+        switch self {
+        case .active: return AppColors.primary
+        case .unlocked: return AppColors.success
+        case .completed: return AppColors.textTertiary
+        case .paused: return AppColors.warning
+        case .archived: return AppColors.textTertiary
         }
     }
 }
