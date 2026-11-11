@@ -59,6 +59,7 @@
 | `HairlineDivider` | 0.5pt `separator`，替代卡片分隔 |
 | `SegmentedProgress` | 必需条件 ≤ 8 项时使用分段条，否则连续进度条 |
 | `WishHeroPhoto` | 4:3 用户图片，圆角 26；无图时主题色 wash + 轻图标，不生成插画 |
+| `UnlockCelebration` | 纸张证书式两阶段页面：已达成（照片 + 印章 + 一次性星屑）→ 已领取（回执 + 完成）；主行动固定在底部安全区 |
 | `AppTabBar` | 自绘平铺 Tab 栏：hairline、线性图标、选中墨色 + 顶部 14×3 横条 |
 | 页面头部 | kicker + 大标题（display）+ 一句说明，导航栏标题留空 |
 | 列表行 | 标题 16–17pt semibold + 一行 caption 元信息，行间 hairline |
@@ -267,6 +268,7 @@ Rules:
 - Show unit next to value, not buried in helper text.
 - Keep user input on validation or persistence error.
 - Use inline error text adjacent to the field.
+- New COUNT / CUSTOM records prefill `1` so the common single action can be saved immediately. DURATION / AMOUNT stay blank to avoid accidentally saving 1 minute or 1 unit of currency. Editing an existing record always preserves its stored value.
 
 ### 3.8 Empty / error / loading states
 
@@ -279,9 +281,9 @@ Rules:
 
 - Standard transitions: 180–260 ms, easeInOut.
 - Progress changes animate gently; do not animate every list refresh.
-- Record success: subtle checkmark / haptic if already supported; no confetti.
-- Unlock: existing full-screen celebration is the one intentionally elevated moment.
-- Respect Reduce Motion; replace scale/particle effects with opacity or static state.
+- Record success: subtle haptic; the row/condition state is the visible confirmation. No full-screen celebration for a single condition.
+- Unlock: the full-screen celebration is the one intentionally elevated moment. It uses a brief, one-shot star burst, a paper “已达成” stamp, and a second “已领取” receipt state. The celebration stays visible after claiming until the user taps 完成, so the feedback never ends instantly.
+- Respect Reduce Motion; skip the burst and use opacity/static composition instead.
 - Avoid sound by default.
 
 ## 5. Dark mode and accessibility

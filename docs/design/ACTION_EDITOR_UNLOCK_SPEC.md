@@ -285,6 +285,11 @@ Avoid repeating the same wish/condition information in multiple cards.
 | CHECKPOINT | One clear completion action | Numeric amount input |
 | CUSTOM | Only the fields already supported by the current model/ViewModel | Invented custom controls |
 
+New-record defaults:
+- COUNT and CUSTOM prefill `1`; the user can save immediately for the common single action.
+- DURATION and AMOUNT remain blank; a default of 1 would be too easy to save as an unintended 1 minute / 1 unit.
+- Editing an existing record always initializes the stored value and never replaces it with the default.
+
 For STREAK:
 - Respect local-calendar-day semantics from Domain.
 - Respect the one-valid-record-per-natural-day rule.
@@ -343,25 +348,39 @@ Delete:
 
 Unlock is the emotional payoff of WishEarn: the user has completed the conditions they chose for something they genuinely wanted.
 
-It should feel meaningful, personal, and calm — not like a casino reward, game achievement, or financial transaction.
+It should feel meaningful, personal, and warmly celebratory — not like a casino reward, game achievement, or financial transaction. The celebration may be more expressive than the rest of the app, but it must stay in the paper editorial language.
 
 ### 6.2 Visual composition
 
 Recommended hierarchy:
-1. Wish image as the visual anchor.
-2. Short emotional headline: “你做到了”.
-3. Wish title: “「{wish title}」已解锁”.
-4. Factual supporting line based on the unlock snapshot, if available.
-5. Primary CTA: “领取这份奖励”.
-6. Secondary text action: “稍后再说”.
+1. Small kicker: “心愿达成” with two small sparkles.
+2. Wish image as the visual anchor, framed as a paper photo card with an “已达成” stamp.
+3. Short emotional headline: “你做到了”.
+4. Wish title: “「{wish title}」已解锁”.
+5. Factual supporting line based on the unlock snapshot, if available.
+6. Primary CTA: “领取这份奖励”.
+7. Secondary text action: “稍后再说”.
 
 Layout:
-- Centered composition with generous vertical whitespace.
+- Centered composition with generous vertical whitespace; content scrolls, while the primary CTA is pinned above the safe area.
 - Image uses a large rounded crop, max width around 320 pt on standard iPhone.
-- Headline uses editorial serif display style.
-- CTA uses the established accent and 52 pt target height.
+- Headline uses the editorial display style.
+- A brief one-shot star burst radiates from the photo; it fades out and must not remain over the text.
+- The CTA uses the ink capsule and the established 56 pt height.
 - Secondary action remains visible but quiet.
 - Do not place unrelated metrics, progress charts, or navigation tabs in the celebration surface.
+
+### 6.2.1 Claimed state
+
+After a successful claim, keep the celebration on screen and switch to a second state:
+- Kicker “奖励已领取” + an “已领取” stamp on the photo.
+- Headline: “这份奖励，属于你了”.
+- A small receipt with 领取日期 and 完成条件.
+- Copy: “它会留在成就页，提醒你曾经认真对待过这个心愿。”
+- Primary CTA: “完成”. Only this action dismisses; the wish is already completed at this point.
+- A success haptic and, under VoiceOver, an announcement “奖励已领取”。
+
+This second state is presentation-only; completion is still performed by the existing lifecycle service.
 
 ### 6.3 Copy rules
 
@@ -426,8 +445,8 @@ Avoid:
 | Wish Detail | Edit wish | Wish Editor opens in edit mode |
 | Wish Editor | Save success | Dismiss; Detail reflects saved data |
 | Unlock Celebration | Later/dismiss | Wish remains UNLOCKED; can claim later |
-| Unlock Celebration | Claim success | Existing lifecycle flow marks completed; render authoritative result |
-| Unlock Celebration | Claim failure | Remain unlocked; show recoverable error |
+| Unlock Celebration | Claim success | Existing lifecycle flow marks completed; stay on the “已领取” receipt state; 完成 dismisses and Detail refreshes |
+| Unlock Celebration | Claim failure | Remain unlocked; show recoverable error and keep the claim action available |
 
 ## 8. Preview and QA matrix
 

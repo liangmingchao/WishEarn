@@ -103,17 +103,35 @@ final class UnlockCoordinatorTests: XCTestCase {
         XCTAssertEqual(sut.coordinator.presentation?.wish.id, first.id)
     }
 
-    func testClaimCompletesWishAndDismisses() throws {
+    func testClaimCompletesWishAndKeepsPresentationForConfirmation() throws {
         let sut = makeSUT()
         let wish = try makeWish()
         try sut.wishRepository.save(wish)
         sut.coordinator.publishUnlock(wishID: wishID)
 
-        sut.coordinator.claim()
+        XCTAssertTrue(sut.coordinator.claim())
 
-        XCTAssertNil(sut.coordinator.presentation)
+        XCTAssertNotNil(sut.coordinator.presentation)
+        XCTAssertTrue(sut.coordinator.isClaimed)
         XCTAssertEqual(sut.wishRepository.wishes.first?.status, .completed)
         XCTAssertEqual(sut.wishRepository.wishes.first?.completedAt, now)
+
+        sut.coordinator.dismiss()
+        XCTAssertNil(sut.coordinator.presentation)
+        XCTAssertFalse(sut.coordinator.isClaimed)
+    }
+
+    func testClaimIsIdempotentWhileConfirmationIsVisible() throws {
+        let sut = makeSUT()
+        let wish = try makeWish()
+        try sut.wishRepository.save(wish)
+        sut.coordinator.publishUnlock(wishID: wishID)
+
+        XCTAssertTrue(sut.coordinator.claim())
+        XCTAssertTrue(sut.coordinator.claim())
+
+        XCTAssertNil(sut.coordinator.error)
+        XCTAssertEqual(sut.wishRepository.wishes.first?.status, .completed)
     }
 
     func testDismissKeepsWishUnlocked() throws {
@@ -145,10 +163,11 @@ final class UnlockCoordinatorTests: XCTestCase {
         sut.coordinator.publishUnlock(wishID: wishID)
         sut.wishRepository.error = PersistenceError.saveFailed("保存失败")
 
-        sut.coordinator.claim()
+        XCTAssertFalse(sut.coordinator.claim())
 
         XCTAssertEqual(sut.coordinator.error, .persistence(.saveFailed("保存失败")))
         XCTAssertNotNil(sut.coordinator.presentation)
+        XCTAssertFalse(sut.coordinator.isClaimed)
         XCTAssertEqual(sut.wishRepository.wishes.first?.status, .unlocked)
     }
 }

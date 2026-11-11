@@ -42,6 +42,12 @@
 - Modified Files: 见下方「Files Changed（Editorial Paper v1）」
 - Remaining Work: 条件详情 / 记录编辑器单独截图；真机确认；App Icon 与品牌素材同步
 
+- Task ID: TASK-906
+- Task Name: 记录默认值与解锁庆祝反馈增强
+- Current Progress: NEEDS_REVIEW — COUNT / CUSTOM 新记录预填 1；解锁庆祝改为「已达成 → 已领取」两阶段反馈；Build / 276 单元测试 / Critical Journey UI 测试通过
+- Modified Files: `RecordEditorViewModel.swift`、`RecordEditorView.swift`、`UnlockCelebrationView.swift`、`UnlockCoordinator.swift`、`RecordEditorViewModelTests.swift`、`UnlockCoordinatorTests.swift`、`CriticalJourneyUITests.swift`、设计文档与截图
+- Remaining Work: 真机确认星屑动画与触觉；评审后决定是否合并
+
 - Task ID: TASK-904
 - Task Name: 发布验收
 - Current Progress: Release 0.15.0 已归档；TestFlight / App Store 提交待账号
@@ -106,6 +112,10 @@
 
 ## Last Verification
 
+- TASK-906: Build PASS — Debug（iOS Simulator，2026-11-11 23:54）
+- TASK-906: Unit Tests PASS — 276 项（新增记录默认值与领取确认态）
+- TASK-906: UI Test PASS — CriticalJourneyUITests 覆盖解锁 → 领取 → 完成（35.5s）
+- TASK-906: Screenshots — `unlock-light.png`（已达成）与 `unlock-claimed-light.png`（已领取），iPhone 18 Pro / iOS 27.2
 - Editorial Paper v1: Build PASS — Debug（iOS Simulator，2026-11-11 08:32）
 - Editorial Paper v1: Unit Tests PASS — 274 项（含 chip 对比度断言）
 - Editorial Paper v1: UI Test PASS — CriticalJourneyUITests（七页迁移后回归）
@@ -125,6 +135,7 @@
 ## Current Risks
 
 - 真机图片选择 / 键盘 / 滚动 / 导航 / 重启仍需手动确认。
+- 解锁庆祝的星屑动画、两次触觉反馈与 Reduce Motion 表现需真机/手动验收。
 - PR #26 CI 已恢复绿色；main 合并后的运行仍需确认。
 - TestFlight / App Store 账号与凭据缺失。
 - App Store 截图、支持 URL、隐私政策 URL 未准备。
@@ -141,12 +152,14 @@
 - `WishEarn/Presentation/WishList/{WishListView,WishCard,WishListViewModel}.swift`
 - `WishEarn/Presentation/Achievements/AchievementsView.swift`
 - `WishEarn/Presentation/Settings/SettingsView.swift`
-- `WishEarn/Presentation/UnlockCelebration/UnlockCelebrationView.swift`
+- `WishEarn/Presentation/UnlockCelebration/{UnlockCelebrationView,UnlockCoordinator}.swift`
+- `WishEarn/Presentation/RecordEditor/{RecordEditorView,RecordEditorViewModel}.swift`
 - `WishEarn/Presentation/WishEditor/{WishEditorView,EditorField}.swift`
 - `WishEarn/App/{AppContainer,WishEarnApp}.swift`
 - `WishEarnTests/DesignSystemTests/DesignSystemTests.swift`
-- `WishEarnTests/ViewModelTests/TodayViewModelTests.swift`
-- `docs/design/DESIGN_SYSTEM.md`、`docs/design/screenshots/editorial-paper-01/`
+- `WishEarnTests/ViewModelTests/{TodayViewModelTests,RecordEditorViewModelTests,UnlockCoordinatorTests}.swift`
+- `WishEarnUITests/CriticalJourneyUITests.swift`
+- `docs/design/DESIGN_SYSTEM.md`、`docs/design/ACTION_EDITOR_UNLOCK_SPEC.md`、`docs/design/screenshots/editorial-paper-01/`
 
 ## Files Changed（Phase 9）
 
@@ -163,11 +176,11 @@
 
 ## Next Recommended Action
 
-- Task ID: TASK-905
-- Description: 评审 `design/editorial-paper-01` 的七个核心页面；确认后合并并在真机确认图片、键盘与滚动
-- Dependencies: 设计方向确认（TASK-905 NEEDS_REVIEW）
-- Expected Outcome: 五个剩余页面完成 Editorial Paper 布局迁移
-- Acceptance Criteria: 七页视觉一致；Light / Dark 截图齐全；Build + 274 单元测试 + UI 测试通过
+- Task ID: TASK-906
+- Description: 评审 `design/editorial-paper-01` 的记录默认值与两阶段解锁庆祝；真机确认星屑、触觉与 Reduce Motion；确认后合并
+- Dependencies: TASK-905 设计方向确认（NEEDS_REVIEW）
+- Expected Outcome: 记录摩擦降低，解锁/领取反馈通过评审并进入合并
+- Acceptance Criteria: Build + 276 单元/集成 + Critical Journey UI PASS；Light 截图包含已达成/已领取；真机确认
 
 - Task ID: Issue #22 / TASK-904
 - Description: 恢复 GitHub Actions billing，重跑 CI；在 iPhone 17 上完成真机交互清单；确认 App Store 名称 / Bundle ID / 截图 / 支持 URL / 隐私政策 URL

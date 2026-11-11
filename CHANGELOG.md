@@ -10,7 +10,7 @@
 
 - Editorial Paper 迁移至心愿列表、成就、我的、新建心愿与解锁庆祝：页面头部改为 kicker + 大字标题，列表与表单改用 hairline，卡片去掉投影，表单改为下划线输入。
 - 心愿列表 lead card 优先选择带照片的进行中心愿（仍按既有列表顺序，不引入价格/进度排序）；「其他心愿」行与筛选栏重设层级。
-- 解锁庆祝改为纸张底色 + 4:3 用户照片 + 墨色主行动的扁平版式。
+- 解锁庆祝升级为两阶段纸张证书：已达成（4:3 照片 + 已达成印章 + 一次性星屑 + 触觉反馈）→ 已领取（回执 + 完成）；主行动固定在底部安全区，领取后不会立即消失。
 - Editorial Paper v1 视觉方向：暖纸白画布、墨黑单一行动色、薄荷状态横幅；移除衬线标题与卡片阴影，改用 0.5pt 分隔线与留白建立层级。
 - 今日页重构：大标题 + 状态横幅 + 以用户图片为主视觉的心愿区 + 单一墨色胶囊 CTA + hairline 行动列表。
 - 心愿详情页重构：4:3 用户图片 Hero、分段进度（≤ 8 项条件）、hairline 条件行、底部固定「记录这一项进度」。
@@ -23,11 +23,13 @@
 - Wish Editor 改为图片邀请、必填名称、价格 / 原因 / 目标日期分组；取消图片选择不再清空已有图片；保存按钮按校验状态禁用。
 - Condition Editor 改为类型优先的字段布局：STREAK 整数输入与“天”单位、CHECKPOINT 完成型卡片、金额方向菜单；编辑时类型保持只读。
 - Record Editor 将单位贴近数值、完成型条件使用完成卡片、日期使用中文本地化，并增加字段内联校验。
+- Record Editor 新记录默认值：COUNT / CUSTOM 预填 1，DURATION / AMOUNT 保持空白；编辑记录保留原值；保存成功增加触觉反馈。
 - 编辑器测试扩展至 270 项；六种条件类型均提供 Condition / Record Editor Preview。
 - Unlock Celebration 改为图片、事实性必需条件数量、领取 / 稍后 / 关闭操作，并支持 Reduce Motion。
 - Achievements 改为紧凑汇总与已兑现 / 已解锁的日期行，空态不再展示零值仪表盘。
 - Settings 补充 JSON 导出格式与图片限制说明，并补齐 52 pt 行高与披露指示。
 - 解锁幂等与领取失败测试补充；测试扩展至 272 项。
+- 新增记录默认值与「已领取」确认态测试；测试扩展至 276 项；Critical Journey UI Test 覆盖解锁 → 领取 → 完成全流程。
 - 首页 Featured WishCard 主图从 16:10 调整为 2:1，并修复竖图按源图比例撑高卡片的问题；心愿详情 Hero 保持 16:10。
 - 全量配色从暖陶土改为 petrol teal + eucalyptus 冷色体系，同步 Light / Dark tokens、对比度测试、设计文档与 App Icon。
 - 重新设计为 Playful Editorial / Sunny Pop Journal：Violet 主色、Coral 辅助色、六种 Wish 主题色，并落地七个核心页面 Light / Dark；测试扩展至 274 项。
