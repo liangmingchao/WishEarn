@@ -19,6 +19,7 @@ struct RootTabView: View {
                 .appTabBar(selection: $router.selectedTab)
             }
             .toolbar(.hidden, for: .tabBar)
+            .toolbarBackground(.hidden, for: .tabBar)
             .tag(AppRouter.Tab.wishes)
 
             NavigationStack {
@@ -34,6 +35,7 @@ struct RootTabView: View {
                 .appTabBar(selection: $router.selectedTab)
             }
             .toolbar(.hidden, for: .tabBar)
+            .toolbarBackground(.hidden, for: .tabBar)
             .tag(AppRouter.Tab.today)
 
             NavigationStack {
@@ -41,6 +43,7 @@ struct RootTabView: View {
                     .appTabBar(selection: $router.selectedTab)
             }
             .toolbar(.hidden, for: .tabBar)
+            .toolbarBackground(.hidden, for: .tabBar)
             .tag(AppRouter.Tab.achievements)
 
             NavigationStack {
@@ -48,6 +51,7 @@ struct RootTabView: View {
                     .appTabBar(selection: $router.selectedTab)
             }
             .toolbar(.hidden, for: .tabBar)
+            .toolbarBackground(.hidden, for: .tabBar)
             .tag(AppRouter.Tab.settings)
         }
         .tint(AppColors.primary)
