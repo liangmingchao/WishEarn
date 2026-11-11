@@ -14,6 +14,8 @@ Captured on iPhone 18 Pro Simulator (iOS 27.2), Debug build, unless noted. The e
 | 心愿详情（含水印照片与 2/3 进度） | `detail-light.png` | `detail-dark.png` |
 | 心愿详情（长标题状态） | `detail-long-title-light.png` | — |
 | 今天（行动 + 已完成分组，含长条件文案） | `today-light.png` | `today-dark.png` |
+| 解锁庆祝（已达成） | `unlock-light.png` | — |
+| 解锁庆祝（已领取） | `unlock-claimed-light.png` | — |
 | 我的 / 外观设置 | `settings-light.png` | `settings-dark.png` |
 | 我的 / 固定浅色外观 | `settings-light-fixed.png` | — |
 | 成就（空状态） | `achievements-light.png` | — |
@@ -40,6 +42,8 @@ Issue #30 首轮的 Sunny Wish Journal 截图已由本目录的新截图取代�
 - **Detail**：故事 Hero 从主题色大卡改为白纸卡；主题只保留 kicker 颜色、短标记与占位图。
 - **Appearance**：新增「我的 → 外观」：跟随系统 / 浅色 / 深色；选择持久化并在 App 根视图应用。
 - **Buttons**：主按钮改为纯色胶囊，取消紫色渐变与重阴影。
+- **Record Editor**：COUNT / CUSTOM 新记录预填 1；DURATION / AMOUNT 保持空白；编辑记录保留原值。
+- **Unlock Celebration**：改为「已达成 → 已领取」两阶段纸张证书，含照片相框、印章、一次性星屑、触觉反馈、固定主行动和领取回执。
 
 ## 数据与状态覆盖
 
@@ -47,6 +51,7 @@ Issue #30 首轮的 Sunny Wish Journal 截图已由本目录的新截图取代�
 - 普通心愿：`学会做提拉米苏`（横向 Banner，1/2）、`一个可以让周末慢下来的阅读角`（双列卡，长标题，0/1）、`一台新的相机`（双列卡，0/1）。
 - Today：4 个可推进行动，其中第三张卡是长条件文案；已完成条件分组在下方。
 - 照片、无照片占位、长标题、长条件、Light / Dark、App 内外观覆盖、辅助功能 XXXL 均已覆盖。
+- 解锁庆祝（已达成 / 已领取）来自 `CriticalJourneyUITests` 的 `-ui-testing` 内存 Store，数据通过真实 UI 创建。
 - 对比度：36 组 pair × Light / Dark，共 72 个实测值全部 PASS；见 `CONTRAST.md`。
 
 ## 复现方式

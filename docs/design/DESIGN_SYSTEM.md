@@ -238,6 +238,7 @@ Rules:
 - Show unit next to value, not buried in helper text.
 - Keep user input on validation or persistence error.
 - Use inline error text adjacent to the field.
+- New COUNT / CUSTOM records prefill `1` so the common single action can be saved immediately. DURATION / AMOUNT stay blank to avoid accidentally saving 1 minute or 1 unit; editing always preserves the stored value.
 
 ### 3.8 Empty / error / loading states
 
@@ -245,6 +246,20 @@ Rules:
 - Error: explain what failed in plain language and provide Retry.
 - Loading: use a restrained progress indicator or skeleton only when loading is perceptible; avoid layout jumps.
 - No blank white screens.
+
+### 3.9 Unlock celebration
+
+The unlock surface is a paper certificate with two states:
+
+1. **已达成**：photo frame, 已达成 stamp, one-shot star burst, proof pill (“N 项必需条件，全部完成”), warm copy, pinned “领取这份奖励” CTA.
+2. **已领取**：same photo with 已领取 stamp, receipt (领取日期 / 完成条件), “完成” CTA. The wish is already completed when this state appears; 完成 only dismisses the celebration.
+
+Rules:
+- The full celebration appears only when the wish unlocks (all required conditions complete), not after every single record.
+- Keep the primary CTA pinned above the bottom safe area; content scrolls.
+- The star burst is brief and fades out; it must not remain over the text.
+- Respect Reduce Motion: skip the burst and use a static composition.
+- Announce “奖励已领取” under VoiceOver and use the success haptic.
 - Empty copy is encouraging, never a failure message.
 
 ## 4. Motion and feedback
@@ -252,9 +267,9 @@ Rules:
 - Standard transitions: 180–260 ms, easeInOut.
 - Card press: 0.985 scale + 0.92 opacity; Reduce Motion removes the scale and keeps opacity.
 - Progress changes animate gently; do not animate every list refresh.
-- Record success: subtle checkmark / haptic if already supported; no confetti.
-- Unlock: existing full-screen celebration is the one intentionally elevated moment.
-- Respect Reduce Motion; replace scale/particle effects with opacity or static state.
+- Record success: subtle haptic; the row/condition state is the visible confirmation. No full-screen celebration for a single condition.
+- Unlock: the full-screen paper certificate is the one intentionally elevated moment. It uses a brief one-shot star burst, a stamp, and a second “已领取” receipt state; the page stays visible after claiming until 完成.
+- Respect Reduce Motion; skip particle motion and use opacity/static composition instead.
 - Avoid sound by default.
 
 ## 5. Dark mode, appearance and accessibility

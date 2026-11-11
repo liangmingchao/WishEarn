@@ -18,7 +18,15 @@ final class UnlockCoordinator: UnlockEventPublishing, UnlockFailureReporting {
     private let lifecycleService: WishLifecycleServicing
 
     private(set) var presentation: UnlockPresentation?
+    /// Keeps the celebration on screen after a successful claim so the view
+    /// can show an explicit "reward claimed" confirmation before dismissing.
+    private(set) var claimedWishID: UUID?
     var error: AppError?
+
+    var isClaimed: Bool {
+        guard let presentation else { return false }
+        return claimedWishID == presentation.wish.id
+    }
 
     init(
         wishRepository: WishRepository,
@@ -52,6 +60,7 @@ final class UnlockCoordinator: UnlockEventPublishing, UnlockFailureReporting {
                 }
             }
 
+            claimedWishID = nil
             presentation = UnlockPresentation(
                 wish: wish,
                 requiredConditionCount: requiredConditionCount,
@@ -62,19 +71,28 @@ final class UnlockCoordinator: UnlockEventPublishing, UnlockFailureReporting {
         }
     }
 
-    func claim() {
-        guard let presentation else { return }
+    /// Completes the wish but keeps the celebration visible for the claimed
+    /// confirmation. Returns whether the reward was successfully claimed.
+    @discardableResult
+    func claim() -> Bool {
+        guard let presentation else { return false }
+        if claimedWishID == presentation.wish.id {
+            return true
+        }
 
         do {
             try lifecycleService.complete(wishID: presentation.wish.id)
-            self.presentation = nil
+            claimedWishID = presentation.wish.id
+            return true
         } catch {
             self.error = AppError.wrap(error)
+            return false
         }
     }
 
     func dismiss() {
         presentation = nil
+        claimedWishID = nil
     }
 
     func reportUnlockFailure(_ error: Error, wishID: UUID) {

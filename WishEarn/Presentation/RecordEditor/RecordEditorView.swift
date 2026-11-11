@@ -46,6 +46,7 @@ struct RecordEditorView: View {
             .appErrorAlert(error: $viewModel.error)
             .environment(\.locale, Locale(identifier: "zh_CN"))
             .interactiveDismissDisabled(viewModel.isSaving)
+            .sensoryFeedback(.success, trigger: viewModel.isSaved)
             .onChange(of: viewModel.isSaved) { _, isSaved in
                 if isSaved {
                     dismiss()

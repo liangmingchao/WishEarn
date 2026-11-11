@@ -143,8 +143,15 @@ final class RecordEditorViewModel {
         if let record {
             valueText = NSDecimalNumber(decimal: record.value).stringValue
             noteText = record.note ?? ""
-        } else if condition.type == .streak || condition.type == .checkpoint {
-            valueText = "1"
+        } else {
+            // COUNT / CUSTOM 的“1”是最常见的单次行动，预填后可以直接保存。
+            // DURATION / AMOUNT 不预填：1 分钟或 1 元更可能是误存，保留显式输入。
+            switch condition.type {
+            case .streak, .checkpoint, .count, .custom:
+                valueText = "1"
+            case .duration, .amount:
+                valueText = ""
+            }
         }
     }
 

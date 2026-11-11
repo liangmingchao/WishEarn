@@ -44,6 +44,12 @@
 - Modified Files: `AppTheme.swift`、`WishTheme.swift`、`WishCard.swift`、`WishListView.swift`、`TodayView.swift`、`WishDetailView.swift`、`ConditionRow.swift`、`FilterChip.swift`、`StatusBadge.swift`、`ProgressIndicator.swift`、`ButtonStyles.swift`、`CardModifier.swift`、`EmptyStateView.swift`、`RootTabView.swift`、`ConditionDetailView.swift`、`WishStatus+Presentation.swift`、`WishEarnApp.swift`、`SettingsView.swift`、新增 `AppAppearance.swift`、`EditorialComponents.swift`、`DesignSystemTests.swift`、`DesignCaptureUITests.swift`、设计文档与截图。
 - Remaining Work: 用户审阅 PR；确认后再合并。若需要，后续单独评估 App Icon 替换与真机照片验证。
 
+- Task ID: TASK-907
+- Task Name: 记录默认值与解锁庆祝反馈增强（Paper & Sage）
+- Current Progress: NEEDS_REVIEW — COUNT / CUSTOM 新记录预填 1；解锁庆祝改为「已达成 → 已领取」两阶段纸张证书；Build / 278 单元测试 / Critical Journey UI 测试通过；截图 `unlock-light.png` + `unlock-claimed-light.png`
+- Modified Files: `RecordEditorViewModel.swift`、`RecordEditorView.swift`、`UnlockCelebrationView.swift`、`UnlockCoordinator.swift`、`RecordEditorViewModelTests.swift`、`UnlockCoordinatorTests.swift`、`CriticalJourneyUITests.swift`、设计文档与截图
+- Remaining Work: PR 审阅；真机确认星屑动画、触觉与 Reduce Motion
+
 - Task ID: TASK-904
 - Task Name: 发布验收
 - Current Progress: Release 0.15.0 已归档；TestFlight / App Store 提交待账号
@@ -113,11 +119,15 @@
 ## Last Verification
 
 - Build: PASS — Debug / Release
+- TASK-907: Build PASS — Debug（iOS Simulator，2026-11-12 00:10）
+- TASK-907: Unit Tests PASS — 278 项（新增记录默认值与领取确认态）
+- TASK-907: UI Test PASS — CriticalJourneyUITests 覆盖 解锁 → 领取 → 已领取 → 完成（38.4s）
+- TASK-907: Screenshots — `unlock-light.png`（已达成）与 `unlock-claimed-light.png`（已领取）
 - Unit Tests: PASS — 276 项，iPhone 18 Pro / iOS 27.2，2026-11-11 21:35（Paper & Sage 复审修订）
 - UI Test: PASS — 1 项关键旅程（创建 → 条件 → 记录 → 解锁 → 领取），29.083s，2026-11-11 21:35
 - Design Evidence UI Tests: 10 项在未设置 opt-in 环境变量时 skipped；本地 Light / Dark / 设置 / 辅助功能截图流程 PASS
 - Contrast Audit: PASS — 36 组 pair × Light / Dark（72 个实测值），见 `docs/design/screenshots/issue-30/CONTRAST.md`
-- Issue #30 Screenshots: PASS — Home / Today / Detail / Settings / Achievements Light / Dark、长文案、App 内外观覆盖、辅助功能 XXXL；iPhone 18 Pro Simulator / iOS 27.2；空状态 iPhone 17e 空 Store
+- Issue #30 Screenshots: PASS — Home / Today / Detail / Settings / Achievements Light / Dark、长文案、App 内外观覆盖、辅助功能 XXXL、解锁已达成/已领取；iPhone 18 Pro Simulator / iOS 27.2；空状态 iPhone 17e 空 Store
 - Playful Editorial: PASS — 七个核心页面 Light / Dark 模拟器截图（历史首轮 #30 设计，已被 Paper & Sage 取代）
 - Archive: PASS — `build/Issue22.xcarchive`（0.15.0 / 1）
 - IPA: PASS — `build/Issue22Export/WishEarn.ipa`
@@ -134,6 +144,7 @@
 
 - 真机图片选择 / 键盘 / 滚动 / 导航 / 重启仍需手动确认。
 - Paper & Sage 新配色、主按钮纯色化与「外观」设置在真机上尚未逐项验收。
+- 解锁庆祝的星屑动画、两次触觉反馈与 Reduce Motion 表现需真机手动验收；记录默认值由单元测试覆盖。
 - main CI 已确认绿色；后续提交仍需维持门禁。
 - TestFlight / App Store 账号与凭据缺失。
 - App Store 截图、支持 URL、隐私政策 URL 未准备。

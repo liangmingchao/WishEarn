@@ -52,7 +52,26 @@ final class CriticalJourneyUITests: XCTestCase {
 
         let claim = app.buttons["unlockClaimButton"]
         XCTAssertTrue(claim.waitForExistence(timeout: 10))
+
+        let celebration = XCTAttachment(screenshot: app.screenshot())
+        celebration.name = "unlock-celebration"
+        celebration.lifetime = .keepAlways
+        add(celebration)
+
         claim.tap()
+
+        let finish = app.buttons["unlockFinishButton"]
+        XCTAssertTrue(finish.waitForExistence(timeout: 10))
+        XCTAssertTrue(
+            app.staticTexts["这份奖励，属于你了"].waitForExistence(timeout: 5)
+        )
+
+        let claimed = XCTAttachment(screenshot: app.screenshot())
+        claimed.name = "unlock-claimed"
+        claimed.lifetime = .keepAlways
+        add(claimed)
+
+        finish.tap()
 
         let completedStatus = app.descendants(matching: .any)
             .matching(NSPredicate(format: "label == %@", "已兑现"))

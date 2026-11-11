@@ -212,3 +212,15 @@ Detail
 - 截图：Home / Today / Detail Light + Dark、设置页 Light / Dark / 固定浅色、成就页、长标题、无障碍字号；见 `docs/design/screenshots/issue-30/`。
 - Settings 外观切换通过真实 UI 测试验证：系统浅色下切到「深色」后，设置页立即变暗；再切回「跟随系统」恢复。
 - 未修改 Domain / Repository / SwiftData / 解锁状态机；未引入第三方依赖；生产 App Icon 未替换。
+
+## 8. 后续 UX 增强（2026-11-12）
+
+在 Paper & Sage 复审修订之后，追加两项交互优化：
+
+1. **记录默认值**：COUNT / CUSTOM 新记录预填 `1`，省去最常见的输入；DURATION / AMOUNT 保持空白，避免误存 1 分钟 / 1 元；编辑记录保留原值。实现位于 `RecordEditorViewModel`，并新增类型覆盖测试。
+2. **解锁庆祝反馈**：把原来的扁平庆祝页升级为两阶段纸张证书：
+   - 已达成：4:3 照片 + 已达成印章 + 一次性星屑 + 必需条件完成胶囊 + 触觉反馈 + 底部固定「领取这份奖励」。
+   - 已领取：保持页面不消失，切换为「已领取」印章 + 领取日期 / 完成条件回执 + 「完成」按钮。
+   - 单个条件完成只做轻量触觉与状态更新；完整庆祝仍只在心愿真正解锁（全部必需条件完成）时出现，避免把条件完成误表示为奖励已解锁。
+
+验证：Build PASS；Unit / Integration 278 项 PASS；Critical Journey UI Test PASS（覆盖 解锁 → 领取 → 已领取 → 完成）；截图见 `docs/design/screenshots/issue-30/unlock-light.png` 与 `unlock-claimed-light.png`。未修改 Domain / Repository / SwiftData / 解锁状态机。

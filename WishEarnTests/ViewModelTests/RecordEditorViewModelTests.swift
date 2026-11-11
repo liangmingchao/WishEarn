@@ -147,7 +147,9 @@ final class RecordEditorViewModelTests: XCTestCase {
         let condition = try makeCondition()
         let sut = try makeSUT(condition: condition)
 
-        XCTAssertFalse(sut.viewModel.canSave)
+        // COUNT 新记录预填 1，因此打开编辑器即可直接保存。
+        XCTAssertEqual(sut.viewModel.valueText, "1")
+        XCTAssertTrue(sut.viewModel.canSave)
         XCTAssertNil(sut.viewModel.valueValidationMessage)
 
         sut.viewModel.valueText = "5"
@@ -161,6 +163,37 @@ final class RecordEditorViewModelTests: XCTestCase {
         sut.viewModel.valueText = "0"
         XCTAssertFalse(sut.viewModel.canSave)
         XCTAssertEqual(sut.viewModel.valueValidationMessage, "记录值必须大于 0。")
+    }
+
+    func testNewRecordPrefillsOneOnlyWhereItIsSafe() throws {
+        let count = try makeSUT(
+            condition: try makeCondition(type: .count, targetValue: 20, unit: "次")
+        )
+        XCTAssertEqual(count.viewModel.valueText, "1")
+        XCTAssertTrue(count.viewModel.canSave)
+
+        let custom = try makeSUT(
+            condition: try makeCondition(type: .custom, targetValue: 300, unit: "页")
+        )
+        XCTAssertEqual(custom.viewModel.valueText, "1")
+        XCTAssertTrue(custom.viewModel.canSave)
+
+        let duration = try makeSUT(
+            condition: try makeCondition(type: .duration, targetValue: 30, unit: "分钟")
+        )
+        XCTAssertEqual(duration.viewModel.valueText, "")
+        XCTAssertFalse(duration.viewModel.canSave)
+
+        let amount = try makeSUT(
+            condition: try makeCondition(
+                type: .amount,
+                targetValue: 5000,
+                unit: "元",
+                amountDirection: .income
+            )
+        )
+        XCTAssertEqual(amount.viewModel.valueText, "")
+        XCTAssertFalse(amount.viewModel.canSave)
     }
 
     func testAmountZeroIsValidButNegativeIsNot() throws {

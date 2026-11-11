@@ -34,6 +34,10 @@
 - Issue #30 复审修订（Paper & Sage）：首页卡片从 6 种高饱和主题整卡填色收敛为统一白纸面 + 3 种低饱和 Wish Theme 短标记；品牌紫色与紫色渐变替换为深鼠尾草绿纯色行动色；取消彩色光晕与珊瑚大面积色块；Today 鼓励卡改为白纸 + 窄 clay 色条；Detail Hero 改为白纸卡。
 - 对比度报告更新为 36 组 pair × Light / Dark（72 个实测值）全部 PASS；测试扩展至 276 项。
 - 截图更新为 Paper & Sage：Home / Today / Detail Light + Dark、设置页 Light / Dark / 固定浅色、成就、长标题、辅助功能 XXXL；空状态在 iPhone 17e 空 Store 截取。
+- Record Editor 新记录默认值：COUNT / CUSTOM 预填 1，DURATION / AMOUNT 保持空白；编辑记录保留原值；保存成功增加触觉反馈。
+- Unlock Celebration 升级为「已达成 → 已领取」两阶段纸张证书：照片相框、印章、一次性星屑、触觉反馈、必需条件完成胶囊、底部固定主行动；领取后显示领取日期 / 完成条件回执，点「完成」才关闭。
+- 新增记录默认值与「已领取」确认态测试；测试扩展至 278 项；Critical Journey UI Test 覆盖 解锁 → 领取 → 已领取 → 完成。
+- 新增 `unlock-light.png` 与 `unlock-claimed-light.png` 截图；解锁庆祝主行动固定在底部安全区。
 
 ### Added
 
