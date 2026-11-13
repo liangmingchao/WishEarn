@@ -8,6 +8,7 @@ final class AppContainer {
     let store: SwiftDataStore
     let imageStorageService: ImageStorageService
     let dataExportService: DataExportService
+    let appearanceSettings: AppearanceSettings
 
     let wishRepository: WishRepository
     let conditionRepository: ConditionRepository
@@ -32,12 +33,14 @@ final class AppContainer {
         dependencies: AppDependencies = .live,
         router: AppRouter? = nil,
         store: SwiftDataStore,
-        imageStorageService: ImageStorageService = LocalImageStorageService()
+        imageStorageService: ImageStorageService = LocalImageStorageService(),
+        appearanceSettings: AppearanceSettings? = nil
     ) {
         self.dependencies = dependencies
         self.router = router ?? AppRouter()
         self.store = store
         self.imageStorageService = imageStorageService
+        self.appearanceSettings = appearanceSettings ?? AppearanceSettings()
         self.wishRepository = SwiftDataWishRepository(
             store: store,
             imageStorage: imageStorageService
@@ -155,10 +158,14 @@ final class AppContainer {
             let previewImageDirectory = FileManager.default.temporaryDirectory
                 .appendingPathComponent("WishEarnPreviewImages-\(UUID().uuidString)", isDirectory: true)
             let imageStorage = LocalImageStorageService(baseDirectory: previewImageDirectory)
+            let previewDefaults = UserDefaults(suiteName: "com.wishearn.app.preview")
             return AppContainer(
                 dependencies: .preview,
                 store: store,
-                imageStorageService: imageStorage
+                imageStorageService: imageStorage,
+                appearanceSettings: AppearanceSettings(
+                    defaults: previewDefaults ?? .standard
+                )
             )
         } catch {
             fatalError("无法创建预览数据库：\(error)")

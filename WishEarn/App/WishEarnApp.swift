@@ -5,6 +5,7 @@ import SwiftUI
 struct WishEarnApp: App {
     private let container: AppContainer?
     private let startupError: AppError?
+    private let appearanceSettings: AppearanceSettings
 
     init() {
 #if DEBUG
@@ -12,10 +13,13 @@ struct WishEarnApp: App {
             let container = AppContainer.preview()
             container.performStartupRecovery()
             self.container = container
+            self.appearanceSettings = container.appearanceSettings
             startupError = nil
             return
         }
 #endif
+
+        self.appearanceSettings = AppearanceSettings()
 
         do {
             let container = try AppContainer.live()
@@ -36,12 +40,14 @@ struct WishEarnApp: App {
                     unlockCoordinator: container.unlockCoordinator,
                     container: container
                 )
+                .preferredColorScheme(appearanceSettings.colorScheme)
             } else {
                 ErrorStateView(
                     title: "启动失败",
                     message: startupError?.message ?? "无法初始化本地数据库。"
                 )
                 .appScreenBackground()
+                .preferredColorScheme(appearanceSettings.colorScheme)
             }
         }
     }

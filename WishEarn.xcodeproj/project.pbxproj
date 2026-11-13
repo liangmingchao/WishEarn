@@ -122,10 +122,12 @@
 		D70C92A61E6EFF4B464BA3F7 /* WishEditorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 27191ED66E0356142E662682 /* WishEditorViewModel.swift */; };
 		D8DD39F032F8455F9A54C3F7 /* WishStatus+Presentation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4DF370FEC03AACE9B35437E3 /* WishStatus+Presentation.swift */; };
 		DA13246D2777E06BB523B482 /* DataExportTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59219164EAB55C813D71754 /* DataExportTests.swift */; };
+		DB8DA25CE404A2292F541155 /* AppearanceSettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DC225B4B5E107C79B0B36EB /* AppearanceSettingsTests.swift */; };
 		DD3C5275352319D2A23AFF25 /* WishPausePeriodEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8FC5C5B5D92FA9A338E8EE8 /* WishPausePeriodEntity.swift */; };
 		DF9F45653789996C8F3F8F69 /* RecordEditorViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BA82E97EDFDF5290727E454F /* RecordEditorViewModelTests.swift */; };
 		E2FC4849D77E6D5C0A2EC87B /* ProgressRecordEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2790C9E8964C8C9889C89D3B /* ProgressRecordEntity.swift */; };
 		E31A055DFBC5BDC2DBD3CCE9 /* ConditionTargetValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 28618F2D71B80C16BE8A47C9 /* ConditionTargetValidator.swift */; };
+		E3BC6A6CCEC1F8E2F0D990F9 /* AppearanceSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8C196D4E46212BA38CB400D /* AppearanceSettings.swift */; };
 		E3D5C004F42BAD2968DA2B04 /* ConditionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C4D3A431CD7147D396D1021 /* ConditionDetailView.swift */; };
 		E3FFEA62347D2223222FA13C /* ConditionLifecycleServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 427657BF82CF5FEAD0F8076F /* ConditionLifecycleServiceTests.swift */; };
 		E7CFF573901899A0A0A2C24A /* SwiftDataWishRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = BDFDA7F38EB2E3C2DB4988AF /* SwiftDataWishRepository.swift */; };
@@ -199,6 +201,7 @@
 		3A7011E5F72EF1D978173CD1 /* ProgressRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressRecord.swift; sourceTree = "<group>"; };
 		3A90AF76A4A378EB72394DAB /* WishTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WishTheme.swift; sourceTree = "<group>"; };
 		3BE0A05885DDE2F635645D07 /* ProgressIndicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProgressIndicator.swift; sourceTree = "<group>"; };
+		3DC225B4B5E107C79B0B36EB /* AppearanceSettingsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppearanceSettingsTests.swift; sourceTree = "<group>"; };
 		405465564D1713C60BC914BD /* ImageStorageServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageStorageServiceTests.swift; sourceTree = "<group>"; };
 		40ADD84E9B2E2CCEC22F6606 /* WishEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WishEntity.swift; sourceTree = "<group>"; };
 		40D26C9F6BBAC181E381F1B9 /* WishListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WishListViewModel.swift; sourceTree = "<group>"; };
@@ -266,6 +269,7 @@
 		BDFDA7F38EB2E3C2DB4988AF /* SwiftDataWishRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwiftDataWishRepository.swift; sourceTree = "<group>"; };
 		BE06E51109BD840D4F495435 /* ConditionDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConditionDetailViewModel.swift; sourceTree = "<group>"; };
 		C7EBB3A9E03F74127A2DF168 /* RecordEditorViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordEditorViewModel.swift; sourceTree = "<group>"; };
+		C8C196D4E46212BA38CB400D /* AppearanceSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppearanceSettings.swift; sourceTree = "<group>"; };
 		C8FC5C5B5D92FA9A338E8EE8 /* WishPausePeriodEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WishPausePeriodEntity.swift; sourceTree = "<group>"; };
 		CA2D9E3AC8E155DC28A8DEF2 /* UnlockResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnlockResult.swift; sourceTree = "<group>"; };
 		CAEF55DC2C1F9537889BF177 /* WishProgressService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WishProgressService.swift; sourceTree = "<group>"; };
@@ -566,6 +570,7 @@
 		8AC217A11367F28B5615FA17 /* Settings */ = {
 			isa = PBXGroup;
 			children = (
+				C8C196D4E46212BA38CB400D /* AppearanceSettings.swift */,
 				D569C81125A599D300CBBC17 /* SettingsView.swift */,
 				E1E53EB764C64914F130BBCE /* WishEarnExportDocument.swift */,
 			);
@@ -605,6 +610,7 @@
 			isa = PBXGroup;
 			children = (
 				A64095D4EE0BE83A0B511265 /* AchievementsViewModelTests.swift */,
+				3DC225B4B5E107C79B0B36EB /* AppearanceSettingsTests.swift */,
 				20BB3092FDDFB359831D372B /* ConditionDetailViewModelTests.swift */,
 				DE77661EAD397F672EBB7C67 /* ConditionEditorViewModelTests.swift */,
 				BA82E97EDFDF5290727E454F /* RecordEditorViewModelTests.swift */,
@@ -902,6 +908,7 @@
 			files = (
 				29A88913A31EE5F72282D7B7 /* AchievementsViewModelTests.swift in Sources */,
 				C7C0EFBE4364D4B919334268 /* AppErrorTests.swift in Sources */,
+				DB8DA25CE404A2292F541155 /* AppearanceSettingsTests.swift in Sources */,
 				B522CCAF1C33968EAB18AA91 /* ConditionDetailViewModelTests.swift in Sources */,
 				5806EB604D28A8566C730815 /* ConditionEditorViewModelTests.swift in Sources */,
 				E3FFEA62347D2223222FA13C /* ConditionLifecycleServiceTests.swift in Sources */,
@@ -949,6 +956,7 @@
 				B3822DB93ED05419CADFE47C /* AppError.swift in Sources */,
 				50F451283A064FC29A6D0B79 /* AppRouter.swift in Sources */,
 				81FCD600A2E7785C31B3F21D /* AppTheme.swift in Sources */,
+				E3BC6A6CCEC1F8E2F0D990F9 /* AppearanceSettings.swift in Sources */,
 				23D3A1F838F5B7A326E36CF1 /* ButtonStyles.swift in Sources */,
 				7BFAFFC103AA19D81E4DE885 /* CardModifier.swift in Sources */,
 				CB13C70EB1DEEB622BFE6DC0 /* ClockProviding.swift in Sources */,

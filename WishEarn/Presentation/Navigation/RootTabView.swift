@@ -47,7 +47,10 @@ struct RootTabView: View {
             .tag(AppRouter.Tab.achievements)
 
             NavigationStack {
-                SettingsView(dataExportService: container.dataExportService)
+                SettingsView(
+                    dataExportService: container.dataExportService,
+                    appearanceSettings: container.appearanceSettings
+                )
             }
             .tabItem {
                 Label("我的", systemImage: "person")

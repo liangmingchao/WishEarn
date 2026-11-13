@@ -77,6 +77,10 @@ struct TodayView: View {
                             .padding(.top, AppSpacing.xl)
                     }
 
+                    if !viewModel.progressedTodayItems.isEmpty {
+                        progressedSection
+                    }
+
                     if !viewModel.recordedTodayItems.isEmpty {
                         readOnlySection(
                             title: "今天已记录",
@@ -131,7 +135,7 @@ struct TodayView: View {
                     .font(AppTypography.sectionTitle)
                     .foregroundStyle(AppColors.textPrimary)
 
-                Text("\(viewModel.actionableItems.count) 项待记录 · \(doneCount) 项已完成")
+                Text("\(viewModel.actionableItems.count) 项待记录 · \(doneCount) 项已推进")
                     .font(AppTypography.footnote)
                     .foregroundStyle(AppColors.textSecondary)
                     .lineLimit(2)
@@ -161,6 +165,30 @@ struct TodayView: View {
                 }
 
                 TodayActionRow(item: item) {
+                    recordingCondition = item.condition
+                }
+            }
+        }
+        .padding(.horizontal, AppSpacing.screenInset)
+    }
+
+    private var progressedSection: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            sectionHeader(
+                "今天已推进",
+                trailing: "\(viewModel.progressedTodayItems.count) 项"
+            )
+            .padding(.top, AppSpacing.section)
+
+            ForEach(
+                Array(viewModel.progressedTodayItems.enumerated()),
+                id: \.element.id
+            ) { index, item in
+                if index > 0 {
+                    separator
+                }
+
+                TodayProgressedRow(item: item) {
                     recordingCondition = item.condition
                 }
             }
@@ -229,12 +257,15 @@ struct TodayView: View {
 
     private var totalCount: Int {
         viewModel.actionableItems.count
+            + viewModel.progressedTodayItems.count
             + viewModel.recordedTodayItems.count
             + viewModel.completedItems.count
     }
 
     private var doneCount: Int {
-        viewModel.recordedTodayItems.count + viewModel.completedItems.count
+        viewModel.progressedTodayItems.count
+            + viewModel.recordedTodayItems.count
+            + viewModel.completedItems.count
     }
 
     private var pendingDescription: String {
@@ -257,22 +288,70 @@ private struct TodayActionRow: View {
         Group {
             if dynamicTypeSize.isAccessibilitySize {
                 VStack(alignment: .leading, spacing: AppSpacing.md) {
-                    content
-                    recordButton
+                    TodayItemContent(item: item)
+                    TodayRecordButton(item: item, onRecord: onRecord)
                 }
             } else {
                 HStack(alignment: .center, spacing: AppSpacing.md) {
-                    content
+                    TodayItemContent(item: item)
                     Spacer(minLength: AppSpacing.sm)
-                    recordButton
+                    TodayRecordButton(item: item, onRecord: onRecord)
                 }
             }
         }
         .padding(.vertical, AppSpacing.md + 2)
         .frame(minHeight: 76, alignment: .leading)
     }
+}
 
-    private var content: some View {
+/// Today's cumulative conditions that already have a record today but are not
+/// at their target yet. They keep the record action because COUNT, DURATION,
+/// AMOUNT and CUSTOM accept more than one record per day.
+private struct TodayProgressedRow: View {
+    let item: TodayConditionItem
+    let onRecord: () -> Void
+
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
+    var body: some View {
+        Group {
+            if dynamicTypeSize.isAccessibilitySize {
+                VStack(alignment: .leading, spacing: AppSpacing.md) {
+                    HStack(alignment: .top, spacing: AppSpacing.md) {
+                        TodayProgressedCheckmark()
+                        TodayItemContent(item: item)
+                    }
+                    TodayRecordButton(item: item, onRecord: onRecord)
+                }
+            } else {
+                HStack(alignment: .center, spacing: AppSpacing.md) {
+                    TodayProgressedCheckmark()
+                    TodayItemContent(item: item)
+                    Spacer(minLength: AppSpacing.sm)
+                    TodayRecordButton(item: item, onRecord: onRecord)
+                }
+            }
+        }
+        .padding(.vertical, AppSpacing.md + 2)
+        .frame(minHeight: 76, alignment: .leading)
+    }
+}
+
+private struct TodayProgressedCheckmark: View {
+    var body: some View {
+        Image(systemName: "checkmark")
+            .font(.system(size: 11, weight: .bold))
+            .foregroundStyle(AppColors.primary)
+            .frame(width: 20, height: 20)
+            .background(AppColors.primarySoft, in: Circle())
+            .accessibilityHidden(true)
+    }
+}
+
+private struct TodayItemContent: View {
+    let item: TodayConditionItem
+
+    var body: some View {
         VStack(alignment: .leading, spacing: 3) {
             Text(item.condition.title)
                 .font(AppTypography.headline)
@@ -303,8 +382,13 @@ private struct TodayActionRow: View {
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(item.accessibilityDescription))
     }
+}
 
-    private var recordButton: some View {
+private struct TodayRecordButton: View {
+    let item: TodayConditionItem
+    let onRecord: () -> Void
+
+    var body: some View {
         Button(action: onRecord) {
             Text("记录")
                 .font(.system(size: 13, weight: .semibold))
@@ -431,7 +515,7 @@ private struct TodayProgressRing: View {
         .animation(AppMotion.standard, value: ratio)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel("今日进度")
-        .accessibilityValue("已完成 \(completed) 项，共 \(total) 项")
+        .accessibilityValue("已推进 \(completed) 项，共 \(total) 项")
     }
 }
 
