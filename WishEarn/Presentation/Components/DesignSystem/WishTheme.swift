@@ -27,23 +27,23 @@ enum WishTheme: String, CaseIterable, Sendable {
     var tint: Color {
         switch self {
         case .butter:
-            return Color.dynamic(light: 0xFFD66E, dark: 0xF6D57B)
+            return Color.dynamic(light: 0xF2DFB7, dark: 0x4A3E24)
         case .mint:
-            return Color.dynamic(light: 0xA8E3CF, dark: 0x9BDFC7)
+            return Color.dynamic(light: 0xCFE3D3, dark: 0x2A3A2F)
         case .sky:
-            return Color.dynamic(light: 0xA9D7F2, dark: 0x9CCBEA)
+            return Color.dynamic(light: 0xCFE0EC, dark: 0x26333C)
         case .blush:
-            return Color.dynamic(light: 0xF6C6D1, dark: 0xF3B9C8)
+            return Color.dynamic(light: 0xF0D5CF, dark: 0x3C2B28)
         case .lavender:
-            return Color.dynamic(light: 0xDCD4FF, dark: 0xC9BEFF)
+            return Color.dynamic(light: 0xDDD7E8, dark: 0x332F3D)
         case .peach:
-            return Color.dynamic(light: 0xFFE0D2, dark: 0xF8CBB7)
+            return Color.dynamic(light: 0xF3D9C4, dark: 0x3E3025)
         }
     }
 
     /// Foreground for text or icons placed on a solid theme tint.
     var onTint: Color {
-        Color.dynamic(light: 0x2E3040, dark: 0x171725)
+        Color.dynamic(light: 0x23281F, dark: 0xF2EEE4)
     }
 
     /// Larger placeholder washes use a deliberately mixed surface instead of
@@ -51,34 +51,34 @@ enum WishTheme: String, CaseIterable, Sendable {
     var softTint: Color {
         switch self {
         case .butter:
-            return Color.dynamic(light: 0xFFF0C7, dark: 0x3A3427)
+            return Color.dynamic(light: 0xFAF0D6, dark: 0x302818)
         case .mint:
-            return Color.dynamic(light: 0xDDF3EA, dark: 0x223B33)
+            return Color.dynamic(light: 0xE6F1E8, dark: 0x1E2A23)
         case .sky:
-            return Color.dynamic(light: 0xDFEEF9, dark: 0x22343F)
+            return Color.dynamic(light: 0xE6F0F6, dark: 0x1D272E)
         case .blush:
-            return Color.dynamic(light: 0xFBE3E8, dark: 0x3B2B31)
+            return Color.dynamic(light: 0xF9E7E3, dark: 0x2C2020)
         case .lavender:
-            return Color.dynamic(light: 0xEEEAFB, dark: 0x302C45)
+            return Color.dynamic(light: 0xEEEBF5, dark: 0x262330)
         case .peach:
-            return Color.dynamic(light: 0xFFF0E8, dark: 0x3B2D27)
+            return Color.dynamic(light: 0xFBEBDF, dark: 0x2E241C)
         }
     }
 
     var onSoftTint: Color {
         switch self {
         case .butter:
-            return Color.dynamic(light: 0x2E3040, dark: 0xF6D57B)
+            return Color.dynamic(light: 0x4A3E24, dark: 0xF2DFB7)
         case .mint:
-            return Color.dynamic(light: 0x2E3040, dark: 0x9BDFC7)
+            return Color.dynamic(light: 0x2A3A2F, dark: 0xCFE3D3)
         case .sky:
-            return Color.dynamic(light: 0x2E3040, dark: 0x9CCBEA)
+            return Color.dynamic(light: 0x26333C, dark: 0xCFE0EC)
         case .blush:
-            return Color.dynamic(light: 0x2E3040, dark: 0xF3B9C8)
+            return Color.dynamic(light: 0x3C2B28, dark: 0xF0D5CF)
         case .lavender:
-            return Color.dynamic(light: 0x2E3040, dark: 0xC9BEFF)
+            return Color.dynamic(light: 0x332F3D, dark: 0xDDD7E8)
         case .peach:
-            return Color.dynamic(light: 0x2E3040, dark: 0xF8CBB7)
+            return Color.dynamic(light: 0x3E3025, dark: 0xF3D9C4)
         }
     }
 }
@@ -104,6 +104,41 @@ struct WishThemeDot: View {
             .fill(theme.tint)
             .frame(width: size, height: size)
             .accessibilityHidden(true)
+    }
+}
+
+/// A monogram plate used when a wish has no photograph yet. It keeps the
+/// cover feeling intentional instead of showing a broken-image icon.
+struct WishMonogramPlate: View {
+    let wish: Wish
+    let theme: WishTheme
+    var scale: CGFloat = 1
+
+    var body: some View {
+        ZStack {
+            theme.softTint
+
+            RadialGradient(
+                colors: [
+                    theme.onSoftTint.opacity(0.10),
+                    theme.onSoftTint.opacity(0)
+                ],
+                center: .topTrailing,
+                startRadius: 2,
+                endRadius: 160 * scale
+            )
+
+            Text(monogram)
+                .font(.system(size: 92 * scale, weight: .semibold, design: .serif))
+                .foregroundStyle(theme.onSoftTint.opacity(0.18))
+                .offset(x: 34 * scale, y: 40 * scale)
+                .accessibilityHidden(true)
+        }
+    }
+
+    private var monogram: String {
+        guard let first = wish.title.first else { return "愿" }
+        return String(first)
     }
 }
 

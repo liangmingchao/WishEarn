@@ -117,6 +117,32 @@ final class RecordEditorViewModel {
         condition.amountDirection?.displayName
     }
 
+    /// Quick-add steps offered under the number pad. They match the unit of the
+    /// condition so one tap means something meaningful.
+    var quickAddValues: [Decimal] {
+        switch condition.type {
+        case .amount:
+            return [100, 500, 1000]
+        case .duration:
+            return [15, 30, 60]
+        case .count, .custom:
+            return [1, 5, 10]
+        case .streak, .checkpoint:
+            return []
+        }
+    }
+
+    /// Adds `delta` to the current input, keeping the field a plain decimal
+    /// string so validation and saving behave exactly as typed input.
+    func addValue(_ delta: Decimal) {
+        let current = Decimal(
+            string: normalizedValueText,
+            locale: Locale(identifier: "en_US_POSIX")
+        ) ?? 0
+        let next = max(current + delta, 0)
+        valueText = NSDecimalNumber(decimal: next).stringValue
+    }
+
     var conditionTitle: String {
         condition.title
     }

@@ -8,6 +8,10 @@
 
 ### Changed
 
+- UI 2.0「Daylight Ledger」落地：暖纸底、松绿主操作、琥珀奖励色；首页改为沉浸式主卡 + 68pt 紧凑行，筛选回到标题下方并带计数。
+- Today 改为进度环摘要 + 行内记录；Wish Detail 改为全宽封面、完成度主指标与底部固定记录入口；Record Editor 改为大数字输入与按单位自适应的快捷加值。
+- Unlock Celebration 改为墨绿仪式页（全 App 唯一非纸色界面）；Achievements 改为三列统计 + 时间线。
+- 设计令牌新增 `onImage` / `imageScrim` / `ceremony` / `AppRadius.card` / `AppTypography.pageTitle` 等，浅色与深色各自调校，全部色对通过 4.5:1 对比度校验。
 - Today 行动页重构为低摩擦行动入口：Wish 作为次要上下文、条件标题主导、单一记录 CTA。
 - TodayViewModel 输出 actionable / 今天已记录 / 已完成条件三组状态，并暴露累计进度快照；CHECKPOINT 历史完成不再显示为今日完成。
 - 保持 STREAK 每日唯一记录和 COUNT / DURATION / AMOUNT / CUSTOM 可多次记录的现有语义。

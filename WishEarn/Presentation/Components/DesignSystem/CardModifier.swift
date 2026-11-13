@@ -2,7 +2,7 @@ import SwiftUI
 
 struct CardModifier: ViewModifier {
     var padding: CGFloat = AppSpacing.lg
-    var radius: CGFloat = AppRadius.lg
+    var radius: CGFloat = AppRadius.card
 
     func body(content: Content) -> some View {
         content
@@ -13,7 +13,7 @@ struct CardModifier: ViewModifier {
             )
             .overlay(
                 RoundedRectangle(cornerRadius: radius, style: .continuous)
-                    .stroke(AppColors.separator, lineWidth: 1)
+                    .stroke(AppColors.separatorSoft, lineWidth: 1)
             )
             .shadow(
                 color: AppElevation.cardColor,
@@ -47,7 +47,7 @@ private struct CardPreview: View {
     var body: some View {
         VStack(alignment: .leading, spacing: AppSpacing.sm) {
             Text("Kindle Paperwhite")
-                .font(AppTypography.headline)
+                .font(AppTypography.wishTitleCompact)
                 .foregroundStyle(AppColors.textPrimary)
             Text("已完成 2 / 3 项条件")
                 .font(AppTypography.callout)

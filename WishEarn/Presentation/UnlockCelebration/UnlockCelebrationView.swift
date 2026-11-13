@@ -1,6 +1,8 @@
 import SwiftUI
 import UIKit
 
+/// The moment a wish unlocks. Deliberately the only screen in the app that
+/// leaves the paper palette: ink-dark ground, amber seal, one white action.
 struct UnlockCelebrationView: View {
     let wish: Wish
     let imageData: Data?
@@ -17,68 +19,72 @@ struct UnlockCelebrationView: View {
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
-            LinearGradient(
-                colors: [
-                    theme.tint.opacity(0.34),
-                    AppColors.canvas,
-                    AppColors.coralSoft
-                ],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-            .ignoresSafeArea()
+            AppColors.ceremony
+                .ignoresSafeArea()
+
+            ambientLight
 
             GeometryReader { proxy in
                 ScrollView {
-                    VStack(spacing: AppSpacing.lg) {
+                    VStack(spacing: 0) {
                         Spacer(minLength: AppSpacing.lg)
 
-                        imageView
-                            .scaleEffect(reduceMotion ? 1 : (appeared ? 1 : 0.94))
+                        seal
+                            .scaleEffect(reduceMotion ? 1 : (appeared ? 1 : 0.88))
                             .opacity(appeared ? 1 : 0)
 
-                        WishThemeMark(theme: theme, width: 42)
-
                         Text("你做到了")
-                            .font(AppTypography.display)
-                            .foregroundStyle(AppColors.textPrimary)
-                            .multilineTextAlignment(.center)
+                            .font(.system(size: 34, weight: .semibold, design: .serif))
+                            .foregroundStyle(AppColors.onImage)
+                            .padding(.top, AppSpacing.xl)
 
                         Text("「\(wish.title)」已解锁")
-                            .font(AppTypography.title)
-                            .foregroundStyle(AppColors.textPrimary)
+                            .font(.system(size: 17, weight: .regular))
+                            .foregroundStyle(AppColors.onImage.opacity(0.72))
                             .multilineTextAlignment(.center)
                             .fixedSize(horizontal: false, vertical: true)
+                            .padding(.top, AppSpacing.sm)
+                            .padding(.horizontal, AppSpacing.lg)
 
-                        supportingText
-                            .font(AppTypography.callout)
-                            .foregroundStyle(AppColors.textSecondary)
-                            .multilineTextAlignment(.center)
-                            .fixedSize(horizontal: false, vertical: true)
+                        facts
+                            .padding(.top, AppSpacing.xl)
+
+                        if let priceText {
+                            Text(priceText)
+                                .font(.system(size: 13, weight: .regular, design: .monospaced))
+                                .foregroundStyle(AppColors.onImage.opacity(0.55))
+                                .padding(.top, AppSpacing.md)
+                        }
 
                         Spacer(minLength: AppSpacing.xl)
 
+                        closingLine
+
                         actions
-                        Spacer(minLength: AppSpacing.lg)
+                            .padding(.top, AppSpacing.lg)
                     }
                     .frame(minHeight: proxy.size.height)
                     .padding(.horizontal, AppSpacing.xl)
                     .padding(.top, AppLayout.touchTarget + AppSpacing.sm)
                     .padding(.bottom, AppSpacing.xl)
+                    .opacity(appeared ? 1 : 0)
                 }
                 .scrollIndicators(.hidden)
             }
 
-            Button("关闭", action: onDismiss)
-                .font(AppTypography.callout)
-                .foregroundStyle(AppColors.textSecondary)
-                .padding(.horizontal, AppSpacing.md)
-                .frame(minHeight: AppLayout.touchTarget)
-                .background(AppColors.surface.opacity(0.9), in: Capsule())
-                .buttonStyle(.plain)
-                .accessibilityLabel("关闭")
-                .padding(.top, AppSpacing.sm)
-                .padding(.trailing, AppSpacing.screenInset)
+            Button {
+                onDismiss()
+            } label: {
+                Image(systemName: "xmark")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(AppColors.onImage.opacity(0.7))
+                    .frame(width: 34, height: 34)
+                    .background(AppColors.onImage.opacity(0.10), in: Circle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("关闭")
+            .padding(.top, AppSpacing.sm)
+            .padding(.trailing, AppSpacing.screenInset)
         }
         .onAppear {
             if reduceMotion {
@@ -86,62 +92,140 @@ struct UnlockCelebrationView: View {
                     appeared = true
                 }
             } else {
-                withAnimation(.spring(response: 0.55, dampingFraction: 0.82)) {
+                withAnimation(AppMotion.ceremony) {
                     appeared = true
                 }
             }
         }
     }
 
-    private var supportingText: Text {
-        if requiredConditionCount > 0 {
-            return Text("你完成了为它设定的 \(requiredConditionCount) 项条件")
+    private var ambientLight: some View {
+        RadialGradient(
+            colors: [
+                AppColors.coral.opacity(0.18),
+                AppColors.ceremony.opacity(0)
+            ],
+            center: .init(x: 0.5, y: 0.18),
+            startRadius: 8,
+            endRadius: 340
+        )
+        .ignoresSafeArea()
+        .allowsHitTesting(false)
+    }
+
+    private var seal: some View {
+        ZStack {
+            Circle()
+                .stroke(AppColors.coral.opacity(0.45), lineWidth: 1)
+                .frame(width: 104, height: 104)
+
+            Circle()
+                .stroke(AppColors.coral.opacity(0.22), lineWidth: 1)
+                .frame(width: 122, height: 122)
+
+            Circle()
+                .fill(AppColors.coral.opacity(0.12))
+                .frame(width: 84, height: 84)
+
+            Image(systemName: "checkmark")
+                .font(.system(size: 30, weight: .light))
+                .foregroundStyle(AppColors.coral)
         }
-        return Text("解锁条件已完成")
+        .accessibilityHidden(true)
+    }
+
+    private var facts: some View {
+        VStack(spacing: 0) {
+            Rectangle()
+                .fill(AppColors.onImage.opacity(0.12))
+                .frame(height: 0.5)
+
+            HStack(spacing: 0) {
+                fact(
+                    value: "\(requiredConditionCount)",
+                    label: "项条件"
+                )
+
+                divider
+
+                fact(
+                    value: "100%",
+                    label: "完成度"
+                )
+
+                divider
+
+                fact(
+                    value: "今日",
+                    label: "解锁"
+                )
+            }
+            .padding(.vertical, AppSpacing.lg)
+
+            Rectangle()
+                .fill(AppColors.onImage.opacity(0.12))
+                .frame(height: 0.5)
+        }
+        .padding(.horizontal, AppSpacing.md)
+    }
+
+    private func fact(value: String, label: String) -> some View {
+        VStack(spacing: 3) {
+            Text(value)
+                .font(.system(size: 20, weight: .semibold, design: .rounded))
+                .monospacedDigit()
+                .foregroundStyle(AppColors.onImage)
+
+            Text(label)
+                .font(.system(size: 11))
+                .foregroundStyle(AppColors.onImage.opacity(0.55))
+        }
+        .frame(maxWidth: .infinity)
+        .accessibilityElement(children: .combine)
+    }
+
+    private var divider: some View {
+        Rectangle()
+            .fill(AppColors.onImage.opacity(0.12))
+            .frame(width: 0.5, height: 26)
+    }
+
+    private var closingLine: some View {
+        Text("这份奖励，是你自己换来的。")
+            .font(.system(size: 13, weight: .regular, design: .serif))
+            .foregroundStyle(AppColors.onImage.opacity(0.55))
+            .multilineTextAlignment(.center)
     }
 
     private var actions: some View {
         VStack(spacing: AppSpacing.sm) {
-            Button("领取这份奖励", action: onClaim)
-                .buttonStyle(.appPrimary)
-                .accessibilityIdentifier("unlockClaimButton")
+            Button(action: onClaim) {
+                Text("领取我的奖励")
+                    .font(.system(size: 16, weight: .semibold))
+                    .foregroundStyle(AppColors.ceremony)
+                    .frame(maxWidth: .infinity, minHeight: AppLayout.buttonHeight)
+                    .background(
+                        AppColors.onImage,
+                        in: RoundedRectangle(cornerRadius: AppRadius.md, style: .continuous)
+                    )
+            }
+            .buttonStyle(.plain)
+            .accessibilityIdentifier("unlockClaimButton")
 
             Button("稍后再说", action: onDismiss)
-                .font(AppTypography.callout)
-                .foregroundStyle(AppColors.textSecondary)
+                .font(AppTypography.footnote)
+                .foregroundStyle(AppColors.onImage.opacity(0.55))
                 .frame(minHeight: AppLayout.touchTarget)
                 .buttonStyle(.plain)
         }
         .frame(maxWidth: 360)
     }
 
-    private var imageView: some View {
-        ZStack {
-            theme.softTint
-
-            if let imageData, let image = UIImage(data: imageData) {
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFill()
-                    .accessibilityLabel("\(wish.title) 的照片")
-            } else {
-                Image(systemName: "photo")
-                    .font(.system(size: 52, weight: .light))
-                    .foregroundStyle(theme.onSoftTint)
-                    .accessibilityHidden(true)
-            }
-        }
-        .aspectRatio(4.0 / 3.0, contentMode: .fit)
-        .frame(maxWidth: 320)
-        .clipped()
-        .clipShape(
-            RoundedRectangle(cornerRadius: AppRadius.xl, style: .continuous)
-        )
-        .shadow(
-            color: AppColors.accent.opacity(0.18),
-            radius: 24,
-            x: 0,
-            y: 12
+    private var priceText: String? {
+        guard let price = wish.targetPrice else { return nil }
+        return price.formatted(
+            .currency(code: wish.currencyCode)
+            .locale(Locale(identifier: "zh_CN"))
         )
     }
 }

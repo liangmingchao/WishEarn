@@ -55,6 +55,8 @@ struct RootTabView: View {
             .tag(AppRouter.Tab.settings)
         }
         .tint(AppColors.primary)
+        .toolbarBackground(AppColors.canvas, for: .tabBar)
+        .toolbarBackground(.visible, for: .tabBar)
         .environment(unlockCoordinator)
         .fullScreenCover(
             item: Binding(

@@ -35,7 +35,7 @@ struct TodayView: View {
             }
         }
         .appScreenBackground()
-        .navigationTitle("今天")
+        .toolbar(.hidden, for: .navigationBar)
         .sheet(
             item: $recordingCondition,
             onDismiss: {
@@ -60,13 +60,13 @@ struct TodayView: View {
     private var content: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
-                Text(viewModel.todayText)
-                    .font(AppTypography.footnote)
-                    .foregroundStyle(AppColors.textSecondary)
-                    .padding(.horizontal, AppSpacing.screenInset)
-                    .padding(.top, AppSpacing.xs)
+                header
 
                 if viewModel.hasContent {
+                    summaryCard
+                        .padding(.horizontal, AppSpacing.screenInset)
+                        .padding(.top, AppSpacing.lg)
+
                     if !viewModel.actionableItems.isEmpty {
                         actionableSection
                     } else {
@@ -94,22 +94,68 @@ struct TodayView: View {
                     emptyState
                 }
             }
-            .padding(.bottom, AppSpacing.xl)
+            .padding(.bottom, AppSpacing.xxl)
         }
+        .scrollIndicators(.hidden)
+    }
+
+    private var header: some View {
+        VStack(alignment: .leading, spacing: 5) {
+            Text(viewModel.todayText)
+                .font(AppTypography.eyebrow)
+                .tracking(1.2)
+                .foregroundStyle(AppColors.textTertiary)
+
+            Text("今天")
+                .font(AppTypography.pageTitle)
+                .foregroundStyle(AppColors.textPrimary)
+
+            Text(pendingDescription)
+                .font(AppTypography.callout)
+                .foregroundStyle(AppColors.textSecondary)
+                .padding(.top, 1)
+        }
+        .padding(.horizontal, AppSpacing.screenInset)
+        .padding(.top, AppSpacing.md)
+    }
+
+    private var summaryCard: some View {
+        HStack(spacing: AppSpacing.lg) {
+            TodayProgressRing(
+                completed: doneCount,
+                total: totalCount
+            )
+
+            VStack(alignment: .leading, spacing: 3) {
+                Text(doneCount == totalCount ? "今天的行动都记录好了" : "先完成一项，再想别的")
+                    .font(AppTypography.sectionTitle)
+                    .foregroundStyle(AppColors.textPrimary)
+
+                Text("\(viewModel.actionableItems.count) 项待记录 · \(doneCount) 项已完成")
+                    .font(AppTypography.footnote)
+                    .foregroundStyle(AppColors.textSecondary)
+                    .lineLimit(2)
+            }
+
+            Spacer(minLength: 0)
+        }
+        .padding(AppSpacing.lg)
+        .background(
+            RoundedRectangle(cornerRadius: AppRadius.card, style: .continuous)
+                .fill(AppColors.elevated)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: AppRadius.card, style: .continuous)
+                .stroke(AppColors.separatorSoft, lineWidth: 1)
+        )
     }
 
     private var actionableSection: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text("今天可以推进这些心愿")
-                .font(AppTypography.headline)
-                .foregroundStyle(AppColors.textPrimary)
-                .padding(.bottom, AppSpacing.sm)
-                .padding(.top, AppSpacing.xl)
+            sectionHeader("今天可以推进", trailing: "\(viewModel.actionableItems.count) 项")
+                .padding(.top, AppSpacing.section)
 
-            ForEach(
-                Array(viewModel.actionableItems.enumerated()),
-                id: \.element.id
-            ) { index, item in
+            ForEach(Array(viewModel.actionableItems.enumerated()), id: \.element.id) { index, item in
                 if index > 0 {
                     separator
                 }
@@ -127,11 +173,8 @@ struct TodayView: View {
         items: [TodayConditionItem]
     ) -> some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text(title)
-                .font(AppTypography.headline)
-                .foregroundStyle(AppColors.textPrimary)
-                .padding(.bottom, AppSpacing.sm)
-                .padding(.top, AppSpacing.xl)
+            sectionHeader(title, trailing: nil)
+                .padding(.top, AppSpacing.section)
 
             ForEach(Array(items.enumerated()), id: \.element.id) { index, item in
                 if index > 0 {
@@ -144,9 +187,26 @@ struct TodayView: View {
         .padding(.horizontal, AppSpacing.screenInset)
     }
 
+    private func sectionHeader(_ title: String, trailing: String?) -> some View {
+        HStack(alignment: .firstTextBaseline) {
+            Text(title)
+                .font(AppTypography.sectionTitle)
+                .foregroundStyle(AppColors.textPrimary)
+
+            Spacer()
+
+            if let trailing {
+                Text(trailing)
+                    .font(AppTypography.footnote)
+                    .foregroundStyle(AppColors.textTertiary)
+            }
+        }
+        .padding(.bottom, AppSpacing.xs)
+    }
+
     private var separator: some View {
         Rectangle()
-            .fill(AppColors.separator)
+            .fill(AppColors.separatorSoft)
             .frame(height: 0.5)
     }
 
@@ -164,7 +224,28 @@ struct TodayView: View {
         )
         .padding(.top, AppSpacing.hero)
     }
+
+    // MARK: - Derived data
+
+    private var totalCount: Int {
+        viewModel.actionableItems.count
+            + viewModel.recordedTodayItems.count
+            + viewModel.completedItems.count
+    }
+
+    private var doneCount: Int {
+        viewModel.recordedTodayItems.count + viewModel.completedItems.count
+    }
+
+    private var pendingDescription: String {
+        if viewModel.actionableItems.isEmpty {
+            return viewModel.hasContent ? "今天要做的事都完成了" : "今天还没有需要记录的行动"
+        }
+        return "\(viewModel.actionableItems.count) 项待记录，挑一件先做"
+    }
 }
+
+// MARK: - Rows
 
 private struct TodayActionRow: View {
     let item: TodayConditionItem
@@ -187,14 +268,20 @@ private struct TodayActionRow: View {
                 }
             }
         }
-        .padding(.vertical, AppSpacing.md)
-        .frame(minHeight: 84, alignment: .leading)
+        .padding(.vertical, AppSpacing.md + 2)
+        .frame(minHeight: 76, alignment: .leading)
     }
 
     private var content: some View {
-        VStack(alignment: .leading, spacing: AppSpacing.xs) {
-            HStack(spacing: AppSpacing.xs) {
-                WishThemeDot(theme: .forWish(item.wish))
+        VStack(alignment: .leading, spacing: 3) {
+            Text(item.condition.title)
+                .font(AppTypography.headline)
+                .foregroundStyle(AppColors.textPrimary)
+                .lineLimit(2)
+                .fixedSize(horizontal: false, vertical: true)
+
+            HStack(spacing: 6) {
+                WishThemeDot(theme: .forWish(item.wish), size: 6)
 
                 Text(item.wish.title)
                     .font(AppTypography.caption)
@@ -202,15 +289,10 @@ private struct TodayActionRow: View {
                     .lineLimit(1)
             }
 
-            Text(item.condition.title)
-                .font(AppTypography.headline)
-                .foregroundStyle(AppColors.textPrimary)
-                .lineLimit(2)
-                .fixedSize(horizontal: false, vertical: true)
-
             Text(item.progressText)
                 .font(AppTypography.footnote)
-                .foregroundStyle(AppColors.textSecondary)
+                .foregroundStyle(AppColors.textTertiary)
+                .lineLimit(2)
 
             if let todayRecordText = item.todayRecordText {
                 Text(todayRecordText)
@@ -224,16 +306,14 @@ private struct TodayActionRow: View {
 
     private var recordButton: some View {
         Button(action: onRecord) {
-            HStack(spacing: AppSpacing.xs) {
-                Image(systemName: "plus")
-                Text("记录")
-            }
-            .font(AppTypography.footnote.weight(.semibold))
-            .foregroundStyle(AppColors.accent)
-            .padding(.horizontal, AppSpacing.md)
-            .frame(minHeight: AppLayout.touchTarget)
-            .background(AppColors.accentSoft, in: Capsule())
-            .contentShape(Capsule())
+            Text("记录")
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(AppColors.onPrimary)
+                .padding(.horizontal, 15)
+                .frame(height: 34)
+                .background(AppColors.primary, in: Capsule())
+                .frame(minWidth: AppLayout.touchTarget, minHeight: AppLayout.touchTarget)
+                .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
         .accessibilityLabel("记录\(item.condition.title)")
@@ -255,7 +335,7 @@ private struct TodayReadOnlyRow: View {
                         content
                     }
                     stateLabel
-                        .padding(.leading, 28)
+                        .padding(.leading, 26)
                 }
             } else {
                 HStack(alignment: .center, spacing: AppSpacing.md) {
@@ -266,24 +346,31 @@ private struct TodayReadOnlyRow: View {
                 }
             }
         }
-        .padding(.vertical, AppSpacing.md)
-        .frame(minHeight: 72, alignment: .leading)
+        .padding(.vertical, AppSpacing.md + 2)
+        .frame(minHeight: 68, alignment: .leading)
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(item.accessibilityDescription))
     }
 
     private var checkmark: some View {
-        Image(systemName: "checkmark.circle.fill")
-            .font(.system(size: 18, weight: .regular))
-            .foregroundStyle(AppColors.success)
+        Image(systemName: "checkmark")
+            .font(.system(size: 11, weight: .bold))
+            .foregroundStyle(AppColors.primary)
             .frame(width: 20, height: 20)
+            .background(AppColors.primarySoft, in: Circle())
             .accessibilityHidden(true)
     }
 
     private var content: some View {
-        VStack(alignment: .leading, spacing: AppSpacing.xs) {
-            HStack(spacing: AppSpacing.xs) {
-                WishThemeDot(theme: .forWish(item.wish))
+        VStack(alignment: .leading, spacing: 3) {
+            Text(item.condition.title)
+                .font(AppTypography.callout.weight(.medium))
+                .foregroundStyle(AppColors.textPrimary)
+                .lineLimit(2)
+                .fixedSize(horizontal: false, vertical: true)
+
+            HStack(spacing: 6) {
+                WishThemeDot(theme: .forWish(item.wish), size: 6)
 
                 Text(item.wish.title)
                     .font(AppTypography.caption)
@@ -291,22 +378,60 @@ private struct TodayReadOnlyRow: View {
                     .lineLimit(1)
             }
 
-            Text(item.condition.title)
-                .font(AppTypography.callout.weight(.semibold))
-                .foregroundStyle(AppColors.textPrimary)
-                .lineLimit(2)
-                .fixedSize(horizontal: false, vertical: true)
-
             Text(item.progressText)
                 .font(AppTypography.footnote)
-                .foregroundStyle(AppColors.textSecondary)
+                .foregroundStyle(AppColors.textTertiary)
         }
     }
 
     private var stateLabel: some View {
         Text(item.stateText)
-            .font(AppTypography.caption.weight(.semibold))
-            .foregroundStyle(AppColors.textSecondary)
+            .font(AppTypography.caption)
+            .foregroundStyle(AppColors.textTertiary)
+            .fixedSize()
+    }
+}
+
+// MARK: - Ring
+
+private struct TodayProgressRing: View {
+    let completed: Int
+    let total: Int
+
+    private var ratio: Double {
+        guard total > 0 else { return 0 }
+        return Double(completed) / Double(total)
+    }
+
+    var body: some View {
+        ZStack {
+            Circle()
+                .stroke(AppColors.progressTrack, lineWidth: 5)
+
+            Circle()
+                .trim(from: 0, to: min(max(ratio, 0), 1))
+                .stroke(
+                    AppColors.primary,
+                    style: StrokeStyle(lineWidth: 5, lineCap: .round)
+                )
+                .rotationEffect(.degrees(-90))
+
+            VStack(spacing: -1) {
+                Text("\(completed)")
+                    .font(.system(size: 19, weight: .semibold, design: .rounded))
+                    .monospacedDigit()
+                    .foregroundStyle(AppColors.textPrimary)
+
+                Text("/ \(total)")
+                    .font(.system(size: 9, weight: .regular))
+                    .foregroundStyle(AppColors.textTertiary)
+            }
+        }
+        .frame(width: 66, height: 66)
+        .animation(AppMotion.standard, value: ratio)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel("今日进度")
+        .accessibilityValue("已完成 \(completed) 项，共 \(total) 项")
     }
 }
 

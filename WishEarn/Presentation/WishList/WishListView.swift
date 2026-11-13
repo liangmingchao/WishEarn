@@ -29,29 +29,25 @@ struct WishListView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            if showsActiveSummary {
-                activeSummary
-            }
-
-            content
-
-            if showsFilterBar {
-                filterBar
+        Group {
+            if viewModel.isLoading && !viewModel.hasLoaded {
+                ProgressView()
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else if let error = viewModel.error {
+                ErrorStateView(
+                    title: error.title,
+                    message: error.message,
+                    onRetry: viewModel.load
+                )
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else if viewModel.wishes.isEmpty {
+                firstUseEmptyState
+            } else {
+                scrollContent
             }
         }
         .appScreenBackground()
-        .navigationTitle("我的心愿")
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    isPresentingEditor = true
-                } label: {
-                    Image(systemName: "plus")
-                }
-                .accessibilityLabel("创建心愿")
-            }
-        }
+        .toolbar(.hidden, for: .navigationBar)
         .sheet(
             isPresented: $isPresentingEditor,
             onDismiss: {
@@ -96,104 +92,17 @@ struct WishListView: View {
         }
     }
 
-    private var showsActiveSummary: Bool {
-        viewModel.hasLoaded
-            && viewModel.error == nil
-            && viewModel.activeWishCount > 0
-    }
+    // MARK: - Content
 
-    private var activeSummary: some View {
-        Text("正在为 \(viewModel.activeWishCount) 个想要的东西努力")
-            .font(AppTypography.callout)
-            .foregroundStyle(AppColors.textSecondary)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.horizontal, AppSpacing.screenInset)
-            .padding(.top, AppSpacing.xs)
-            .padding(.bottom, AppSpacing.md)
-    }
-
-    private var showsFilterBar: Bool {
-        viewModel.hasLoaded
-            && viewModel.error == nil
-            && !viewModel.wishes.isEmpty
-    }
-
-    private var filterBar: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: AppSpacing.sm) {
-                ForEach(WishFilter.allCases) { filter in
-                    FilterChip(
-                        title: filter.title,
-                        isSelected: viewModel.filter == filter
-                    ) {
-                        viewModel.filter = filter
-                    }
-                }
-            }
-            .padding(.horizontal, AppSpacing.screenInset)
-            .padding(.vertical, AppSpacing.sm)
-        }
-        .background(AppColors.canvas)
-        .overlay(alignment: .top) {
-            Rectangle()
-                .fill(AppColors.separator)
-                .frame(height: 0.5)
-        }
-    }
-
-    @ViewBuilder
-    private var content: some View {
-        if viewModel.isLoading && !viewModel.hasLoaded {
-            ProgressView()
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-        } else if let error = viewModel.error {
-            ErrorStateView(
-                title: error.title,
-                message: error.message,
-                onRetry: viewModel.load
-            )
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-        } else if viewModel.wishes.isEmpty {
-            firstUseEmptyState
-        } else if viewModel.filteredWishes.isEmpty {
-            filterEmptyState
-        } else {
-            wishListContent
-        }
-    }
-
-    private var firstUseEmptyState: some View {
-        EmptyStateView(
-            systemImage: "heart.text.square",
-            title: "给自己一个值得期待的目标",
-            message: "选一件真正想要的东西，再决定要为它付出哪些努力。",
-            actionTitle: "创建第一个心愿",
-            action: {
-                isPresentingEditor = true
-            }
-        )
-        .padding(.top, AppSpacing.xxl)
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-    }
-
-    private var filterEmptyState: some View {
-        EmptyStateView(
-            systemImage: "line.3.horizontal.decrease.circle",
-            title: "这里暂时没有心愿",
-            message: "「\(viewModel.filter.title)」筛选下还没有心愿。",
-            actionTitle: "查看全部",
-            action: {
-                viewModel.filter = .all
-            }
-        )
-        .padding(.top, AppSpacing.xxl)
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
-    }
-
-    private var wishListContent: some View {
+    private var scrollContent: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: AppSpacing.xxl) {
-                if let featuredWish = viewModel.featuredWish {
+            VStack(alignment: .leading, spacing: 0) {
+                header
+
+                chipBar
+                    .padding(.top, AppSpacing.lg)
+
+                if let featuredWish {
                     wishLink(for: featuredWish) {
                         WishCard(
                             wish: featuredWish,
@@ -201,44 +110,164 @@ struct WishListView: View {
                             imageData: viewModel.imageData(for: featuredWish)
                         )
                     }
+                    .padding(.horizontal, AppSpacing.screenInset)
+                    .padding(.top, AppSpacing.md)
                 }
 
-                let secondaryWishes = viewModel.secondaryWishes
-                if !secondaryWishes.isEmpty {
-                    VStack(alignment: .leading, spacing: AppSpacing.md) {
-                        if viewModel.featuredWish != nil {
-                            Text("其他心愿")
-                                .font(AppTypography.headline)
-                                .foregroundStyle(AppColors.textPrimary)
-                        }
+                sectionHeader
+                    .padding(.top, AppSpacing.section)
+                    .padding(.horizontal, AppSpacing.screenInset)
 
-                        VStack(spacing: 0) {
-                            ForEach(
-                                Array(secondaryWishes.enumerated()),
-                                id: \.element.id
-                            ) { index, wish in
-                                if index > 0 {
-                                    Rectangle()
-                                        .fill(AppColors.separator)
-                                        .frame(height: 0.5)
-                                }
-
-                                wishLink(for: wish) {
-                                    WishRow(
-                                        wish: wish,
-                                        progressSummary: viewModel.progressSummary(for: wish),
-                                        imageData: viewModel.imageData(for: wish)
-                                    )
-                                }
+                if secondaryWishes.isEmpty {
+                    Text(emptyListMessage)
+                        .font(AppTypography.callout)
+                        .foregroundStyle(AppColors.textSecondary)
+                        .padding(.horizontal, AppSpacing.screenInset)
+                        .padding(.top, AppSpacing.sm)
+                } else {
+                    VStack(spacing: 0) {
+                        ForEach(Array(secondaryWishes.enumerated()), id: \.element.id) { index, wish in
+                            if index > 0 {
+                                Rectangle()
+                                    .fill(AppColors.separatorSoft)
+                                    .frame(height: 0.5)
+                                    .padding(.leading, AppLayout.thumbnailSize + AppSpacing.md + 2)
                             }
+
+                            wishLink(for: wish) {
+                                WishRow(
+                                    wish: wish,
+                                    progressSummary: viewModel.progressSummary(for: wish),
+                                    imageData: viewModel.imageData(for: wish)
+                                )
+                            }
+                        }
+                    }
+                    .padding(.horizontal, AppSpacing.screenInset)
+                }
+
+                Button {
+                    isPresentingEditor = true
+                } label: {
+                    HStack(spacing: 6) {
+                        Image(systemName: "plus")
+                            .font(.system(size: 13, weight: .semibold))
+                        Text("新建心愿")
+                            .font(AppTypography.callout.weight(.medium))
+                    }
+                    .foregroundStyle(AppColors.textSecondary)
+                    .frame(maxWidth: .infinity, minHeight: AppLayout.touchTarget)
+                    .background(
+                        RoundedRectangle(cornerRadius: AppRadius.md, style: .continuous)
+                            .strokeBorder(
+                                AppColors.separator,
+                                style: StrokeStyle(lineWidth: 1, dash: [4, 4])
+                            )
+                    )
+                }
+                .buttonStyle(.plain)
+                .padding(.horizontal, AppSpacing.screenInset)
+                .padding(.top, AppSpacing.section)
+            }
+            .padding(.top, AppSpacing.sm)
+            .padding(.bottom, AppSpacing.xxl + AppSpacing.lg)
+        }
+        .scrollIndicators(.hidden)
+    }
+
+    private var header: some View {
+        HStack(alignment: .top, spacing: AppSpacing.md) {
+            VStack(alignment: .leading, spacing: 5) {
+                Text(headerDateText)
+                    .font(AppTypography.eyebrow)
+                    .tracking(1.2)
+                    .foregroundStyle(AppColors.textTertiary)
+
+                Text("心愿")
+                    .font(AppTypography.pageTitle)
+                    .foregroundStyle(AppColors.textPrimary)
+
+                Text(
+                    viewModel.activeWishCount > 0
+                        ? "为 \(viewModel.activeWishCount) 个想要的东西努力着"
+                        : "先收藏一件真正想要的东西"
+                )
+                .font(AppTypography.callout)
+                .foregroundStyle(AppColors.textSecondary)
+                .padding(.top, 1)
+            }
+
+            Spacer(minLength: AppSpacing.sm)
+
+            Button {
+                isPresentingEditor = true
+            } label: {
+                Image(systemName: "plus")
+                    .font(.system(size: 17, weight: .semibold))
+                    .foregroundStyle(AppColors.onPrimary)
+                    .frame(width: 42, height: 42)
+                    .background(AppColors.primary, in: Circle())
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel("创建心愿")
+            .accessibilityIdentifier("homeCreateWishButton")
+        }
+        .padding(.horizontal, AppSpacing.screenInset)
+        .padding(.top, AppSpacing.md)
+    }
+
+    private var chipBar: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: AppSpacing.sm) {
+                ForEach(HomeFilter.allCases) { item in
+                    HomeFilterChip(
+                        title: item.title,
+                        count: count(for: item),
+                        isSelected: viewModel.filter == item.filter
+                    ) {
+                        withAnimation(AppMotion.quick) {
+                            viewModel.filter = item.filter
                         }
                     }
                 }
             }
             .padding(.horizontal, AppSpacing.screenInset)
-            .padding(.top, AppSpacing.sm)
-            .padding(.bottom, AppSpacing.xl)
+            .padding(.vertical, 2)
         }
+    }
+
+    private var sectionHeader: some View {
+        HStack(alignment: .firstTextBaseline) {
+            Text(sectionTitle)
+                .font(AppTypography.sectionTitle)
+                .foregroundStyle(AppColors.textPrimary)
+
+            Spacer()
+
+            Text("\(secondaryWishes.count) 个")
+                .font(AppTypography.footnote)
+                .foregroundStyle(AppColors.textTertiary)
+        }
+    }
+
+    private var firstUseEmptyState: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 0) {
+                header
+
+                EmptyStateView(
+                    systemImage: "heart.text.square",
+                    title: "给自己一个值得期待的目标",
+                    message: "选一件真正想要的东西，再决定要为它付出哪些努力。",
+                    actionTitle: "创建第一个心愿",
+                    action: {
+                        isPresentingEditor = true
+                    }
+                )
+                .padding(.top, AppSpacing.xxl)
+            }
+        }
+        .scrollIndicators(.hidden)
     }
 
     private func wishLink<Label: View>(
@@ -310,6 +339,152 @@ struct WishListView: View {
         } label: {
             Label("删除", systemImage: "trash")
         }
+    }
+
+    // MARK: - Derived data
+
+    /// Home hides archived and already-claimed wishes from the default list so
+    /// the first screen stays about what is still in motion.
+    private var visibleWishes: [Wish] {
+        switch viewModel.filter {
+        case .all:
+            return viewModel.wishes.filter {
+                $0.status != .completed && $0.status != .archived
+            }
+        case .completed:
+            return viewModel.wishes.filter { $0.status == .completed }
+        default:
+            return viewModel.filteredWishes
+        }
+    }
+
+    private var featuredWish: Wish? {
+        guard viewModel.filter == .all || viewModel.filter == .active else {
+            return nil
+        }
+        return visibleWishes
+            .filter { $0.status == .active }
+            .max { lhs, rhs in
+                (viewModel.overallProgress(for: lhs) ?? 0)
+                    < (viewModel.overallProgress(for: rhs) ?? 0)
+            }
+    }
+
+    private var secondaryWishes: [Wish] {
+        guard let featuredWish else { return visibleWishes }
+        return visibleWishes.filter { $0.id != featuredWish.id }
+    }
+
+    private func count(for item: HomeFilter) -> Int {
+        viewModel.wishes.filter { wish in
+            switch item {
+            case .all:
+                return wish.status != .completed && wish.status != .archived
+            case .active:
+                return wish.status == .active
+            case .unlocked:
+                return wish.status == .unlocked
+            case .completed:
+                return wish.status == .completed
+            }
+        }.count
+    }
+
+    private var sectionTitle: String {
+        switch viewModel.filter {
+        case .completed:
+            return "已兑现的心愿"
+        case .unlocked:
+            return "已解锁 · 等待领取"
+        default:
+            return featuredWish == nil ? "全部心愿" : "其他心愿"
+        }
+    }
+
+    private var emptyListMessage: String {
+        viewModel.filter == .completed
+            ? "还没有兑现的心愿。慢慢来。"
+            : "这个分类下还没有心愿。"
+    }
+
+    private var headerDateText: String {
+        let locale = Locale(identifier: "zh_CN")
+        let monthDay = Date.now.formatted(
+            .dateTime.month(.defaultDigits).day().locale(locale)
+        )
+        let weekday = Date.now.formatted(
+            .dateTime.weekday(.wide).locale(locale)
+        )
+        return "\(monthDay) · \(weekday)"
+    }
+}
+
+// MARK: - Filters
+
+private enum HomeFilter: String, CaseIterable, Identifiable {
+    case all
+    case active
+    case unlocked
+    case completed
+
+    var id: String { rawValue }
+
+    var title: String {
+        switch self {
+        case .all: return "全部"
+        case .active: return "进行中"
+        case .unlocked: return "已解锁"
+        case .completed: return "已兑现"
+        }
+    }
+
+    var filter: WishFilter {
+        switch self {
+        case .all: return .all
+        case .active: return .active
+        case .unlocked: return .unlocked
+        case .completed: return .completed
+        }
+    }
+}
+
+private struct HomeFilterChip: View {
+    let title: String
+    let count: Int
+    let isSelected: Bool
+    let action: () -> Void
+
+    var body: some View {
+        Button(action: action) {
+            HStack(spacing: 5) {
+                Text(title)
+                    .font(.system(size: 13, weight: isSelected ? .semibold : .regular))
+
+                Text("\(count)")
+                    .font(.system(size: 11, weight: .medium))
+                    .monospacedDigit()
+                    .opacity(isSelected ? 0.62 : 0.55)
+            }
+            .foregroundStyle(isSelected ? AppColors.canvas : AppColors.textSecondary)
+            .padding(.horizontal, 13)
+            .frame(height: 34)
+            .background {
+                if isSelected {
+                    Capsule().fill(AppColors.textPrimary)
+                } else {
+                    Capsule()
+                        .fill(Color.clear)
+                        .overlay(
+                            Capsule().stroke(AppColors.separator, lineWidth: 1)
+                        )
+                }
+            }
+            .frame(minHeight: AppLayout.touchTarget)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(Text("\(title)，\(count) 个"))
+        .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 }
 

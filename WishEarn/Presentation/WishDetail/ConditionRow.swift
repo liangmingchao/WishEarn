@@ -74,13 +74,13 @@ struct ConditionRow: View {
                     ? AppColors.success
                     : theme.onTint
             )
-            .frame(width: 34, height: 34)
+            .frame(width: 32, height: 32)
             .background(
                 snapshot?.isCompleted == true
                     ? AppColors.successSoft
-                    : theme.tint
+                    : theme.tint,
+                in: RoundedRectangle(cornerRadius: 10, style: .continuous)
             )
-            .clipShape(Circle())
             .accessibilityHidden(true)
     }
 

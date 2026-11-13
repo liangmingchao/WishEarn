@@ -21,20 +21,20 @@ struct EditorField<Content: View>: View {
     var body: some View {
         VStack(alignment: .leading, spacing: AppSpacing.sm) {
             Text(title)
-                .font(AppTypography.footnote)
-                .foregroundStyle(AppColors.textSecondary)
+                .font(AppTypography.caption)
+                .foregroundStyle(AppColors.textTertiary)
 
             content
                 .font(AppTypography.body)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(AppSpacing.md)
-                .background(AppColors.surfaceSecondary)
+                .background(AppColors.canvas)
                 .clipShape(
                     RoundedRectangle(cornerRadius: AppRadius.md, style: .continuous)
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: AppRadius.md, style: .continuous)
-                        .stroke(AppColors.separator, lineWidth: 1)
+                        .stroke(AppColors.separatorSoft, lineWidth: 1)
                 )
 
             if let errorText {

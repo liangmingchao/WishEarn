@@ -3,6 +3,7 @@ import SwiftUI
 struct RecordEditorView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var viewModel: RecordEditorViewModel
+    @ScaledMetric(relativeTo: .largeTitle) private var numberSize: CGFloat = 54
 
     init(viewModel: RecordEditorViewModel) {
         _viewModel = State(initialValue: viewModel)
@@ -11,21 +12,26 @@ struct RecordEditorView: View {
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: AppSpacing.lg) {
-                    conditionCard
+                VStack(alignment: .leading, spacing: 0) {
+                    context
 
                     if viewModel.showsValueField {
-                        valueField
+                        valuePad
+                            .padding(.top, AppSpacing.xl)
                     } else {
                         completionCard
+                            .padding(.top, AppSpacing.xl)
                     }
 
                     moreInfoSection
+                        .padding(.top, AppSpacing.section)
                 }
-                .padding(AppSpacing.lg)
+                .padding(.horizontal, AppSpacing.screenInset)
+                .padding(.bottom, AppSpacing.xxl)
             }
-            .appScreenBackground()
+            .scrollIndicators(.hidden)
             .scrollDismissesKeyboard(.interactively)
+            .appScreenBackground()
             .navigationTitle(viewModel.isEditing ? "编辑记录" : "记录行动")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -33,14 +39,11 @@ struct RecordEditorView: View {
                     Button("取消") {
                         dismiss()
                     }
+                    .foregroundStyle(AppColors.textSecondary)
                 }
-
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("保存") {
-                        viewModel.save()
-                    }
-                    .disabled(!viewModel.canSave)
-                }
+            }
+            .safeAreaInset(edge: .bottom, spacing: 0) {
+                saveBar
             }
             .tint(AppColors.primary)
             .appErrorAlert(error: $viewModel.error)
@@ -54,58 +57,114 @@ struct RecordEditorView: View {
         }
     }
 
-    private var conditionCard: some View {
-        VStack(alignment: .leading, spacing: AppSpacing.xs) {
-            Text("条件")
-                .font(AppTypography.caption)
-                .foregroundStyle(AppColors.textTertiary)
+    // MARK: - Context
 
+    private var context: some View {
+        VStack(alignment: .leading, spacing: 3) {
             Text(viewModel.conditionTitle)
-                .font(AppTypography.headline)
+                .font(AppTypography.wishTitleCompact)
                 .foregroundStyle(AppColors.textPrimary)
+                .lineLimit(2)
+                .fixedSize(horizontal: false, vertical: true)
 
-            Text(viewModel.conditionSummary)
-                .font(AppTypography.caption)
-                .foregroundStyle(AppColors.textSecondary)
-
-            if let direction = viewModel.amountDirectionText {
-                Text("金额方向：\(direction)")
-                    .font(AppTypography.caption)
-                    .foregroundStyle(AppColors.textSecondary)
-            }
+            Text(metaText)
+                .font(AppTypography.footnote)
+                .foregroundStyle(AppColors.textTertiary)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .appCard()
+        .padding(.top, AppSpacing.sm)
     }
 
-    private var valueField: some View {
-        EditorField(
-            title: viewModel.valueLabel,
-            errorText: viewModel.valueValidationMessage
-        ) {
-            HStack(alignment: .firstTextBaseline, spacing: AppSpacing.sm) {
-                TextField("0", text: $viewModel.valueText)
-                    .keyboardType(.decimalPad)
+    private var metaText: String {
+        if let direction = viewModel.amountDirectionText {
+            return "\(viewModel.conditionSummary) · \(direction)"
+        }
+        return viewModel.conditionSummary
+    }
 
-                if let unit = viewModel.valueUnit {
-                    Text(unit)
-                        .font(AppTypography.callout)
-                        .foregroundStyle(AppColors.textSecondary)
+    // MARK: - Value input
+
+    private var valuePad: some View {
+        VStack(spacing: AppSpacing.lg) {
+            VStack(spacing: 2) {
+                Text(viewModel.valueLabel)
+                    .font(AppTypography.eyebrow)
+                    .tracking(1.4)
+                    .foregroundStyle(AppColors.textTertiary)
+
+                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                    TextField("0", text: $viewModel.valueText)
+                        .keyboardType(.decimalPad)
+                        .multilineTextAlignment(.center)
+                        .font(.system(size: numberSize, weight: .semibold, design: .rounded))
+                        .monospacedDigit()
+                        .foregroundStyle(AppColors.textPrimary)
+                        .frame(minWidth: 120)
+                        .layoutPriority(1)
+                        .accessibilityLabel(viewModel.valueLabel)
+
+                    if let unit = viewModel.valueUnit {
+                        Text(unit)
+                            .font(AppTypography.callout)
+                            .foregroundStyle(AppColors.textSecondary)
+                    }
                 }
+                .frame(maxWidth: .infinity)
+            }
+            .padding(.vertical, AppSpacing.xl)
+            .frame(maxWidth: .infinity)
+            .background(
+                RoundedRectangle(cornerRadius: AppRadius.card, style: .continuous)
+                    .fill(AppColors.elevated)
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: AppRadius.card, style: .continuous)
+                    .stroke(AppColors.separatorSoft, lineWidth: 1)
+            )
+
+            if !viewModel.quickAddValues.isEmpty {
+                HStack(spacing: AppSpacing.sm) {
+                    ForEach(Array(viewModel.quickAddValues.enumerated()), id: \.offset) { _, step in
+                        Button {
+                            viewModel.addValue(step)
+                        } label: {
+                            Text("+\(plain(step))")
+                                .font(.system(size: 13, weight: .semibold))
+                                .monospacedDigit()
+                                .foregroundStyle(AppColors.primary)
+                                .frame(maxWidth: .infinity, minHeight: 38)
+                                .background(
+                                    AppColors.primarySoft,
+                                    in: Capsule()
+                                )
+                        }
+                        .buttonStyle(.plain)
+                        .accessibilityLabel("增加 \(plain(step)) \(viewModel.valueUnit ?? "")")
+                    }
+                }
+            }
+
+            if let message = viewModel.valueValidationMessage {
+                Text(message)
+                    .font(AppTypography.caption)
+                    .foregroundStyle(AppColors.danger)
+                    .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
     }
 
     private var completionCard: some View {
         HStack(alignment: .top, spacing: AppSpacing.md) {
-            Image(systemName: "checkmark.circle.fill")
-                .font(.title3)
-                .foregroundStyle(AppColors.success)
+            Image(systemName: "checkmark")
+                .font(.system(size: 13, weight: .bold))
+                .foregroundStyle(AppColors.primary)
+                .frame(width: 28, height: 28)
+                .background(AppColors.primarySoft, in: Circle())
                 .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: AppSpacing.xs) {
                 Text(viewModel.completionTitle)
-                    .font(AppTypography.headline)
+                    .font(AppTypography.sectionTitle)
                     .foregroundStyle(AppColors.textPrimary)
 
                 Text(viewModel.completionMessage)
@@ -115,25 +174,55 @@ struct RecordEditorView: View {
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .appCard()
+        .padding(AppSpacing.lg)
+        .background(
+            RoundedRectangle(cornerRadius: AppRadius.card, style: .continuous)
+                .fill(AppColors.elevated)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: AppRadius.card, style: .continuous)
+                .stroke(AppColors.separatorSoft, lineWidth: 1)
+        )
     }
+
+    // MARK: - More info
 
     private var moreInfoSection: some View {
         VStack(alignment: .leading, spacing: AppSpacing.lg) {
             Text("更多信息")
-                .font(AppTypography.headline)
+                .font(AppTypography.sectionTitle)
                 .foregroundStyle(AppColors.textPrimary)
 
-            EditorField(title: "备注（选填）") {
+            VStack(alignment: .leading, spacing: AppSpacing.sm) {
+                Text("备注 · 选填")
+                    .font(AppTypography.caption)
+                    .foregroundStyle(AppColors.textTertiary)
+
                 TextField(
-                    "补充说明",
+                    "今天状态怎么样？",
                     text: $viewModel.noteText,
                     axis: .vertical
                 )
+                .font(AppTypography.callout)
                 .lineLimit(2...4)
+                .padding(AppSpacing.md)
+                .background(
+                    RoundedRectangle(cornerRadius: AppRadius.md, style: .continuous)
+                        .fill(AppColors.elevated)
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: AppRadius.md, style: .continuous)
+                        .stroke(AppColors.separatorSoft, lineWidth: 1)
+                )
             }
 
-            EditorField(title: "记录时间") {
+            HStack {
+                Text("记录时间")
+                    .font(AppTypography.callout)
+                    .foregroundStyle(AppColors.textSecondary)
+
+                Spacer()
+
                 DatePicker(
                     "记录时间",
                     selection: $viewModel.recordedAt,
@@ -142,7 +231,40 @@ struct RecordEditorView: View {
                 .labelsHidden()
                 .datePickerStyle(.compact)
             }
+            .padding(.vertical, AppSpacing.xs)
         }
+    }
+
+    // MARK: - Save
+
+    private var saveBar: some View {
+        VStack(spacing: 0) {
+            Divider()
+                .overlay(AppColors.separatorSoft)
+
+            Button {
+                viewModel.save()
+            } label: {
+                HStack(spacing: 8) {
+                    if viewModel.isSaving {
+                        ProgressView()
+                            .tint(AppColors.onPrimary)
+                    }
+                    Text(viewModel.isEditing ? "保存修改" : "保存")
+                }
+            }
+            .buttonStyle(.appPrimary)
+            .disabled(!viewModel.canSave)
+            .opacity(viewModel.canSave ? 1 : 0.42)
+            .padding(.horizontal, AppSpacing.screenInset)
+            .padding(.top, AppSpacing.md)
+            .padding(.bottom, AppSpacing.sm)
+        }
+        .background(.ultraThinMaterial)
+    }
+
+    private func plain(_ value: Decimal) -> String {
+        NSDecimalNumber(decimal: value).stringValue
     }
 }
 

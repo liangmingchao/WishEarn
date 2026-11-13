@@ -47,6 +47,7 @@ struct WishDetailView: View {
         .appScreenBackground()
         .navigationTitle("")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar(.visible, for: .navigationBar)
         .toolbar {
             ToolbarItemGroup(placement: .topBarTrailing) {
                 if !viewModel.conditions.isEmpty {
@@ -169,6 +170,9 @@ struct WishDetailView: View {
             Text("删除「\(condition.title)」后，关联的行动记录也会被删除。")
         }
         .appErrorAlert(error: $viewModel.actionError)
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            bottomActionBar
+        }
         .onAppear {
             viewModel.load()
         }
@@ -195,7 +199,7 @@ struct WishDetailView: View {
                     }
                 )
                 .listRowInsets(EdgeInsets())
-                .listRowBackground(Color.clear)
+                .listRowBackground(AppColors.canvas)
                 .listRowSeparator(.hidden)
             }
 
@@ -235,26 +239,62 @@ struct WishDetailView: View {
                 Section {
                     ForEach(viewModel.recentRecords) { item in
                         RecentRecordRow(item: item)
-                            .listRowBackground(AppColors.surface)
+                            .listRowBackground(AppColors.canvas)
                     }
                 } header: {
                     Text("最近的努力")
-                        .font(AppTypography.headline)
+                        .font(AppTypography.sectionTitle)
                         .foregroundStyle(AppColors.textPrimary)
+                        .textCase(nil)
                 }
             }
         }
-        .listStyle(.insetGrouped)
+        .listStyle(.plain)
+        .listSectionSpacing(AppSpacing.lg)
         .scrollContentBackground(.hidden)
         .environment(\.editMode, $listEditMode)
         .appScreenBackground()
     }
 
+    /// The one action the screen exists for. Hidden while reordering, and only
+    /// shown when there is an active wish with something recordable left.
+    @ViewBuilder
+    private var bottomActionBar: some View {
+        if let condition = primaryRecordCondition, !listEditMode.isEditing {
+            VStack(spacing: 0) {
+                Rectangle()
+                    .fill(AppColors.separatorSoft)
+                    .frame(height: 0.5)
+
+                Button {
+                    recordCondition = condition
+                } label: {
+                    HStack(spacing: 7) {
+                        Image(systemName: "plus")
+                            .font(.system(size: 13, weight: .semibold))
+                        Text("记录一次行动")
+                    }
+                }
+                .buttonStyle(.appPrimary)
+                .padding(.horizontal, AppSpacing.screenInset)
+                .padding(.top, AppSpacing.md)
+                .padding(.bottom, AppSpacing.sm)
+            }
+            .background(.ultraThinMaterial)
+        }
+    }
+
+    private var primaryRecordCondition: Condition? {
+        guard viewModel.wish.status == .active else { return nil }
+        return viewModel.conditions.first { viewModel.canRecord(for: $0) }
+    }
+
     private var conditionsHeader: some View {
         HStack {
             Text("解锁条件")
-                .font(AppTypography.headline)
+                .font(AppTypography.sectionTitle)
                 .foregroundStyle(AppColors.textPrimary)
+                .textCase(nil)
 
             Spacer()
 
@@ -316,12 +356,12 @@ struct WishDetailView: View {
         .listRowInsets(
             EdgeInsets(
                 top: 0,
-                leading: AppSpacing.lg,
+                leading: AppSpacing.screenInset,
                 bottom: 0,
-                trailing: AppSpacing.lg
+                trailing: AppSpacing.screenInset
             )
         )
-        .listRowBackground(AppColors.surface)
+        .listRowBackground(AppColors.canvas)
         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
             Button(role: .destructive) {
                 conditionPendingDeletion = condition
@@ -363,111 +403,172 @@ private struct WishDetailHero: View {
         .forWish(wish)
     }
 
+    private var percent: Int {
+        Int(((progressSummary?.ratio ?? 0) * 100).rounded())
+    }
+
     var body: some View {
-        VStack(alignment: .leading, spacing: AppSpacing.md) {
-            heroImage
-            WishThemeMark(theme: theme)
+        VStack(alignment: .leading, spacing: 0) {
+            cover
 
-            Text(wish.title)
-                .font(AppTypography.display)
-                .foregroundStyle(AppColors.textPrimary)
-                .lineLimit(3)
-                .fixedSize(horizontal: false, vertical: true)
+            VStack(alignment: .leading, spacing: AppSpacing.md) {
+                HStack(spacing: AppSpacing.sm) {
+                    statusPill
 
-            HStack(spacing: AppSpacing.sm) {
-                StatusBadge(
-                    title: wish.status.displayName,
-                    tone: wish.status.badgeTone
-                )
+                    if let priceText {
+                        Text(priceText)
+                            .font(AppTypography.footnote)
+                            .foregroundStyle(AppColors.textSecondary)
+                    }
 
-                if let price = wish.targetPrice {
-                    Text("·")
+                    Spacer(minLength: 0)
+                }
+
+                Text(wish.title)
+                    .font(.system(.title, design: .serif).weight(.semibold))
+                    .foregroundStyle(AppColors.textPrimary)
+                    .lineLimit(3)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                if !metaLine.isEmpty {
+                    Text(metaLine)
+                        .font(AppTypography.footnote)
                         .foregroundStyle(AppColors.textTertiary)
-                    Text(
-                        price.formatted(
-                            .currency(code: wish.currencyCode)
-                            .locale(Locale(identifier: "zh_CN"))
-                        )
-                    )
-                    .font(AppTypography.footnote)
-                    .foregroundStyle(AppColors.textSecondary)
+                }
+
+                progressBlock
+            }
+            .padding(.horizontal, AppSpacing.screenInset)
+            .padding(.top, AppSpacing.lg + 2)
+        }
+        .padding(.bottom, AppSpacing.sm)
+    }
+
+    private var cover: some View {
+        Color.clear
+            .aspectRatio(1.26, contentMode: .fit)
+            .overlay {
+                ZStack {
+                    WishMonogramPlate(wish: wish, theme: theme, scale: 1.7)
+
+                    if let imageData, let image = UIImage(data: imageData) {
+                        Image(uiImage: image)
+                            .resizable()
+                            .scaledToFill()
+                    }
                 }
             }
-
-            if let targetDate = wish.targetDate {
-                Text(
-                    "目标日期：\(targetDate.formatted(.dateTime.year().month().day().locale(Locale(identifier: "zh_CN"))))"
-                )
-                .font(AppTypography.footnote)
-                .foregroundStyle(AppColors.textSecondary)
-            }
-
-            if wish.status == .completed, let completedAt = wish.completedAt {
-                Text(
-                    "完成于 \(completedAt.formatted(.dateTime.year().month().day().locale(Locale(identifier: "zh_CN"))))"
-                )
-                .font(AppTypography.footnote)
-                .foregroundStyle(AppColors.textSecondary)
-            }
-
-            if let progressSummary {
-                progressSection(progressSummary)
-            } else {
-                emptyProgressSection
-            }
-        }
-        .padding(.horizontal, AppSpacing.screenInset)
-        .padding(.top, AppSpacing.sm)
-        .padding(.bottom, AppSpacing.md)
+            .clipped()
+            .accessibilityHidden(true)
     }
 
-    private var heroImage: some View {
-        ZStack {
-            theme.softTint
+    private var statusPill: some View {
+        HStack(spacing: 5) {
+            Circle()
+                .fill(pillForeground)
+                .frame(width: 6, height: 6)
 
-            if let imageData, let image = UIImage(data: imageData) {
-                Image(uiImage: image)
-                    .resizable()
-                    .scaledToFill()
-            } else {
-                Image(systemName: "photo")
-                    .font(.system(size: 40, weight: .light))
-                    .foregroundStyle(theme.onSoftTint)
-            }
+            Text(wish.status.displayName)
+                .font(.system(size: 11, weight: .semibold))
         }
-        .aspectRatio(16.0 / 10.0, contentMode: .fit)
-        .frame(maxWidth: .infinity)
-        .clipShape(
-            RoundedRectangle(cornerRadius: AppRadius.xl, style: .continuous)
+        .foregroundStyle(pillForeground)
+        .padding(.horizontal, 10)
+        .frame(height: 26)
+        .background(pillBackground, in: Capsule())
+        .fixedSize()
+    }
+
+    private var pillForeground: Color {
+        switch wish.status {
+        case .active:
+            return AppColors.primary
+        case .unlocked:
+            return AppColors.coralText
+        case .completed:
+            return AppColors.success
+        case .paused, .archived:
+            return AppColors.textSecondary
+        }
+    }
+
+    private var pillBackground: Color {
+        switch wish.status {
+        case .active:
+            return AppColors.primarySoft
+        case .unlocked:
+            return AppColors.coralSoft
+        case .completed:
+            return AppColors.successSoft
+        case .paused, .archived:
+            return AppColors.surfaceSecondary
+        }
+    }
+
+    private var priceText: String? {
+        guard let price = wish.targetPrice else { return nil }
+        return price.formatted(
+            .currency(code: wish.currencyCode)
+            .locale(Locale(identifier: "zh_CN"))
         )
-        .accessibilityHidden(true)
     }
 
-    private func progressSection(_ summary: WishProgressSummary) -> some View {
-        VStack(alignment: .leading, spacing: AppSpacing.sm) {
-            Text("你的努力")
-                .font(AppTypography.headline)
-                .foregroundStyle(AppColors.textPrimary)
+    private var metaLine: String {
+        var parts: [String] = []
 
-            Text(summary.detailText)
-                .font(AppTypography.callout.weight(.semibold))
-                .foregroundStyle(AppColors.textPrimary)
-
-            ProgressIndicator(
-                value: summary.ratio,
-                accessibilityLabel: "条件进度",
-                accessibilityValue: summary.accessibilityValue,
-                style: .hero,
-                isComplete: summary.isComplete
+        if let targetDate = wish.targetDate {
+            parts.append(
+                "目标 \(targetDate.formatted(.dateTime.year().month().day().locale(Locale(identifier: "zh_CN"))))"
             )
         }
-        .padding(.top, AppSpacing.md)
+
+        if wish.status == .completed, let completedAt = wish.completedAt {
+            parts.append(
+                "完成于 \(completedAt.formatted(.dateTime.year().month().day().locale(Locale(identifier: "zh_CN"))))"
+            )
+        }
+
+        return parts.joined(separator: " · ")
+    }
+
+    @ViewBuilder
+    private var progressBlock: some View {
+        if let progressSummary {
+            VStack(alignment: .leading, spacing: AppSpacing.sm) {
+                HStack(alignment: .firstTextBaseline, spacing: 6) {
+                    Text("\(percent)%")
+                        .font(.system(size: 30, weight: .semibold, design: .rounded))
+                        .monospacedDigit()
+                        .foregroundStyle(AppColors.textPrimary)
+
+                    Text("完成度")
+                        .font(AppTypography.caption)
+                        .foregroundStyle(AppColors.textTertiary)
+
+                    Spacer(minLength: AppSpacing.sm)
+
+                    Text("\(progressSummary.completedConditionCount) / \(progressSummary.totalConditionCount) 条件")
+                        .font(AppTypography.footnote)
+                        .foregroundStyle(AppColors.textSecondary)
+                }
+
+                ProgressIndicator(
+                    value: progressSummary.ratio,
+                    accessibilityLabel: "条件进度",
+                    accessibilityValue: progressSummary.accessibilityValue,
+                    style: .hero,
+                    isComplete: progressSummary.isComplete
+                )
+            }
+            .padding(.top, AppSpacing.xs)
+        } else {
+            emptyProgressSection
+        }
     }
 
     private var emptyProgressSection: some View {
         VStack(alignment: .leading, spacing: AppSpacing.sm) {
             Text(hasOptionalConditionsOnly ? "还没有必需条件" : "还没有解锁条件")
-                .font(AppTypography.headline)
+                .font(AppTypography.sectionTitle)
                 .foregroundStyle(AppColors.textPrimary)
 
             Text("为这个心愿添加一个可以努力的方向。")
@@ -480,7 +581,17 @@ private struct WishDetailHero: View {
                     .padding(.top, AppSpacing.sm)
             }
         }
-        .padding(.top, AppSpacing.md)
+        .padding(AppSpacing.lg)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: AppRadius.card, style: .continuous)
+                .fill(AppColors.elevated)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: AppRadius.card, style: .continuous)
+                .stroke(AppColors.separatorSoft, lineWidth: 1)
+        )
+        .padding(.top, AppSpacing.xs)
     }
 }
 
