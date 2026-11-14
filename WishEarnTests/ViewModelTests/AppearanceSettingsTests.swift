@@ -1,3 +1,4 @@
+import Observation
 import SwiftUI
 import XCTest
 @testable import WishEarn
@@ -87,5 +88,24 @@ final class AppearanceSettingsTests: XCTestCase {
             AppearanceMode.allCases.map(\.title),
             ["跟随系统", "浅色", "深色"]
         )
+    }
+
+    /// The root view reads `colorScheme` in its body; SwiftUI only rebuilds it
+    /// if that read is observable. Regression guard for "change only applies
+    /// after relaunch".
+    func testReadingColorSchemeNotifiesObservationTrackingWhenModeChanges() {
+        let settings = AppearanceSettings(defaults: defaults)
+        let observed = expectation(description: "colorScheme 的读取被重新通知")
+
+        withObservationTracking {
+            _ = settings.colorScheme
+        } onChange: {
+            observed.fulfill()
+        }
+
+        settings.mode = .dark
+
+        wait(for: [observed], timeout: 1)
+        XCTAssertEqual(settings.colorScheme, .dark)
     }
 }
