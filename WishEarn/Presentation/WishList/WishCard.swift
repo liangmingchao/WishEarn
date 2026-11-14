@@ -1,63 +1,113 @@
 import SwiftUI
 import UIKit
 
+/// The lead card on the home screen: one wish, its photograph, and how close
+/// it is to unlocking. Copy stays minimal so the image can carry the emotion.
 struct WishCard: View {
     let wish: Wish
     let progressSummary: WishProgressSummary?
     var imageData: Data? = nil
+    /// Small tag pinned to the cover. Pass nil to hide it.
+    var badge: String? = "离解锁最近"
 
     private var theme: WishTheme {
         .forWish(wish)
     }
 
+    private var ratio: Double {
+        progressSummary?.ratio ?? 0
+    }
+
     var body: some View {
-        VStack(alignment: .leading, spacing: AppSpacing.md) {
-            WishThemeMark(theme: theme)
-            FeaturedWishImage(imageData: imageData, theme: theme)
+        Color.clear
+            .aspectRatio(AppLayout.featuredAspectRatio, contentMode: .fit)
+            .overlay {
+                cardLayers
+            }
+            .clipShape(
+                RoundedRectangle(cornerRadius: AppRadius.card, style: .continuous)
+            )
+            .appPaperShadow()
+            .contentShape(RoundedRectangle(cornerRadius: AppRadius.card, style: .continuous))
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(Text(accessibilityText))
+            .accessibilityAddTraits(.isButton)
+    }
+
+    private var cardLayers: some View {
+        ZStack(alignment: .bottomLeading) {
+            WishCoverArtwork(
+                wish: wish,
+                theme: theme,
+                imageData: imageData,
+                monogramScale: 1.2
+            )
+
+            // Photograph legibility scrim. Kept inside the card so the paper
+            // canvas stays clean around it.
+            LinearGradient(
+                stops: [
+                    .init(color: AppColors.imageScrim.opacity(0.0), location: 0.32),
+                    .init(color: AppColors.imageScrim.opacity(0.52), location: 0.72),
+                    .init(color: AppColors.imageScrim.opacity(0.82), location: 1.0)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .allowsHitTesting(false)
 
             VStack(alignment: .leading, spacing: AppSpacing.sm) {
                 Text(wish.title)
-                    .font(AppTypography.display)
-                    .foregroundStyle(AppColors.textPrimary)
+                    .font(AppTypography.wishTitle)
+                    .foregroundStyle(AppColors.onImage)
                     .lineLimit(2)
                     .fixedSize(horizontal: false, vertical: true)
 
-                if let price = wish.targetPrice {
-                    Text(
-                        price.formatted(
-                            .currency(code: wish.currencyCode)
-                            .locale(Locale(identifier: "zh_CN"))
-                        )
-                    )
-                    .font(AppTypography.callout)
-                    .foregroundStyle(AppColors.textSecondary)
-                }
-
                 if let progressSummary {
-                    Text(progressSummary.text)
-                        .font(AppTypography.callout.weight(.semibold))
-                        .foregroundStyle(AppColors.textPrimary)
-                        .accessibilityHidden(true)
+                    HStack(alignment: .firstTextBaseline) {
+                        Text("\(progressSummary.completedConditionCount) / \(progressSummary.totalConditionCount) 条件完成")
+                            .font(AppTypography.footnote)
+                            .foregroundStyle(AppColors.onImage.opacity(0.86))
 
-                    ProgressIndicator(
-                        value: progressSummary.ratio,
-                        accessibilityLabel: "条件进度",
-                        accessibilityValue: progressSummary.accessibilityValue,
-                        style: .hero,
-                        isComplete: progressSummary.isComplete
-                    )
+                        Spacer(minLength: AppSpacing.sm)
+
+                        Text("\(Int((ratio * 100).rounded()))%")
+                            .font(AppTypography.number)
+                            .foregroundStyle(AppColors.onImage)
+                            .monospacedDigit()
+                    }
+
+                    CoverProgressBar(value: ratio)
                 } else {
                     Text("还没有解锁条件")
-                        .font(AppTypography.callout)
-                        .foregroundStyle(AppColors.textSecondary)
+                        .font(AppTypography.footnote)
+                        .foregroundStyle(AppColors.onImage.opacity(0.86))
                 }
             }
+            .padding(AppSpacing.lg + 2)
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+            if let badge {
+                CoverBadge(text: badge)
+                    .padding(AppSpacing.md)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            }
         }
-        .contentShape(Rectangle())
-        .accessibilityElement(children: .combine)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private var accessibilityText: String {
+        var parts = [wish.title]
+        if let progressSummary {
+            parts.append(progressSummary.accessibilityValue)
+        } else {
+            parts.append("还没有解锁条件")
+        }
+        return parts.joined(separator: "，")
     }
 }
 
+/// A compact, scannable wish row: thumbnail, name, and a single progress line.
 struct WishRow: View {
     let wish: Wish
     let progressSummary: WishProgressSummary?
@@ -65,83 +115,100 @@ struct WishRow: View {
 
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
+    private var theme: WishTheme {
+        .forWish(wish)
+    }
+
     var body: some View {
-        Group {
-            if dynamicTypeSize.isAccessibilitySize {
-                VStack(alignment: .leading, spacing: AppSpacing.md) {
-                    thumbnail
-                    textContent
-                }
-            } else {
-                HStack(spacing: AppSpacing.md) {
-                    thumbnail
-                    textContent
-                    Spacer(minLength: AppSpacing.sm)
-                    Image(systemName: "chevron.right")
-                        .font(AppTypography.caption)
-                        .foregroundStyle(AppColors.textTertiary)
-                        .accessibilityHidden(true)
-                }
-            }
-        }
-        .padding(.vertical, AppSpacing.md)
-        .contentShape(Rectangle())
-        .accessibilityElement(children: .combine)
-    }
+        HStack(alignment: .center, spacing: AppSpacing.md + 2) {
+            WishThumbnail(wish: wish, imageData: imageData, theme: theme)
 
-    private var textContent: some View {
-        VStack(alignment: .leading, spacing: AppSpacing.xs) {
-            HStack(alignment: .firstTextBaseline, spacing: AppSpacing.sm) {
-                WishThemeDot(theme: .forWish(wish))
+            VStack(alignment: .leading, spacing: AppSpacing.xs) {
+                HStack(alignment: .firstTextBaseline, spacing: AppSpacing.sm) {
+                    Text(wish.title)
+                        .font(AppTypography.wishTitleCompact)
+                        .foregroundStyle(AppColors.textPrimary)
+                        .lineLimit(dynamicTypeSize.isAccessibilitySize ? 3 : 1)
 
-                Text(wish.title)
-                    .font(AppTypography.headline)
-                    .foregroundStyle(AppColors.textPrimary)
+                    if wish.status == .unlocked {
+                        MiniStatusTag(text: "已解锁", tone: .reward)
+                    } else if wish.status == .completed {
+                        MiniStatusTag(text: "已兑现", tone: .done)
+                    }
+                }
+
+                Text(metaText)
+                    .font(AppTypography.footnote)
+                    .foregroundStyle(AppColors.textTertiary)
                     .lineLimit(2)
-                    .fixedSize(horizontal: false, vertical: true)
+
+                if wish.status == .active, let progressSummary {
+                    ProgressIndicator(
+                        value: progressSummary.ratio,
+                        accessibilityLabel: "条件进度",
+                        accessibilityValue: progressSummary.accessibilityValue,
+                        style: .inline,
+                        isComplete: progressSummary.isComplete
+                    )
+                    .padding(.top, 2)
+                }
             }
 
-            if wish.status == .active {
-                if let progressSummary {
-                    Text(progressSummary.text)
-                        .font(AppTypography.footnote)
-                        .foregroundStyle(AppColors.textSecondary)
-                } else {
-                    Text("还没有解锁条件")
-                        .font(AppTypography.footnote)
-                        .foregroundStyle(AppColors.textSecondary)
-                }
-            } else {
-                StatusBadge(
-                    title: wish.status.displayName,
-                    tone: wish.status.badgeTone
-                )
-            }
+            Spacer(minLength: AppSpacing.xs)
+
+            Image(systemName: "chevron.right")
+                .font(.system(size: 13, weight: .semibold))
+                .foregroundStyle(AppColors.textTertiary.opacity(0.7))
+                .accessibilityHidden(true)
+        }
+        .padding(.vertical, AppSpacing.md + 2)
+        .contentShape(Rectangle())
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text(accessibilityText))
+        .accessibilityAddTraits(.isButton)
+    }
+
+    private var metaText: String {
+        switch wish.status {
+        case .unlocked:
+            return "已达成 · 等待领取"
+        case .completed:
+            return "已兑现 · 这份奖励是你换来的"
+        case .paused:
+            return "已暂停 · 随时可以继续"
+        case .archived:
+            return "已归档"
+        case .active:
+            guard let progressSummary else { return "还没有解锁条件" }
+            let remaining = progressSummary.totalConditionCount
+                - progressSummary.completedConditionCount
+            let percent = Int((progressSummary.ratio * 100).rounded())
+            return remaining > 0
+                ? "\(percent)% · 还差 \(remaining) 项"
+                : "\(percent)% · 已达成"
         }
     }
 
-    private var thumbnail: some View {
-        WishThumbnail(imageData: imageData, theme: .forWish(wish))
+    private var accessibilityText: String {
+        "\(wish.title)，\(metaText)"
     }
 }
 
-private struct FeaturedWishImage: View {
-    let imageData: Data?
+/// Cover artwork shared by the home card and the detail hero.
+struct WishCoverArtwork: View {
+    let wish: Wish
     let theme: WishTheme
+    let imageData: Data?
+    var monogramScale: CGFloat = 1
 
     var body: some View {
-        // Color.clear establishes the crop before the image is overlaid; using
-        // the image itself as the aspect-ratio source lets a portrait source
-        // drive the card height. The home lead image is deliberately shallower
-        // than the Detail hero so it does not overpower the title below it.
         Color.clear
-            .aspectRatio(2.0, contentMode: .fit)
             .overlay {
                 ZStack {
-                    WishImagePlaceholder(
-                        iconSize: 38,
-                        background: theme.softTint,
-                        foreground: theme.onSoftTint
+                    WishMonogramPlate(
+                        wish: wish,
+                        theme: theme,
+                        scale: monogramScale
                     )
 
                     if let imageData, let image = UIImage(data: imageData) {
@@ -151,24 +218,85 @@ private struct FeaturedWishImage: View {
                     }
                 }
             }
-            .clipShape(
-                RoundedRectangle(cornerRadius: AppRadius.xl, style: .continuous)
+            .clipped()
+            .accessibilityHidden(true)
+    }
+}
+
+struct CoverProgressBar: View {
+    let value: Double
+    var tint: Color = AppColors.onImage
+
+    var body: some View {
+        GeometryReader { proxy in
+            ZStack(alignment: .leading) {
+                Capsule()
+                    .fill(tint.opacity(0.28))
+
+                Capsule()
+                    .fill(tint)
+                    .frame(width: proxy.size.width * min(max(value, 0), 1))
+            }
+        }
+        .frame(height: 4)
+        .accessibilityHidden(true)
+    }
+}
+
+struct CoverBadge: View {
+    let text: String
+
+    var body: some View {
+        HStack(spacing: 5) {
+            Image(systemName: "sparkles")
+                .font(.system(size: 10, weight: .semibold))
+            Text(text)
+                .font(.system(size: 11, weight: .semibold))
+                .lineLimit(1)
+        }
+        .foregroundStyle(AppColors.textPrimary)
+        .padding(.horizontal, 10)
+        .frame(height: 26)
+        .background(
+            AppColors.canvas.opacity(0.92),
+            in: Capsule()
+        )
+        .accessibilityHidden(true)
+    }
+}
+
+struct MiniStatusTag: View {
+    enum Tone {
+        case reward
+        case done
+    }
+
+    let text: String
+    let tone: Tone
+
+    var body: some View {
+        Text(text)
+            .font(.system(size: 10, weight: .semibold))
+            .foregroundStyle(tone == .reward ? AppColors.coralText : AppColors.primary)
+            .padding(.horizontal, 6)
+            .frame(height: 17)
+            .background(
+                tone == .reward ? AppColors.coralSoft : AppColors.primarySoft,
+                in: RoundedRectangle(cornerRadius: 5, style: .continuous)
             )
+            .fixedSize()
             .accessibilityHidden(true)
     }
 }
 
 private struct WishThumbnail: View {
+    let wish: Wish
     let imageData: Data?
     let theme: WishTheme
 
     var body: some View {
         ZStack {
-            WishImagePlaceholder(
-                iconSize: 24,
-                background: theme.tint,
-                foreground: theme.onTint
-            )
+            WishMonogramPlate(wish: wish, theme: theme, scale: 0.62)
 
             if let imageData, let image = UIImage(data: imageData) {
                 Image(uiImage: image)
@@ -176,27 +304,18 @@ private struct WishThumbnail: View {
                     .scaledToFill()
             }
         }
-        .frame(width: 76, height: 76)
+        .frame(
+            width: AppLayout.thumbnailSize,
+            height: AppLayout.thumbnailSize
+        )
         .clipShape(
-            RoundedRectangle(cornerRadius: AppRadius.md, style: .continuous)
+            RoundedRectangle(cornerRadius: AppRadius.thumbnail, style: .continuous)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: AppRadius.thumbnail, style: .continuous)
+                .stroke(AppColors.separatorSoft, lineWidth: 0.5)
         )
         .accessibilityHidden(true)
-    }
-}
-
-private struct WishImagePlaceholder: View {
-    let iconSize: CGFloat
-    let background: Color
-    let foreground: Color
-
-    var body: some View {
-        ZStack {
-            background
-
-            Image(systemName: "photo")
-                .font(.system(size: iconSize, weight: .light))
-                .foregroundStyle(foreground)
-        }
     }
 }
 
@@ -272,7 +391,7 @@ private struct WishRowPreview: View {
                 )
 
                 Rectangle()
-                    .fill(AppColors.separator)
+                    .fill(AppColors.separatorSoft)
                     .frame(height: 0.5)
             }
 

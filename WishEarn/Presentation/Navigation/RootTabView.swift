@@ -47,7 +47,10 @@ struct RootTabView: View {
             .tag(AppRouter.Tab.achievements)
 
             NavigationStack {
-                SettingsView(dataExportService: container.dataExportService)
+                SettingsView(
+                    dataExportService: container.dataExportService,
+                    appearanceSettings: container.appearanceSettings
+                )
             }
             .tabItem {
                 Label("我的", systemImage: "person")
@@ -55,6 +58,8 @@ struct RootTabView: View {
             .tag(AppRouter.Tab.settings)
         }
         .tint(AppColors.primary)
+        .toolbarBackground(AppColors.canvas, for: .tabBar)
+        .toolbarBackground(.visible, for: .tabBar)
         .environment(unlockCoordinator)
         .fullScreenCover(
             item: Binding(

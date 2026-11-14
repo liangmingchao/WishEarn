@@ -144,7 +144,7 @@ final class TodayViewModelTests: XCTestCase {
         XCTAssertTrue(sut.viewModel.completedItems.isEmpty)
     }
 
-    func testCumulativeConditionKeepsCumulativeProgressAndTodayRecord() throws {
+    func testCumulativeConditionWithTodayRecordIsProgressedToday() throws {
         let sut = makeSUT()
         let wish = try makeWish(title: "Kindle")
         try sut.wishRepository.save(wish)
@@ -175,11 +175,13 @@ final class TodayViewModelTests: XCTestCase {
 
         sut.viewModel.load()
 
-        let item = try XCTUnwrap(sut.viewModel.actionableItems.first)
-        XCTAssertEqual(item.state, .actionable)
+        XCTAssertTrue(sut.viewModel.actionableItems.isEmpty)
+        let item = try XCTUnwrap(sut.viewModel.progressedTodayItems.first)
+        XCTAssertEqual(item.state, .progressedToday)
         XCTAssertTrue(item.canRecord)
         XCTAssertEqual(item.progressText, "累计 5 / 20 次")
         XCTAssertEqual(item.todayRecordText, "今日已记录 3 次")
+        XCTAssertEqual(item.stateText, "已推进")
     }
 
     func testStreakRecordedTodayMovesToRecordedToday() throws {
@@ -331,7 +333,7 @@ final class TodayViewModelTests: XCTestCase {
         XCTAssertEqual(item.progressText, "完成一次即可达成")
     }
 
-    func testCumulativeTypesRemainActionableWithTodayRecords() throws {
+    func testCumulativeTypesWithTodayRecordsAreProgressedTodayAndStayRecordable() throws {
         let sut = makeSUT()
         let wish = try makeWish(title: "Kindle")
         try sut.wishRepository.save(wish)
@@ -385,17 +387,20 @@ final class TodayViewModelTests: XCTestCase {
 
         sut.viewModel.load()
 
-        XCTAssertEqual(sut.viewModel.actionableItems.count, 4)
+        XCTAssertTrue(sut.viewModel.actionableItems.isEmpty)
+        XCTAssertEqual(sut.viewModel.progressedTodayItems.count, 4)
         XCTAssertEqual(
-            sut.viewModel.actionableItems.map(\.condition.id),
+            sut.viewModel.progressedTodayItems.map(\.condition.id),
             [count.id, duration.id, amount.id, custom.id]
         )
-        XCTAssertTrue(sut.viewModel.actionableItems.allSatisfy(\.canRecord))
+        XCTAssertTrue(
+            sut.viewModel.progressedTodayItems.allSatisfy(\.canRecord)
+        )
         XCTAssertTrue(sut.viewModel.recordedTodayItems.isEmpty)
         XCTAssertTrue(sut.viewModel.completedItems.isEmpty)
     }
 
-    func testCountTargetReachedRemainsActionable() throws {
+    func testCountTargetReachedMovesToCompleted() throws {
         let sut = makeSUT()
         let wish = try makeWish(title: "Kindle")
         try sut.wishRepository.save(wish)
@@ -418,10 +423,67 @@ final class TodayViewModelTests: XCTestCase {
 
         sut.viewModel.load()
 
-        let item = try XCTUnwrap(sut.viewModel.actionableItems.first)
+        XCTAssertTrue(sut.viewModel.actionableItems.isEmpty)
+        XCTAssertTrue(sut.viewModel.progressedTodayItems.isEmpty)
+        let item = try XCTUnwrap(sut.viewModel.completedItems.first)
+        XCTAssertEqual(item.state, .completed)
+        XCTAssertFalse(item.canRecord)
         XCTAssertEqual(item.progressText, "累计 5 / 5 次")
         XCTAssertTrue(item.snapshot.isCompleted)
-        XCTAssertTrue(item.canRecord)
+        XCTAssertEqual(item.stateText, "已完成")
+    }
+
+    /// Reproduces the reported “recorded but still 0 / N” case: three cumulative
+    /// conditions, two of them recorded today. Two of three must count as
+    /// progressed instead of zero.
+    func testTodayProgressCountsCumulativeConditionsRecordedToday() throws {
+        let sut = makeSUT()
+        let wish = try makeWish(title: "新百伦")
+        try sut.wishRepository.save(wish)
+
+        let recordedA = try makeCondition(
+            wishID: wish.id,
+            title: "俯卧撑",
+            type: .count,
+            targetValue: 1000,
+            unit: "次",
+            sortOrder: 0
+        )
+        let recordedB = try makeCondition(
+            wishID: wish.id,
+            title: "开合跳",
+            type: .count,
+            targetValue: 500,
+            unit: "次",
+            sortOrder: 1
+        )
+        let untouched = try makeCondition(
+            wishID: wish.id,
+            title: "健身",
+            type: .count,
+            targetValue: 100,
+            unit: "次",
+            sortOrder: 2
+        )
+        for condition in [recordedA, recordedB, untouched] {
+            try sut.conditionRepository.save(condition)
+        }
+
+        for condition in [recordedA, recordedB] {
+            try sut.progressRepository.save(
+                makeRecord(
+                    conditionID: condition.id,
+                    value: 10,
+                    recordedAt: TestDates.make(year: 2026, month: 11, day: 8, hour: 22)
+                )
+            )
+        }
+
+        sut.viewModel.load()
+
+        XCTAssertEqual(sut.viewModel.progressedTodayItems.count, 2)
+        XCTAssertEqual(sut.viewModel.actionableItems.count, 1)
+        XCTAssertEqual(sut.viewModel.actionableItems.first?.condition.id, untouched.id)
     }
 
     func testConditionsPreserveViewModelOrder() throws {

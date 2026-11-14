@@ -6,8 +6,16 @@
 
 ## [Unreleased]
 
+### Added
+
+- 设置新增「外观」分区：跟随系统 / 浅色 / 深色三档，选择持久化到 `appearanceMode` 并在下次启动保持；切换即时作用于全 App（含 TabBar、弹层与解锁庆祝页）。
+
 ### Changed
 
+- UI 2.0「Daylight Ledger」落地：暖纸底、松绿主操作、琥珀奖励色；首页改为沉浸式主卡 + 68pt 紧凑行，筛选回到标题下方并带计数。
+- Today 改为进度环摘要 + 行内记录；Wish Detail 改为全宽封面、完成度主指标与底部固定记录入口；Record Editor 改为大数字输入与按单位自适应的快捷加值。
+- Unlock Celebration 改为墨绿仪式页（全 App 唯一非纸色界面）；Achievements 改为三列统计 + 时间线。
+- 设计令牌新增 `onImage` / `imageScrim` / `ceremony` / `AppRadius.card` / `AppTypography.pageTitle` 等，浅色与深色各自调校，全部色对通过 4.5:1 对比度校验。
 - Today 行动页重构为低摩擦行动入口：Wish 作为次要上下文、条件标题主导、单一记录 CTA。
 - TodayViewModel 输出 actionable / 今天已记录 / 已完成条件三组状态，并暴露累计进度快照；CHECKPOINT 历史完成不再显示为今日完成。
 - 保持 STREAK 每日唯一记录和 COUNT / DURATION / AMOUNT / CUSTOM 可多次记录的现有语义。
@@ -26,6 +34,11 @@
 - 新增 `WishTheme` 确定性 Wish 主题色系统；App Icon 仅提供提案预览，未替换生产资产。
 - 新增 `WishEarnUITests` 关键旅程测试（创建 → 条件 → 记录 → 解锁 → 领取）；修复庆祝页领取后详情状态不刷新的问题。测试基线为 274 项单元/集成 + 1 项 UI 测试。
 - Issue #25 的 PR #26 已合并，main CI 绿色；Playful Release 0.15.0 在 iPhone 17 安装并启动（真机交互项未验收）。
+
+### Fixed
+
+- 修复 Today 行动页已记录但进度仍显示 0 / N：累计型条件（COUNT / DURATION / AMOUNT / CUSTOM）此前恒为 `actionable`，既不进「今天已记录」也不进「已完成」，进度环分子因此永远为 0。新增 `progressedToday` 状态：今日有记录的累计型条件计入进度、显示在「今天已推进」分组并保持可继续记录；累计达到目标后归入「已完成条件」，不再永久停留在待记录列表。
+- Today 进度环与摘要文案由「已完成」改为「已推进 X / 共 Y」，与「条件达标」区分。
 
 ### Planned
 

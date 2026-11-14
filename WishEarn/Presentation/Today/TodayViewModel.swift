@@ -7,8 +7,16 @@ import Observation
 /// whose existing recording rule is once per local natural day. CHECKPOINT is
 /// completed after its first record regardless of when that record happened, so
 /// it belongs to `completed`, never to the “recorded today” group.
+///
+/// `progressedToday` is the cumulative counterpart: COUNT, DURATION, AMOUNT and
+/// CUSTOM keep accepting records after the first one in a day, so they cannot be
+/// locked into a read-only state. They still count as today's action done
+/// (`completed` once the target is reached), which keeps the Today progress
+/// summary honest instead of reporting 0 actions completed after the user has
+/// already recorded.
 enum TodayConditionState: Equatable {
     case actionable
+    case progressedToday
     case recordedToday
     case completed
 }
@@ -29,7 +37,7 @@ struct TodayConditionItem: Identifiable {
     /// Mirrors the existing Today recording semantics. COUNT, DURATION,
     /// AMOUNT, and CUSTOM remain recordable after a same-day record.
     var canRecord: Bool {
-        state == .actionable
+        state == .actionable || state == .progressedToday
     }
 
     var progressText: String {
@@ -64,6 +72,8 @@ struct TodayConditionItem: Identifiable {
         switch state {
         case .actionable:
             return "记录"
+        case .progressedToday:
+            return "已推进"
         case .recordedToday:
             return "已记录"
         case .completed:
@@ -75,6 +85,9 @@ struct TodayConditionItem: Identifiable {
         var parts = [wish.title, condition.title, progressText]
         if let todayRecordText {
             parts.append(todayRecordText)
+        }
+        if state == .progressedToday {
+            parts.append("今日已推进")
         }
         if state == .recordedToday {
             parts.append("今日已记录")
@@ -113,6 +126,7 @@ final class TodayViewModel {
     private let clock: ClockProviding
 
     private(set) var actionableItems: [TodayConditionItem] = []
+    private(set) var progressedTodayItems: [TodayConditionItem] = []
     private(set) var recordedTodayItems: [TodayConditionItem] = []
     private(set) var completedItems: [TodayConditionItem] = []
     private(set) var hasAnyWishes = false
@@ -133,6 +147,7 @@ final class TodayViewModel {
 
     var hasContent: Bool {
         !actionableItems.isEmpty
+            || !progressedTodayItems.isEmpty
             || !recordedTodayItems.isEmpty
             || !completedItems.isEmpty
     }
@@ -165,6 +180,7 @@ final class TodayViewModel {
             let activeWishes = allWishes.filter { $0.status == .active }
 
             var actionable: [TodayConditionItem] = []
+            var progressedToday: [TodayConditionItem] = []
             var recordedToday: [TodayConditionItem] = []
             var completed: [TodayConditionItem] = []
 
@@ -197,6 +213,8 @@ final class TodayViewModel {
                     switch item.state {
                     case .actionable:
                         actionable.append(item)
+                    case .progressedToday:
+                        progressedToday.append(item)
                     case .recordedToday:
                         recordedToday.append(item)
                     case .completed:
@@ -206,6 +224,7 @@ final class TodayViewModel {
             }
 
             actionableItems = actionable
+            progressedTodayItems = progressedToday
             recordedTodayItems = recordedToday
             completedItems = completed
         } catch {
@@ -224,7 +243,15 @@ final class TodayViewModel {
         case .checkpoint:
             return snapshot.isCompleted ? .completed : .actionable
         case .count, .duration, .amount, .custom:
-            return .actionable
+            // Cumulative types reach their target exactly once and keep
+            // accepting records afterwards, so a reached target is the only
+            // terminal state. Anything else stays recordable for the rest of
+            // the day; a same-day record promotes it to `progressedToday` so
+            // the Today progress summary reflects the work already done.
+            if snapshot.isCompleted {
+                return .completed
+            }
+            return hasTodayRecord ? .progressedToday : .actionable
         }
     }
 }

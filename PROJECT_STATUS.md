@@ -46,6 +46,13 @@
 
 - RC 真机验收：Playful Release 0.15.0 已在 iPhone 17 安装并启动（2026-11-10）；PhotosPicker、键盘、滚动、导航、重启仍未验收
 
+- Task ID: TASK-905
+- Task Name: Today 进度口径修复 + 外观切换（分支 `ui/daylight-ledger`）
+- Current Progress: 代码完成并已构建安装到 iPhone 17（2026-11-13）；单元测试未执行
+- Modified Files: `TodayViewModel.swift`、`TodayView.swift`、`AppearanceSettings.swift`（新增）、`SettingsView.swift`、`RootTabView.swift`、`WishEarnApp.swift`、`AppContainer.swift`、`TodayViewModelTests.swift`、`AppearanceSettingsTests.swift`（新增）、`WishEarn.xcodeproj/project.pbxproj`（xcodegen）
+- Verification: Debug 真机构建 BUILD SUCCEEDED；`build-for-testing` TEST BUILD SUCCEEDED；模拟器实测「跟随系统 / 强制深色」三态渲染通过（画布 223,221,213 ↔ 46,49,43）
+- Remaining Work: 单元测试未跑（模拟器测试服务被 macOS 开发者模式禁用拦截，真机测试包缺 Apple ID 签名）；真机交互与视觉验收
+
 ## Pending Tasks
 
 - TASK-904 发布验收（TestFlight / App Store）

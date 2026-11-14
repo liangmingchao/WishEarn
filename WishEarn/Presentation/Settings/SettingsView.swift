@@ -3,6 +3,7 @@ import UniformTypeIdentifiers
 
 struct SettingsView: View {
     let dataExportService: DataExportService
+    let appearanceSettings: AppearanceSettings
 
     @State private var exportDocument = WishEarnExportDocument()
     @State private var isExporting = false
@@ -38,6 +39,24 @@ struct SettingsView: View {
                 }
                 .padding(.vertical, AppSpacing.xs)
                 .listRowBackground(Color.clear)
+            }
+
+            Section {
+                Picker("外观", selection: appearanceBinding) {
+                    ForEach(AppearanceMode.allCases) { mode in
+                        Text(mode.title).tag(mode)
+                    }
+                }
+                .pickerStyle(.segmented)
+                .padding(.vertical, AppSpacing.xs)
+                .accessibilityLabel("外观")
+                .accessibilityHint("选择跟随系统、浅色或深色外观")
+            } header: {
+                Text("外观")
+            } footer: {
+                Text("跟随系统时会随 iOS 的浅色 / 深色设置自动切换；选择浅色或深色后，App 内所有界面立即按所选外观渲染，并在下次启动时保持。")
+                    .font(AppTypography.footnote)
+                    .foregroundStyle(AppColors.textSecondary)
             }
 
             Section {
@@ -105,6 +124,13 @@ struct SettingsView: View {
         .appErrorAlert(error: $exportError)
     }
 
+    private var appearanceBinding: Binding<AppearanceMode> {
+        Binding(
+            get: { appearanceSettings.mode },
+            set: { appearanceSettings.mode = $0 }
+        )
+    }
+
     private func exportData() {
         do {
             exportDocument = WishEarnExportDocument(data: try dataExportService.exportData())
@@ -124,14 +150,20 @@ struct SettingsView: View {
 #Preview("Light") {
     let container = AppContainer.preview()
     NavigationStack {
-        SettingsView(dataExportService: container.dataExportService)
+        SettingsView(
+            dataExportService: container.dataExportService,
+            appearanceSettings: container.appearanceSettings
+        )
     }
 }
 
 #Preview("Dark") {
     let container = AppContainer.preview()
     NavigationStack {
-        SettingsView(dataExportService: container.dataExportService)
+        SettingsView(
+            dataExportService: container.dataExportService,
+            appearanceSettings: container.appearanceSettings
+        )
     }
     .preferredColorScheme(.dark)
 }

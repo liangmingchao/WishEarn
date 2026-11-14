@@ -26,7 +26,7 @@ struct AchievementsView: View {
             }
         }
         .appScreenBackground()
-        .navigationTitle("成就")
+        .toolbar(.hidden, for: .navigationBar)
         .onAppear {
             viewModel.load()
         }
@@ -39,26 +39,36 @@ struct AchievementsView: View {
 
     private var content: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: AppSpacing.xl) {
+            VStack(alignment: .leading, spacing: 0) {
+                header
+
                 if hasAchievements {
-                    summary
-                }
+                    statsCard
+                        .padding(.horizontal, AppSpacing.screenInset)
+                        .padding(.top, AppSpacing.lg)
 
-                if !viewModel.completedWishes.isEmpty {
-                    wishSection(
-                        title: "已兑现",
-                        wishes: viewModel.completedWishes
+                    if !viewModel.completedWishes.isEmpty {
+                        wishSection(
+                            title: "已兑现",
+                            wishes: viewModel.completedWishes
+                        )
+                    }
+
+                    if !viewModel.unlockedWishes.isEmpty {
+                        wishSection(
+                            title: "已解锁 · 等待领取",
+                            wishes: viewModel.unlockedWishes
+                        )
+                    }
+
+                    Text(
+                        "累计完成 \(viewModel.completedConditionCount) 项条件 · \(viewModel.totalRecordCount) 条行动记录"
                     )
-                }
-
-                if !viewModel.unlockedWishes.isEmpty {
-                    wishSection(
-                        title: "已解锁",
-                        wishes: viewModel.unlockedWishes
-                    )
-                }
-
-                if !hasAchievements {
+                    .font(AppTypography.footnote)
+                    .foregroundStyle(AppColors.textTertiary)
+                    .padding(.horizontal, AppSpacing.screenInset)
+                    .padding(.top, AppSpacing.section)
+                } else {
                     EmptyStateView(
                         systemImage: "trophy",
                         title: "还没有成就",
@@ -67,70 +77,112 @@ struct AchievementsView: View {
                     .padding(.top, AppSpacing.hero)
                 }
             }
-            .padding(.horizontal, AppSpacing.screenInset)
-            .padding(.top, AppSpacing.sm)
-            .padding(.bottom, AppSpacing.xl)
+            .padding(.top, AppSpacing.md)
+            .padding(.bottom, AppSpacing.xxl)
         }
+        .scrollIndicators(.hidden)
     }
 
-    private var summary: some View {
-        VStack(alignment: .leading, spacing: AppSpacing.sm) {
-            Text("你为自己完成了这些事")
-                .font(AppTypography.callout)
-                .foregroundStyle(AppColors.textSecondary)
+    private var header: some View {
+        VStack(alignment: .leading, spacing: 5) {
+            Text("CHRONICLE")
+                .font(AppTypography.eyebrow)
+                .tracking(1.4)
+                .foregroundStyle(AppColors.textTertiary)
 
-            summaryMetrics
-                .appCard()
+            Text("成就")
+                .font(AppTypography.pageTitle)
+                .foregroundStyle(AppColors.textPrimary)
 
             Text(
-                "累计完成 \(viewModel.completedConditionCount) 项条件 · \(viewModel.totalRecordCount) 条行动记录"
+                viewModel.completedWishes.isEmpty
+                    ? "这里会收下你为自己兑现的奖励"
+                    : "你已经把 \(viewModel.completedWishes.count) 个心愿变成了现实"
             )
-            .font(AppTypography.footnote)
+            .font(AppTypography.callout)
             .foregroundStyle(AppColors.textSecondary)
+            .padding(.top, 1)
         }
+        .padding(.horizontal, AppSpacing.screenInset)
     }
 
-    @ViewBuilder
-    private var summaryMetrics: some View {
-        if dynamicTypeSize.isAccessibilitySize {
-            VStack(alignment: .leading, spacing: AppSpacing.md) {
-                AchievementSummaryMetric(
-                    value: viewModel.unlockedWishes.count,
-                    title: "已解锁"
-                )
-                separator
-                AchievementSummaryMetric(
-                    value: viewModel.completedWishes.count,
-                    title: "已兑现"
-                )
-            }
-        } else {
-            HStack(spacing: AppSpacing.lg) {
-                AchievementSummaryMetric(
-                    value: viewModel.unlockedWishes.count,
-                    title: "已解锁"
-                )
-                Rectangle()
-                    .fill(AppColors.separator)
-                    .frame(width: 0.5, height: 44)
-                AchievementSummaryMetric(
-                    value: viewModel.completedWishes.count,
-                    title: "已兑现"
-                )
+    private var statsCard: some View {
+        Group {
+            if dynamicTypeSize.isAccessibilitySize {
+                VStack(alignment: .leading, spacing: AppSpacing.md) {
+                    metric(value: viewModel.completedWishes.count, title: "兑现奖励")
+                    separator
+                    metric(value: viewModel.unlockedWishes.count, title: "解锁心愿")
+                    separator
+                    metric(value: viewModel.completedConditionCount, title: "完成条件")
+                }
+            } else {
+                HStack(alignment: .top, spacing: 0) {
+                    metric(value: viewModel.completedWishes.count, title: "兑现奖励")
+                    verticalSeparator
+                    metric(value: viewModel.unlockedWishes.count, title: "解锁心愿")
+                    verticalSeparator
+                    metric(value: viewModel.completedConditionCount, title: "完成条件")
+                }
             }
         }
+        .padding(.vertical, AppSpacing.lg)
+        .padding(.horizontal, AppSpacing.sm)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(
+            RoundedRectangle(cornerRadius: AppRadius.card, style: .continuous)
+                .fill(AppColors.elevated)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: AppRadius.card, style: .continuous)
+                .stroke(AppColors.separatorSoft, lineWidth: 1)
+        )
+    }
+
+    private func metric(value: Int, title: String) -> some View {
+        VStack(spacing: 3) {
+            Text("\(value)")
+                .font(.system(size: 26, weight: .semibold, design: .serif))
+                .monospacedDigit()
+                .foregroundStyle(AppColors.textPrimary)
+
+            Text(title)
+                .font(.system(size: 11))
+                .foregroundStyle(AppColors.textTertiary)
+        }
+        .frame(maxWidth: .infinity)
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel(Text("\(value) 个\(title)"))
+    }
+
+    private var verticalSeparator: some View {
+        Rectangle()
+            .fill(AppColors.separatorSoft)
+            .frame(width: 0.5, height: 34)
+            .padding(.top, AppSpacing.xs)
     }
 
     private func wishSection(title: String, wishes: [Wish]) -> some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text(title)
-                .font(AppTypography.headline)
-                .foregroundStyle(AppColors.textPrimary)
-                .padding(.bottom, AppSpacing.sm)
+            HStack(alignment: .firstTextBaseline) {
+                Text(title)
+                    .font(AppTypography.sectionTitle)
+                    .foregroundStyle(AppColors.textPrimary)
+
+                Spacer()
+
+                Text("\(wishes.count) 个")
+                    .font(AppTypography.footnote)
+                    .foregroundStyle(AppColors.textTertiary)
+            }
+            .padding(.bottom, AppSpacing.xs)
 
             ForEach(Array(wishes.enumerated()), id: \.element.id) { index, wish in
                 if index > 0 {
-                    separator
+                    Rectangle()
+                        .fill(AppColors.separatorSoft)
+                        .frame(height: 0.5)
+                        .padding(.leading, AppLayout.thumbnailSize + AppSpacing.md + 2)
                 }
 
                 AchievementWishRow(
@@ -140,32 +192,14 @@ struct AchievementsView: View {
                 )
             }
         }
+        .padding(.horizontal, AppSpacing.screenInset)
+        .padding(.top, AppSpacing.section)
     }
 
     private var separator: some View {
         Rectangle()
-            .fill(AppColors.separator)
+            .fill(AppColors.separatorSoft)
             .frame(height: 0.5)
-    }
-}
-
-private struct AchievementSummaryMetric: View {
-    let value: Int
-    let title: String
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: AppSpacing.xs) {
-            Text("\(value)")
-                .font(AppTypography.display)
-                .foregroundStyle(AppColors.textPrimary)
-
-            Text(title)
-                .font(AppTypography.caption)
-                .foregroundStyle(AppColors.textSecondary)
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .accessibilityElement(children: .combine)
-        .accessibilityLabel(Text("\(value) 个\(title)"))
     }
 }
 
@@ -178,58 +212,62 @@ private struct AchievementWishRow: View {
         .forWish(wish)
     }
 
+    private var isCompleted: Bool {
+        wish.status == .completed
+    }
+
     var body: some View {
-        HStack(spacing: AppSpacing.md) {
+        HStack(spacing: AppSpacing.md + 2) {
             thumbnail
 
             VStack(alignment: .leading, spacing: AppSpacing.xs) {
                 HStack(alignment: .firstTextBaseline, spacing: AppSpacing.sm) {
-                    WishThemeDot(theme: theme)
-
                     Text(wish.title)
-                        .font(AppTypography.headline)
+                        .font(AppTypography.wishTitleCompact)
                         .foregroundStyle(AppColors.textPrimary)
                         .lineLimit(2)
                         .fixedSize(horizontal: false, vertical: true)
+
+                    MiniStatusTag(
+                        text: isCompleted ? "已兑现" : "已解锁",
+                        tone: isCompleted ? .done : .reward
+                    )
                 }
 
                 if let dateText {
                     Text(dateText)
                         .font(AppTypography.footnote)
-                        .foregroundStyle(AppColors.textSecondary)
+                        .foregroundStyle(AppColors.textTertiary)
                 }
             }
 
             Spacer(minLength: AppSpacing.sm)
         }
-        .padding(.vertical, AppSpacing.md)
+        .padding(.vertical, AppSpacing.md + 2)
         .contentShape(Rectangle())
         .accessibilityElement(children: .combine)
     }
 
     @ViewBuilder
     private var thumbnail: some View {
-        if let imageData, let image = UIImage(data: imageData) {
-            Image(uiImage: image)
-                .resizable()
-                .scaledToFill()
-                .frame(width: 64, height: 64)
-                .clipped()
-                .clipShape(
-                    RoundedRectangle(cornerRadius: AppRadius.md, style: .continuous)
-                )
-                .accessibilityHidden(true)
-        } else {
-            ZStack {
-                RoundedRectangle(cornerRadius: AppRadius.md, style: .continuous)
-                    .fill(theme.tint)
-                Image(systemName: "photo")
-                    .font(.system(size: 22, weight: .light))
-                    .foregroundStyle(theme.onTint)
+        ZStack {
+            WishMonogramPlate(wish: wish, theme: theme, scale: 0.62)
+
+            if let imageData, let image = UIImage(data: imageData) {
+                Image(uiImage: image)
+                    .resizable()
+                    .scaledToFill()
             }
-            .frame(width: 64, height: 64)
-            .accessibilityHidden(true)
         }
+        .frame(width: AppLayout.thumbnailSize, height: AppLayout.thumbnailSize)
+        .clipShape(
+            RoundedRectangle(cornerRadius: AppRadius.thumbnail, style: .continuous)
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: AppRadius.thumbnail, style: .continuous)
+                .stroke(AppColors.separatorSoft, lineWidth: 0.5)
+        )
+        .accessibilityHidden(true)
     }
 }
 
